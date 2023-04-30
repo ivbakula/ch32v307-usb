@@ -1,0 +1,26 @@
+set(BOOT_SOURCES
+  boot.S
+  main.c
+)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+add_executable(${PROJECT_TARGET_ELF} ${BOOT_SOURCES})
+
+target_link_libraries(${PROJECT_TARGET_ELF} src)
+
+target_include_directories(${PROJECT_TARGET_ELF} PUBLIC
+  "${PROJECT_SOURCE_DIR}/inc")
+
+add_custom_command(
+  TARGET ${PROJECT_TARGET_ELF} POST_BUILD
+    
+  COMMAND ${CMAKE_OBJCOPY} -O binary ${PROJECT_BINARY_DIR}/${PROJECT_TARGET_ELF}
+  ${PROJECT_BINARY_DIR}/${PROJECT}.bin
+
+  COMMAND ${CMAKE_OBJCOPY} -O ihex ${PROJECT_BINARY_DIR}/${PROJECT_TARGET_ELF}
+  ${PROJECT_BINARY_DIR}/${PROJECT}.hex
+
+  COMMAND ${CMAKE_OBJDUMP} --source --all-headers --demangle --line-numbers --wide ${PROJECT_BINARY_DIR}/${PROJECT}.elf > ${PROJECT_BINARY_DIR}/${PROJECT}.lst
+
+  VERBATIM USES_TERMINAL)
