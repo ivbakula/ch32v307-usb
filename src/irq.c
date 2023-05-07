@@ -92,7 +92,6 @@ static inline void __trap_handle_exception(uint32_t excn)
   return;
 }
 
-extern void uart_puts(const char *);
 /**
  * @fn irq_trap
  *
@@ -106,12 +105,7 @@ extern void uart_puts(const char *);
 void _irq_trap (void) __attribute__((interrupt));
 void _irq_trap (void)
 {
-  uart_puts(__FUNCTION__);
-  uart_putc('\n');
   CSR_mcause mcause = csr_read_mcause();
-  char buff[16] = {0};
-  sprintf(buff, "%d\r\n", mcause.code);
-  uart_puts(buff);
   switch (mcause.type)
   {
   case MCAUSE_TYPE_INTERRUPT:

@@ -92,6 +92,7 @@ int main()
   system_pll_clock_init(PLLMul_6);
   enable_uart(sysclock_frequency, 9600);
   enable_usbd();
+  //  usbd_clock_enable();
   irq_enable_interrupt(USBHS_IRQn);
 
   char st[32] = {0};

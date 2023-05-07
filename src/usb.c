@@ -1,6 +1,7 @@
 #include "ch32v307.h"
 #include "time.h"
 #include "irq.h"
+#include <stdio.h>
 
 typedef struct {
   /* STOLEN from ch32v307 repo */
@@ -146,14 +147,85 @@ typedef struct {
 #define USBHD_INTFG_SETUP_ACT U8_BIT(5) 
 
 #define DEF_USBD_UEP0_SIZE           64     /* usb hs/fs device end-point 0 size */
+
 __attribute__((aligned(4))) uint8_t USBHS_EP0_Buf[DEF_USBD_UEP0_SIZE];
+
+#define TOKEN_MASK ((uint8_t)(0b11 << 4))
+#define TOKEN_OUT ((uint8_t)(0b00 << 4))
+#define TOKEN_SOF ((uint8_t)(0b01 << 4))
+#define TOKEN_IN ((uint8_t)(0b10 << 4))
+#define TOKEN_SETUP ((uint8_t)((0b11 << 4)))
+
+#define DEF_USB_VID                  0x1A86
+#define DEF_USB_PID 0xFE0C
+#define DEF_FILE_VERSION             0x01
+#define DEF_IC_PRG_VER DEF_FILE_VERSION
+
+const uint8_t  MyDevDescr[ ] =
+{
+    0x8,       // bLength
+    0x01,       // bDescriptorType (Device)
+    0x00, 0x02, // bcdUSB 2.00
+    0x02,       // bDeviceClass
+    0x00,       // bDeviceSubClass
+    0x00,       // bDeviceProtocol
+    DEF_USBD_UEP0_SIZE,   // bMaxPacketSize0 64
+    (uint8_t)DEF_USB_VID, (uint8_t)(DEF_USB_VID >> 8),  // idVendor 0x1A86
+    (uint8_t)DEF_USB_PID, (uint8_t)(DEF_USB_PID >> 8),  // idProduct 0x5537
+    DEF_IC_PRG_VER, 0x00, // bcdDevice 0.01
+    0x01,       // iManufacturer (String Index)
+    0x02,       // iProduct (String Index)
+    0x03,       // iSerialNumber (String Index)
+    0x01,       // bNumConfigurations 1
+};
 
 extern void uart_puts(const char *str);
 static void usbhd_irq(void)
 {
-  uart_puts(__FUNCTION__);
-  if (USBHD->INT_FG & USBHD_INTFG_SETUP_ACT)
-    uart_puts("USBHD_INTFG_SETUP_ACT\n");
+  irq_disable_interrupt(USBHS_IRQn);
+  /* char buffer[128] = {0}; */
+  /* sprintf(buffer, "USB_INTERRUPT_FLAG: 0x%08x\r\n", USBHD->INT_FG); */
+  /* uart_puts(buffer); */
+
+  /* if (USBHD->INT_FG & U8_BIT(0)) */
+  /* { */
+  /*   /\* uart_puts("handle USB_RESET\r\n"); *\/ */
+  /*   USBHD->INT_FG |= U8_BIT(1); */
+  /* } */
+
+  if (USBHD->INT_FG & U8_BIT(1))
+  {
+    /* uart_puts("handle USB_TRANSFER\r\n"); */
+    /* if ((USBHD->INT_ST & TOKEN_MASK) == TOKEN_IN) */
+    /* { */
+    /*   uart_puts("TOKEN_IN\r\n"); */
+
+      /* USBHD->UEP0_TX_LEN = 18;     */
+      /* memcpy(USBHS_EP0_Buf, &MyDevDescr, sizeof(MyDevDescr)); */
+      /* USBHD->UEP0_TX_CTRL = 0x8; */
+      /* //      USBHD->UEP0_TX_CTRL |= U8_BIT(0) | U8_BIT(1); */
+
+      USBHD->INT_FG = USBHD->INT_FG;
+  }
+
+  
+  else if (USBHD->INT_FG & U8_BIT(5))
+  {
+    /* uart_puts("handle USB_SETUP\r\n"); */
+    memcpy(USBHS_EP0_Buf, &MyDevDescr, 18);
+    USBHD->UEP0_TX_CTRL = 0x8;
+    USBHD->UEP0_TX_LEN = 0x12;
+    //   USBHD->UEP0_TX_CTRL |= U8_BIT(0) | U8_BIT(1);
+
+      USBHD->INT_FG = USBHD->INT_FG;
+      
+    USBHD->INT_FG |= U8_BIT(5);
+  }
+  else
+  {
+    USBHD->INT_FG = USBHD->INT_FG;    
+  }
+  irq_enable_interrupt(USBHS_IRQn);  
 }
 
 void enable_usbd(void)
@@ -170,16 +242,20 @@ void enable_usbd(void)
   wait_us(10);
   USBHD->CONTROL &= ~0x4; // ~U8_BIT(2);
   USBHD->HOST_CTRL = 0x10;
-  USBHD->CONTROL = USBHD_CONTROL_DMA_EN;
+  USBHD->CONTROL = USBHD_CONTROL_DMA_EN | U8_BIT(3) /* | U8_BIT(6) */;
 
-  USBHD->INT_EN = U32_BIT(0) | U32_BIT(1) | U32_BIT(5);
+  USBHD->INT_EN = 255;
   USBHD->UEP0_MAX_LEN = DEF_USBD_UEP0_SIZE;
   USBHD->UEP0_DMA = (uint32_t)((uint8_t *)USBHS_EP0_Buf);
   USBHD->UEP0_TX_LEN = 0;
   USBHD->UEP0_TX_CTRL = 0x02;
   USBHD->UEP0_RX_CTRL = 0x00;
   USBHD->CONTROL |= USBHD_CONTROL_DEV_PU_EN;
-  
+
+  char buff[128] = {0};
+  sprintf(buff, "0x%x\r\n", USBHS_EP0_Buf);
+  uart_puts(buff);
+                   
   irq_register_interrupt_handler(USBHS_IRQn, usbhd_irq);
   irq_enable_interrupt(USBHS_IRQn);
 }    
