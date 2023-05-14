@@ -2,7 +2,7 @@ set(SRC_SOURCES
   time.c
   irq.c
   usb.c
-  usbd.c
+  mmem.c
 )
 
 add_library(src STATIC ${SRC_SOURCES})

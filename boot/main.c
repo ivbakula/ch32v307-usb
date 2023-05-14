@@ -4,6 +4,12 @@
 #include "csr.h"
 #include "time.h"
 #include "irq.h"
+#include "mmem.h"
+
+extern uint32_t _susrstack;
+
+extern uint32_t _heap_end;
+extern uint32_t _heap_start;
 
 void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg)
 {
@@ -85,11 +91,11 @@ void red_light(void)
 }
 
 extern void enable_usbd(void);
-
+extern uint8_t USBHS_EP0_Buf;
 int main()
 {
-  //  config_clksrc_hse_pll();
   system_pll_clock_init(PLLMul_6);
+  mmem_init();
   enable_uart(sysclock_frequency, 9600);
   enable_usbd();
   //  usbd_clock_enable();
@@ -99,6 +105,10 @@ int main()
   sprintf(st, "irq status %d\r\n", irq_get_interrupt_status(USBHS_IRQn));
   uart_puts(st);
 
+  sprintf(st, "%d\n", _susrstack);
+  sprintf(st, "%d\n", _heap_end);
+  sprintf(st, "%d\n", _heap_start);
+  
   uint32_t secs = 0;
   char buff[32] = {0};
   while (1)
