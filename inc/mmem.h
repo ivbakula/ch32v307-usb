@@ -3,19 +3,15 @@
 
 #include <stdint.h>
 
-typedef enum {
-  BLK_FREED,
-  BLK_ALLOCD
-} BlkStatus;
+typedef enum { BLK_FREED, BLK_ALLOCD } BlkStatus;
 
-#define GET_STATUS(ptr) ((uintptr_t) ptr & 3)
-#define SET_STATUS(ptr, status) ((uintptr_t) ptr | status)
-#define CLR_STATUS(ptr) ((header *)((uintptr_t) ptr & ~3))
-#define GET_PTR(ptr)((header *)CLR_STATUS(ptr))
-#define IS_FREE(ptr) (GET_STATUS(ptr) == BLK_FREED)
+#define GET_STATUS(ptr)         ((uintptr_t)ptr & 3)
+#define SET_STATUS(ptr, status) ((uintptr_t)ptr | status)
+#define CLR_STATUS(ptr)         ((header *)((uintptr_t)ptr & ~3))
+#define GET_PTR(ptr)            ((header *)CLR_STATUS(ptr))
+#define IS_FREE(ptr)            (GET_STATUS(ptr) == BLK_FREED)
 
-__attribute__((aligned(4)))
-typedef struct header {
+__attribute__((aligned(4))) typedef struct header {
   uint32_t size;
   struct header *next;
 } header;
@@ -26,8 +22,8 @@ typedef struct header {
  * @fn allocm
  *
  * @brief Allocate contiguous block of memory.
- * @param size: desired size of memory block. 
- */ 
+ * @param size: desired size of memory block.
+ */
 void *allocm(uint32_t size);
 
 /**
@@ -37,9 +33,8 @@ void *allocm(uint32_t size);
  *        with call to allocm.
  *
  * @param ptr: pointer to memory block
- */ 
+ */
 void freem(void *ptr);
-
 
 /**
  * @fn mmem_init
