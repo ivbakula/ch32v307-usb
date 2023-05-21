@@ -1,16 +1,14 @@
 #ifndef MSGQ_H
 #define MSGQ_H
 
-#include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define MSGQ_NOMSG 100 /* max number of messages in message queue */
 
-typedef union
-{
-  struct
-  {
+typedef union {
+  struct {
     uint32_t size;
     uint8_t data[8];
   } __attribute__((__packed__));
@@ -82,7 +80,7 @@ size_t msgq_dequeue(MSG_queue *q, void *msg, bool is_blocking);
 #ifndef UNITTEST
   #include "irq.h"
   #include "time.h"
-  #define MSGQ_LOCK(X) irq_disable_interrupts_g()
+  #define MSGQ_LOCK(X)   irq_disable_interrupts_g()
   #define MSGQ_UNLOCK(X) irq_enable_interrupts_g()
 #else
   #define MSGQ_LOCK(x)
