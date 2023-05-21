@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include "mmem.h"
 #include <string.h>
+#include "time.h"
+#include <stdbool.h>
 
 extern uint32_t _heap_start;
 extern uint32_t _heap_end;
@@ -113,4 +115,4 @@ void freem(void *ptr)
     (*prev)->size += sizeof(header) + (*current)->size;
     (*prev)->next = (*current)->next;
   }
-}    
+}

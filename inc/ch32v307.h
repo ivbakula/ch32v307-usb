@@ -30,6 +30,7 @@ typedef struct {
 
 #define RCC_BASE               ((uint32_t)0x40021000)
 #define RCC_APB2PCENR_IOPAEN   U32_BIT(2)
+#define RCC_APB2PCENR_IOPBEN   U32_BIT(3)
 #define RCC_APB2PCENR_USART1EN U32_BIT(14)
 #define RCC_AHBPCENR_USBHSEN   U32_BIT(11)
 #define RCC_CTRL_PLLON         U32_BIT(24)
@@ -68,7 +69,9 @@ typedef struct {
 #define GPIO_PULL_UP_INPUT              0b1000
 
 #define GPIOA_BASE ((uint32_t)0x40010800)
+#define GPIOB_BASE ((uint32_t)0x40010C00)
 #define GPIOA      ((GPIO_Regfile *)GPIOA_BASE)
+#define GPIOB      ((GPIO_Regfile *)GPIOB_BASE)
 
 /* USART stuff */
 typedef struct {

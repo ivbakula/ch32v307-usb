@@ -33,7 +33,7 @@ typedef enum {
  */
 typedef enum {
   /******  RISC-V Processor Exceptions Numbers
-     *******************************************************/
+   *******************************************************/
   NonMaskableInt_IRQn = 2,  /* 2 Non Maskable Interrupt                             */
   EXC_IRQn            = 3,  /* 3 Exception Interrupt                                */
   Ecall_M_Mode_IRQn   = 5,  /* 5 Ecall M Mode Interrupt                             */
@@ -43,7 +43,7 @@ typedef enum {
   Software_IRQn       = 14, /* 14 software Interrupt                                */
 
   /******  RISC-V specific Interrupt Numbers
-     *********************************************************/
+   *********************************************************/
   WWDG_IRQn            = 16,  /* Window WatchDog Interrupt                            */
   PVD_IRQn             = 17,  /* PVD through EXTI Line detection Interrupt            */
   TAMPER_IRQn          = 18,  /* Tamper Interrupt                                     */

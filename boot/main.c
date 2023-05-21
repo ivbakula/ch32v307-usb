@@ -5,6 +5,7 @@
 #include "time.h"
 #include "irq.h"
 #include "mmem.h"
+#include "usb.h"
 
 extern uint32_t _susrstack;
 
@@ -92,6 +93,22 @@ void red_light(void)
 
 extern void enable_usbd(void);
 extern uint8_t USBHS_EP0_Buf;
+DescriptorPacket sp = {
+  .bLength            = 0x12,
+  .bDescriptorType    = 0x01,
+  .bcdUSB             = 0x01,
+  .bDeviceClass       = 0x02,
+  .bDeviceSubClass    = 0x00,
+  .bDeviceProtocol    = 0x00,
+  .bMaxPacketSize0    = 64,
+  .idVendor           = 0x6976, /*iv*/
+  .idProduct          = 0x616e, /*an*/
+  .bcdDevice          = 0x01,
+  .iProduct           = 0x02,
+  .iSerialNumber      = 0x03,
+  .bNumConfigurations = 0x01,
+};
+
 int main()
 {
   system_pll_clock_init(PLLMul_6);
@@ -101,16 +118,31 @@ int main()
   //  usbd_clock_enable();
   irq_enable_interrupt(USBHS_IRQn);
 
-  char st[32] = {0};
-  sprintf(st, "irq status %d\r\n", irq_get_interrupt_status(USBHS_IRQn));
-  uart_puts(st);
+  char *str = (char *)allocm(sizeof(char) * 256);
 
-  sprintf(st, "%d\n", _susrstack);
-  sprintf(st, "%d\n", _heap_end);
-  sprintf(st, "%d\n", _heap_start);
-  
-  uint32_t secs = 0;
-  char buff[32] = {0};
+  char buffer[64];
   while (1)
-    ;
+  {
+    size_t size = usb_setup_read_ep0(buffer);
+    if (size)
+    {
+      switch (((SetupPacket *)buffer)->bRequest)
+      {
+        case 0x06:
+          usb_setup_write_ep0(&sp, sizeof(sp));
+          break;
+        case 0x05:
+          //          usb_setup_write_ep0(0, 0);
+          /* sprintf(str, "0x%x\r\n", ((SetupPacket *)buffer)->wValue); */
+          /* uart_puts(str); */
+          wait_us(100);
+          usb_assign_address(((SetupPacket *)buffer)->wValue);
+          break;
+      }
+
+
+    }
+
+  }
+
 }    

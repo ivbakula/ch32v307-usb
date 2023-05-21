@@ -42,4 +42,5 @@ void freem(void *ptr);
  * @brief initialize memory management subsystem.
  */
 void mmem_init(void);
+
 #endif

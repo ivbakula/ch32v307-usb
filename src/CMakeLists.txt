@@ -3,6 +3,7 @@ set(SRC_SOURCES
   irq.c
   usb.c
   mmem.c
+  msgq.c
 )
 
 add_library(src STATIC ${SRC_SOURCES})
