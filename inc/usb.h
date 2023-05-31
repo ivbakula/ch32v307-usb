@@ -76,6 +76,8 @@ struct CompoundDescriptor {
   ConfigurationDescriptor config_descr;
   InterfaceDescriptor iface_descr;
   EndpointDescriptor ep_descr;
+  InterfaceDescriptor iface_descr2;
+  EndpointDescriptor ep_descr2;
 } __attribute__((packed));
 typedef struct CompoundDescriptor CompoundDescriptor;
 

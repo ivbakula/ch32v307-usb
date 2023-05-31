@@ -152,6 +152,8 @@ typedef struct {
 #define DEF_USBD_UEP0_SIZE           64     /* usb hs/fs device end-point 0 size */
 
 __attribute__((aligned(4))) uint8_t USBHS_EP0_Buf[DEF_USBD_UEP0_SIZE];
+__attribute__((aligned(4))) uint8_t USBHS_EP3TX_Buf[DEF_USBD_UEP0_SIZE];
+__attribute__((aligned(4))) uint8_t USBHS_EP3RX_Buf[DEF_USBD_UEP0_SIZE];
 
 #define DEF_USB_VID                  0x1A86
 #define DEF_USB_PID 0xFE0C
@@ -238,21 +240,21 @@ DeviceDescriptor dev_descr = { .bLength            = sizeof(dev_descr),
                                .bcdDevice          = 0x01,
                                .iProduct           = 0x01,
                                .iSerialNumber      = 0x00,
-                               .bNumConfigurations = 1 };
+                               .bNumConfigurations = 0x1 };
 
-CompoundDescriptor cdscr = { .config_descr = {
-                                 .bLength         = sizeof(ConfigurationDescriptor),
-                                 .bDescriptorType = CONFIGURATION_DESCRIPTOR,
-                                 .wTotalLength =
-                                     sizeof(ConfigurationDescriptor) +
-                                     sizeof(InterfaceDescriptor) +
-                                     sizeof(EndpointDescriptor), /* One interface and one endpoint
-                                                                    for this configuration */
-                                 .bNumInterfaces      = 0x01,
-                                 .bConfigurationValue = 0x00,
-                                 .iConfiguration      = 0x00,
-                                 .bmAttributes        = U8_BIT(7),
-                                 .bMaxPower           = 100,
+CompoundDescriptor cdscr = {
+  .config_descr = {
+    .bLength         = sizeof(ConfigurationDescriptor),
+    .bDescriptorType = CONFIGURATION_DESCRIPTOR,
+    .wTotalLength =
+    sizeof(ConfigurationDescriptor) +
+    sizeof(InterfaceDescriptor) * 2 +
+    sizeof(EndpointDescriptor) * 2,
+    .bNumInterfaces      = 0x02,
+    .bConfigurationValue = 0x00,
+    .iConfiguration      = 0x00,
+    .bmAttributes        = U8_BIT(7),
+    .bMaxPower           = 100,
   },
 
   .iface_descr = {
@@ -267,15 +269,35 @@ CompoundDescriptor cdscr = { .config_descr = {
     .iInterface         = 0x00,
   },
 
-
   .ep_descr = {
     .bLength          = sizeof(EndpointDescriptor),
     .bDescriptorType  = ENDPOINT_DESCRIPTOR,
-    .bEndpointAddress = U8_BIT(1),
-    .bmAttributes     = 0x0,
-    .wMaxPacketSize   = 0x64,
-    .bInterval        = 0x0,
+    .bEndpointAddress = 3 | U8_BIT(7),
+    .bmAttributes     = 0x3,
+    .wMaxPacketSize   = 0x8,
+    .bInterval        = 0x10,
   },
+
+  .iface_descr2 = {
+    .bLength            = sizeof(InterfaceDescriptor),
+    .bDescriptorType    = INTERFACE_DESCRIPTOR,
+    .bInterfaceNumber   = 0x0,
+    .bAlternateSetting  = 0x0,
+    .bNumEndpoints      = 0x01,
+    .bInterfaceClass    = 0x03,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
+    .iInterface         = 0x00,
+  },
+
+  .ep_descr2 = {
+    .bLength = sizeof(EndpointDescriptor),
+    .bDescriptorType = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = 3,
+    .bmAttributes = 0x3,
+    .wMaxPacketSize = 0x8,
+    .bInterval = 0x10,
+  }
 };
 
 StringDescriptor str_descr = { .bLength         = sizeof(StringDescriptor),
@@ -305,6 +327,8 @@ uint8_t address_assignement = 0;
 
 uint8_t get_configuration = 0;
 
+char set_config_cfm[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
 static void handle_setup_packet(void)
 {
   SetupPacket *sp = (SetupPacket *)(USBHS_EP0_Buf);
@@ -325,7 +349,7 @@ static void handle_setup_packet(void)
           }
           else
           {
-            msgq_enqueue(&ep0_msgq_tx, &cdscr, sizeof(cdscr), false);
+            msgq_enqueue(&ep0_msgq_tx, &cdscr, cdscr.config_descr.wTotalLength, false);
           }
           break;
 
@@ -340,18 +364,20 @@ static void handle_setup_packet(void)
           break;
 
         case INTERFACE_DESCRIPTOR:
-          //          msgq_enqueue(&ep0_msgq_tx, &iface_descr, sizeof(iface_descr), false);
-          break;
+            break;
           
         case ENDPOINT_DESCRIPTOR:
-          //          msgq_enqueue(&ep0_msgq_tx, &ep1_descr, sizeof(ep1_descr), false);
-          break;
+            break;
       }
 
       break;
     case SET_ADDRESS:
       address = sp->wValue;
       address_assignement = 1;
+      break;
+
+    case SET_CONFIGURATION:
+      msgq_enqueue(&ep0_msgq_tx, (void *)set_config_cfm, 8, false);
       break;
   }
 }
@@ -419,7 +445,6 @@ static void usbhd_irq(void)
     }
   }
 
-  
   USBHD->INT_FG = USBHD->INT_FG;
   GPIOB->R32_GPIO_OUTDR &= ~pin;  
 }
@@ -434,6 +459,7 @@ void enable_usbd_debug(void)
   gpio_port_config(GPIOB_BASE, 13, 0b0001);
   gpio_port_config(GPIOB_BASE, 14, 0b0001);  
 }
+
 
 void enable_usbd(void)
 {
@@ -455,6 +481,15 @@ void enable_usbd(void)
   USBHD->INT_EN = U8_BIT(0) | U8_BIT(1) | U8_BIT(2) | U8_BIT(4) | U8_BIT(5) | U8_BIT(6);
   USBHD->UEP0_MAX_LEN = DEF_USBD_UEP0_SIZE;
   USBHD->UEP0_DMA = (uintptr_t)((uint8_t *)USBHS_EP0_Buf);
+
+  USBHD->ENDP_CONFIG = 8 | 0x00080000;
+  USBHD->UEP3_MAX_LEN = 8;
+  
+  USBHD->UEP3_TX_DMA  = (uintptr_t)((uint8_t *)USBHS_EP3TX_Buf);
+  USBHD->UEP3_RX_DMA  = (uintptr_t)((uint8_t *)USBHS_EP3RX_Buf);
+
+  USBHD->UEP3_RX_CTRL = 0;
+  USBHD->UEP3_TX_CTRL = 2;
   USBHD->UEP0_TX_LEN = 0;
   USBHD->UEP0_TX_CTRL = 0x02;
   USBHD->UEP0_RX_CTRL = 0x00;
