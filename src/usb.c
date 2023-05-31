@@ -226,6 +226,135 @@ void usb_assign_address(uint8_t address)
   USBHD->DEV_AD = address;
 }
 
+DeviceDescriptor dev_descr = { .bLength            = sizeof(dev_descr),
+                               .bDescriptorType    = 0x01,
+                               .bcdUSB             = 0x0001,
+                               .bDeviceClass       = 0x02,
+                               .bDeviceSubClass    = 0x00,
+                               .bDeviceProtocol    = 0x00,
+                               .bMaxPacketSize0    = 8,
+                               .idVendor           = 0x6976,
+                               .idProduct          = 0x616e,
+                               .bcdDevice          = 0x01,
+                               .iProduct           = 0x01,
+                               .iSerialNumber      = 0x00,
+                               .bNumConfigurations = 1 };
+
+CompoundDescriptor cdscr = { .config_descr = {
+                                 .bLength         = sizeof(ConfigurationDescriptor),
+                                 .bDescriptorType = CONFIGURATION_DESCRIPTOR,
+                                 .wTotalLength =
+                                     sizeof(ConfigurationDescriptor) +
+                                     sizeof(InterfaceDescriptor) +
+                                     sizeof(EndpointDescriptor), /* One interface and one endpoint
+                                                                    for this configuration */
+                                 .bNumInterfaces      = 0x01,
+                                 .bConfigurationValue = 0x00,
+                                 .iConfiguration      = 0x00,
+                                 .bmAttributes        = U8_BIT(7),
+                                 .bMaxPower           = 100,
+  },
+
+  .iface_descr = {
+    .bLength            = sizeof(InterfaceDescriptor),
+    .bDescriptorType    = INTERFACE_DESCRIPTOR,
+    .bInterfaceNumber   = 0x0,
+    .bAlternateSetting  = 0x0,
+    .bNumEndpoints      = 0x01,
+    .bInterfaceClass    = 0x03,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
+    .iInterface         = 0x00,
+  },
+
+
+  .ep1_in_descr = {
+    .bLength          = sizeof(EndpointDescriptor),
+    .bDescriptorType  = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = U8_BIT(1),
+    .bmAttributes     = 0x0,
+    .wMaxPacketSize   = 0x64,
+    .bInterval        = 0x0,
+  },
+};
+
+StringDescriptor str_descr = { .bLength         = sizeof(StringDescriptor),
+                               .bDescriptorType = STRING_DESCRIPTOR,
+                               .wLANGID[0]      = 0x0409 };
+
+USB_DescriptorString usb_str_descr = {
+  .bLength         = sizeof(usb_str_descr) + 22,
+  .bDescriptorType = STRING_DESCRIPTOR,
+  //  .bString         = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' }
+  .bString = {
+    'H', 0x00,
+    'e', 0x00,
+    'l', 0x00,
+    'l', 0x00,
+    'o', 0x00,
+    ' ', 0x00,
+    'W', 0x00,
+    'o', 0x00,
+    'r', 0x00,
+    'l', 0x00,
+    'd', 0x00},
+};
+
+uint8_t address = 0;
+uint8_t address_assignement = 0;
+
+uint8_t get_configuration = 0;
+
+static void handle_setup_packet(void)
+{
+  SetupPacket *sp = (SetupPacket *)(USBHS_EP0_Buf);
+  switch (sp->bRequest)
+  {
+    case GET_DESCRIPTOR:
+      switch (sp->wValue >> 8)
+      {
+        case DEVICE_DESCRIPTOR:
+          msgq_enqueue(&ep0_msgq_tx, &dev_descr, sizeof(dev_descr), false);
+          break;
+
+        case CONFIGURATION_DESCRIPTOR:
+          if (!get_configuration)
+          {
+            msgq_enqueue(&ep0_msgq_tx, &cdscr.config_descr, sizeof(ConfigurationDescriptor), false);
+            get_configuration = 1;
+          }
+          else
+          {
+            msgq_enqueue(&ep0_msgq_tx, &cdscr, sizeof(cdscr), false);
+          }
+          break;
+
+        case STRING_DESCRIPTOR:
+          if (sp->wIndex == 0)
+            msgq_enqueue(&ep0_msgq_tx, &str_descr, sizeof(str_descr), false);
+          else
+          {
+            //            usb_str_descr.bLength = sizeof(usb_str_descr) + strlen(usb_str_descr.bString);
+            msgq_enqueue(&ep0_msgq_tx, &usb_str_descr, usb_str_descr.bLength, false);
+          }
+          break;
+
+        case INTERFACE_DESCRIPTOR:
+          //          msgq_enqueue(&ep0_msgq_tx, &iface_descr, sizeof(iface_descr), false);
+          break;
+          
+        case ENDPOINT_DESCRIPTOR:
+          //          msgq_enqueue(&ep0_msgq_tx, &ep1_descr, sizeof(ep1_descr), false);
+          break;
+      }
+
+      break;
+    case SET_ADDRESS:
+      address = sp->wValue;
+      address_assignement = 1;
+      break;
+  }
+}
 /*
  * Logic analyzer config PINOUT:
  *
@@ -237,7 +366,6 @@ void usb_assign_address(uint8_t address)
  * B10         CH4                 TRANSFER_IRQ
  * B14         CH7                 ISO_ACT
  */
-extern void uart_puts(const char *str);
 static void usbhd_irq(void)
 {
   uint32_t pin = 0;
@@ -258,15 +386,37 @@ static void usbhd_irq(void)
     pin |= 1 << 14;
 
   GPIOB->R32_GPIO_OUTDR |= pin;
-  
-  if (USBHD->INT_FG & U8_BIT(5))
-    msgq_enqueue(&ep0_msgq_rx, USBHS_EP0_Buf, 64, false);
 
-  if (USBHD->INT_FG & U8_BIT(6))
+  if (USBHD->INT_FG & U8_BIT(0))
   {
+    USBHD->DEV_AD = 0;
+  }
+
+  if (USBHD->INT_FG & U8_BIT(5))
+  {
+    handle_setup_packet();
     int sz = msgq_dequeue(&ep0_msgq_tx, USBHS_EP0_Buf, false);
     USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x8) ^ 0x8;
     USBHD->UEP0_TX_LEN  = sz;
+  }
+
+  if (USBHD->INT_FG & U8_BIT(1))
+  {
+    if ((USBHD->INT_ST & TOKEN_MASK) == TOKEN_IN)
+    {
+      int sz = 0;
+      if (!address_assignement)
+      {
+        sz = msgq_dequeue(&ep0_msgq_tx, USBHS_EP0_Buf, false);
+      }
+      else
+      {
+        USBHD->DEV_AD = address;
+        address_assignement = 0;        
+      }
+      USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x8) ^ 0x8;
+      USBHD->UEP0_TX_LEN  = sz;
+    }
   }
 
   

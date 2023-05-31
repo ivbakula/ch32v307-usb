@@ -93,7 +93,7 @@ void red_light(void)
 
 extern void enable_usbd(void);
 extern uint8_t USBHS_EP0_Buf;
-DescriptorPacket sp = {
+DeviceDescriptor sp = {
   .bLength            = 0x12,
   .bDescriptorType    = 0x01,
   .bcdUSB             = 0x01,
@@ -121,27 +121,26 @@ int main()
   char *str = (char *)allocm(sizeof(char) * 256);
 
   char buffer[64];
+  uart_puts("Initialization complete!\r\n");
   while (1)
   {
-    size_t size = usb_setup_read_ep0(buffer);
-    if (size)
-    {
-      switch (((SetupPacket *)buffer)->bRequest)
-      {
-        case 0x06:
-          usb_setup_write_ep0(&sp, sizeof(sp));
-          break;
-        case 0x05:
-          //          usb_setup_write_ep0(0, 0);
-          /* sprintf(str, "0x%x\r\n", ((SetupPacket *)buffer)->wValue); */
-          /* uart_puts(str); */
-          wait_us(100);
-          usb_assign_address(((SetupPacket *)buffer)->wValue);
-          break;
-      }
-
-
-    }
+    /* size_t size = usb_setup_read_ep0(buffer); */
+    /* if (size) */
+    /* { */
+    /*   switch (((SetupPacket *)buffer)->bRequest) */
+    /*   { */
+    /*     case 0x06: */
+    /*       usb_setup_write_ep0(&sp, sizeof(sp)); */
+    /*       break; */
+    /*     case 0x05: */
+    /*       //          usb_setup_write_ep0(0, 0); */
+    /*       /\* sprintf(str, "0x%x\r\n", ((SetupPacket *)buffer)->wValue); *\/ */
+    /*       /\* uart_puts(str); *\/ */
+    /*       wait_us(100); */
+    /*       usb_assign_address(((SetupPacket *)buffer)->wValue); */
+    /*       break; */
+    /*   } */
+    //    }
 
   }
 
