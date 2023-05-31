@@ -1,8 +1,7 @@
 #ifndef _USB_H
 #define _USB_H
 
-enum
-{
+enum {
   DEVICE_DESCRIPTOR = 1,
   CONFIGURATION_DESCRIPTOR,
   STRING_DESCRIPTOR,
@@ -38,8 +37,7 @@ struct DeviceDescriptor {
 } __attribute__((packed));
 typedef struct DeviceDescriptor DeviceDescriptor;
 
-struct ConfigurationDescriptor
-{
+struct ConfigurationDescriptor {
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t wTotalLength;
@@ -51,8 +49,7 @@ struct ConfigurationDescriptor
 } __attribute__((packed));
 typedef struct ConfigurationDescriptor ConfigurationDescriptor;
 
-struct InterfaceDescriptor
-{
+struct InterfaceDescriptor {
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint8_t bInterfaceNumber;
@@ -61,12 +58,11 @@ struct InterfaceDescriptor
   uint8_t bInterfaceClass;
   uint8_t bInterfaceSubClass;
   uint8_t bInterfaceProtocol;
-  uint8_t iInterface;  
+  uint8_t iInterface;
 } __attribute__((packed));
 typedef struct InterfaceDescriptor InterfaceDescriptor;
 
-struct EndpointDescriptor
-{
+struct EndpointDescriptor {
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint8_t bEndpointAddress;
@@ -79,12 +75,11 @@ typedef struct EndpointDescriptor EndpointDescriptor;
 struct CompoundDescriptor {
   ConfigurationDescriptor config_descr;
   InterfaceDescriptor iface_descr;
-  EndpointDescriptor ep1_descr;
+  EndpointDescriptor ep_descr;
 } __attribute__((packed));
 typedef struct CompoundDescriptor CompoundDescriptor;
 
-struct StringDescriptor
-{
+struct StringDescriptor {
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t wLANGID[1];

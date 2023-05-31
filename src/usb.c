@@ -268,7 +268,7 @@ CompoundDescriptor cdscr = { .config_descr = {
   },
 
 
-  .ep1_in_descr = {
+  .ep_descr = {
     .bLength          = sizeof(EndpointDescriptor),
     .bDescriptorType  = ENDPOINT_DESCRIPTOR,
     .bEndpointAddress = U8_BIT(1),
