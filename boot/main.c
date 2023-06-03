@@ -109,6 +109,8 @@ DeviceDescriptor sp = {
   .bNumConfigurations = 0x01,
 };
 
+size_t usb_poll(void *buffer, uint8_t endpoint, size_t buffer_size);
+
 int main()
 {
   system_pll_clock_init(PLLMul_6);
@@ -124,13 +126,19 @@ int main()
   uart_puts("Initialization complete!\r\n");
   while (1)
   {
+    size_t size = usb_poll(buffer, 3, 64);
+    if (size > 0)
+    {
+      sprintf(str, "Data received: %s\n", buffer);
+      uart_puts(str);
+    }
     /* size_t size = usb_setup_read_ep0(buffer); */
     /* if (size) */
     /* { */
     /*   switch (((SetupPacket *)buffer)->bRequest) */
     /*   { */
     /*     case 0x06: */
-    /*       usb_setup_write_ep0(&sp, sizeof(sp)); */
+    /*     -  usb_setup_write_ep0(&sp, sizeof(sp)); */
     /*       break; */
     /*     case 0x05: */
     /*       //          usb_setup_write_ep0(0, 0); */

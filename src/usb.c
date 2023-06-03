@@ -251,7 +251,7 @@ CompoundDescriptor cdscr = {
     sizeof(InterfaceDescriptor) * 2 +
     sizeof(EndpointDescriptor) * 2,
     .bNumInterfaces      = 0x02,
-    .bConfigurationValue = 0x00,
+    .bConfigurationValue = 0x01,
     .iConfiguration      = 0x00,
     .bmAttributes        = U8_BIT(7),
     .bMaxPower           = 100,
@@ -281,7 +281,7 @@ CompoundDescriptor cdscr = {
   .iface_descr2 = {
     .bLength            = sizeof(InterfaceDescriptor),
     .bDescriptorType    = INTERFACE_DESCRIPTOR,
-    .bInterfaceNumber   = 0x0,
+    .bInterfaceNumber   = 0x1,
     .bAlternateSetting  = 0x0,
     .bNumEndpoints      = 0x01,
     .bInterfaceClass    = 0x03,
@@ -326,7 +326,7 @@ uint8_t address = 0;
 uint8_t address_assignement = 0;
 
 uint8_t get_configuration = 0;
-
+volatile uint8_t is_configured = 0;
 char set_config_cfm[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 static void handle_setup_packet(void)
@@ -358,7 +358,6 @@ static void handle_setup_packet(void)
             msgq_enqueue(&ep0_msgq_tx, &str_descr, sizeof(str_descr), false);
           else
           {
-            //            usb_str_descr.bLength = sizeof(usb_str_descr) + strlen(usb_str_descr.bString);
             msgq_enqueue(&ep0_msgq_tx, &usb_str_descr, usb_str_descr.bLength, false);
           }
           break;
@@ -377,10 +376,49 @@ static void handle_setup_packet(void)
       break;
 
     case SET_CONFIGURATION:
-      msgq_enqueue(&ep0_msgq_tx, (void *)set_config_cfm, 8, false);
+      //      msgq_enqueue(&ep0_msgq_tx, (void *)set_config_cfm, 8, false);
+      USBHD->UEP0_TX_CTRL &= ~0x8;
+      is_configured = 1;
       break;
   }
 }
+
+volatile int out_transaction_in_progress = 0;
+int out_transaction_size        = 11;
+volatile int data_rdy = 0;
+MSG_queue ep3_rx_msgq;
+void handle_token_out()
+{
+  int size = 8;
+
+  if ((USBHD->INT_ST & 15) != 3)
+  {
+    return;
+  }
+
+  char buf[256] = { 0 };  
+  if (!out_transaction_in_progress)
+  {
+    //    out_transaction_size = ((USB_DataPacket *)USBHS_EP0_Buf)->_size;
+    //    sprintf(buf, "out_transaction_size: %d\r\n", out_transaction_size);
+    out_transaction_in_progress = 1;
+  }
+
+  if (out_transaction_size < size)
+    size = out_transaction_size;
+
+  sprintf(buf, "data recvd: %s\r\n", USBHS_EP3RX_Buf);
+  msgq_enqueue(&ep3_rx_msgq, USBHS_EP3RX_Buf, size, false);
+  out_transaction_size -= size;
+
+  if (out_transaction_size == 0)
+  {
+    out_transaction_in_progress = 0;
+    data_rdy = 1;
+  }    
+
+}
+
 /*
  * Logic analyzer config PINOUT:
  *
@@ -438,10 +476,19 @@ static void usbhd_irq(void)
       else
       {
         USBHD->DEV_AD = address;
-        address_assignement = 0;        
+        address_assignement = 0;
       }
       USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x8) ^ 0x8;
       USBHD->UEP0_TX_LEN  = sz;
+    }
+    if ((USBHD->INT_ST & TOKEN_MASK) == TOKEN_OUT)
+    {
+      if ((USBHD->INT_ST & 3) == 3)
+      {
+        uart_puts("EP3\r\n");
+        handle_token_out();
+      }
+
     }
   }
 
@@ -460,6 +507,22 @@ void enable_usbd_debug(void)
   gpio_port_config(GPIOB_BASE, 14, 0b0001);  
 }
 
+size_t usb_poll(void *buffer, uint8_t endpoint, size_t buffer_size)
+{
+  size_t size = 0;
+  while (!data_rdy)
+    ;
+
+  memset(buffer, 0, 64);
+  uart_puts("DataRDY\r\n");
+  size = msgq_dequeue(&ep3_rx_msgq, buffer, false);
+  char str[256] = {};
+  sprintf(str, "DATA_RECVD: %s\r\n", (char *)buffer);
+  uart_puts(str);
+  data_rdy = 0;
+  
+  return size;
+}
 
 void enable_usbd(void)
 {
@@ -496,6 +559,7 @@ void enable_usbd(void)
 
   msgq_init(&ep0_msgq_rx);
   msgq_init(&ep0_msgq_tx);
+  msgq_init(&ep3_rx_msgq);
   irq_register_interrupt_handler(USBHS_IRQn, usbhd_irq);
   enable_usbd_debug();
   irq_enable_interrupt(USBHS_IRQn);
