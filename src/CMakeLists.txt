@@ -1,7 +1,7 @@
 set(SRC_SOURCES
   time.c
   irq.c
-  usb.c
+  usb_device.c
   mmem.c
   msgq.c
 )

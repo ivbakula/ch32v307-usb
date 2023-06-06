@@ -6,6 +6,7 @@
 #include "irq.h"
 #include "mmem.h"
 #include "usb.h"
+#include "usb_interface.h"
 
 extern uint32_t _susrstack;
 
@@ -116,9 +117,10 @@ int main()
   system_pll_clock_init(PLLMul_6);
   mmem_init();
   enable_uart(sysclock_frequency, 9600);
-  enable_usbd();
+  //  enable_usbd();
   //  usbd_clock_enable();
-  irq_enable_interrupt(USBHS_IRQn);
+  init_usb_device(USB_LOW_SPEED);
+  //  irq_enable_interrupt(USBHS_IRQn);
 
   char *str = (char *)allocm(sizeof(char) * 256);
 
@@ -126,12 +128,12 @@ int main()
   uart_puts("Initialization complete!\r\n");
   while (1)
   {
-    size_t size = usb_poll(buffer, 3, 64);
-    if (size > 0)
-    {
-      sprintf(str, "Data received: %s\n", buffer);
-      uart_puts(str);
-    }
+    /* size_t size = usb_poll(buffer, 3, 64); */
+    /* if (size > 0) */
+    /* { */
+    /*   sprintf(str, "Data received: %s\n", buffer); */
+    /*   uart_puts(str); */
+    /* } */
     /* size_t size = usb_setup_read_ep0(buffer); */
     /* if (size) */
     /* { */

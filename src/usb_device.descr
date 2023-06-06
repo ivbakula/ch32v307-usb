@@ -1,0 +1,107 @@
+/* -*- mode: c -*- */
+#ifndef __USB_DEVICE_DESCR
+#include "usb_interface.h"
+
+static DeviceDescriptor deviceDescriptor = {
+  .bLength            = sizeof(deviceDescriptor),
+  .bDescriptorType    = 0x01,
+  .bcdUSB             = 0x0001,
+  .bDeviceClass       = 0x02,
+  .bDeviceSubClass    = 0x00,
+  .bDeviceProtocol    = 0x00,
+  .bMaxPacketSize0    = 8,
+  .idVendor           = 0x6976,
+  .idProduct          = 0x616e,
+  .bcdDevice          = 0x01,
+  .iProduct           = 0x01,
+  .iSerialNumber      = 0x00,
+  .bNumConfigurations = 0x1 
+};
+
+struct CompoundDescriptor {
+  ConfigurationDescriptor configurationDescriptor;
+  InterfaceDescriptor interfaceDescriptor1;
+  EndpointDescriptor ep1InDescriptor;
+  InterfaceDescriptor interfaceDescriptor2;
+  EndpointDescriptor ep1OutDescriptor;
+} __attribute__((packed))
+compoundDescriptor = {
+  .configurationDescriptor = {
+    .bLength = sizeof(ConfigurationDescriptor),
+    .bDescriptorType = CONFIGURATION_DESCRIPTOR,
+    .wTotalLength = sizeof(struct CompoundDescriptor),
+    .bNumInterfaces = 0x2,
+    .bConfigurationValue = 0x1,
+    .iConfiguration = 0x0,
+    .bmAttributes = 1 << 7,
+    .bMaxPower = 100,
+  },
+
+  .interfaceDescriptor1 = {
+    .bLength = sizeof(InterfaceDescriptor),
+    .bDescriptorType = INTERFACE_DESCRIPTOR,
+    .bInterfaceNumber = 0x0,
+    .bAlternateSetting = 0x0,
+    .bNumEndpoints = 0x01,
+    .bInterfaceClass = 0x03,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
+    .iInterface = 0x00,
+  },
+
+  .ep1InDescriptor = {
+    .bLength = sizeof(EndpointDescriptor),
+    .bDescriptorType = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = 1 | (1<<7),
+    .bmAttributes = 0x3,
+    .wMaxPacketSize = 0x8,
+    .bInterval = 0x10,
+  },
+
+  .interfaceDescriptor2 = {
+    .bLength = sizeof(InterfaceDescriptor),
+    .bDescriptorType = INTERFACE_DESCRIPTOR,
+    .bInterfaceNumber = 0x1,
+    .bAlternateSetting = 0x0,
+    .bNumEndpoints = 0x01,
+    .bInterfaceSubClass = 0x00,
+    .bInterfaceProtocol = 0x00,
+    .iInterface = 0x00,
+  },
+
+  .ep1OutDescriptor = {
+    .bLength = sizeof(EndpointDescriptor),
+    .bDescriptorType = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = 0x1,
+    .bmAttributes = 0x3,
+    .wMaxPacketSize = 0x8,
+    .bInterval = 0x10,
+  }
+};
+
+StringDescriptorLang stringDescriptorLang = {
+  .bLength         = sizeof(StringDescriptorLang),
+  .bDescriptorType = STRING_DESCRIPTOR,
+  .wLANGID[0]      = 0x0409,
+};
+
+StringDescriptorStr stringDescriptorStr = {
+  .bLength         = sizeof(stringDescriptorStr) + sizeof("Hello world!") * 2,
+  .bDescriptorType = STRING_DESCRIPTOR,
+  .bString = {
+    'H', 0x00,
+    'e', 0x00,
+    'l', 0x00,
+    'l', 0x00,
+    'o', 0x00,
+    ' ', 0x00,
+    'w', 0x00,
+    'o', 0x00,
+    'r', 0x00,
+    'l', 0x00,
+    'd', 0x00,
+    '!', 0x00,
+    0x00,0x00
+  },
+};
+#endif

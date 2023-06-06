@@ -537,7 +537,7 @@ void enable_usbd(void)
   USBHD->CONTROL = 0x2 | 0x4; //USBHD_CONTROL_RESET;
   wait_us(10);
   USBHD->CONTROL &= ~0x4; // ~U8_BIT(2);
-  USBHD->HOST_CTRL = 0x10;
+  USBHD->HOST_CTRL = 0x10; // this is necessary, but I have no idea why
   USBHD->CONTROL = USBHD_CONTROL_DMA_EN | U8_BIT(3) | U8_BIT(6);
 
   //  USBHD->INT_EN = 255;
