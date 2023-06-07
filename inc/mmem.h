@@ -3,7 +3,11 @@
 
 #include <stdint.h>
 
-typedef enum { BLK_FREED, BLK_ALLOCD } BlkStatus;
+typedef enum
+{
+  BLK_FREED,
+  BLK_ALLOCD
+} BlkStatus;
 
 #define GET_STATUS(ptr)         ((uintptr_t)ptr & 3)
 #define SET_STATUS(ptr, status) ((uintptr_t)ptr | status)
@@ -11,7 +15,8 @@ typedef enum { BLK_FREED, BLK_ALLOCD } BlkStatus;
 #define GET_PTR(ptr)            ((header *)CLR_STATUS(ptr))
 #define IS_FREE(ptr)            (GET_STATUS(ptr) == BLK_FREED)
 
-__attribute__((aligned(4))) typedef struct header {
+__attribute__((aligned(4))) typedef struct header
+{
   uint32_t size;
   struct header *next;
 } header;

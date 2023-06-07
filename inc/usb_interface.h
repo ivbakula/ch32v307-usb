@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-typedef enum {
+typedef enum
+{
   USB_FULL_SPEED = 0,
   USB_HIGH_SPEED = 1,
   USB_LOW_SPEED = 2,
@@ -18,8 +19,8 @@ typedef enum {
  */
 void init_usb_device(USB_DeviceMode mode);
 
-
-enum {
+enum
+{
   DEVICE_DESCRIPTOR = 1,
   CONFIGURATION_DESCRIPTOR,
   STRING_DESCRIPTOR,
@@ -27,7 +28,8 @@ enum {
   ENDPOINT_DESCRIPTOR,
 };
 
-struct SetupPacket {
+struct SetupPacket
+{
   uint8_t bmRequestType;
   uint8_t bRequest;
   uint16_t wValue;
@@ -37,7 +39,8 @@ struct SetupPacket {
 
 typedef struct SetupPacket SetupPacket;
 
-struct DeviceDescriptor {
+struct DeviceDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t bcdUSB;
@@ -55,7 +58,8 @@ struct DeviceDescriptor {
 } __attribute__((packed));
 typedef struct DeviceDescriptor DeviceDescriptor;
 
-struct ConfigurationDescriptor {
+struct ConfigurationDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t wTotalLength;
@@ -67,7 +71,8 @@ struct ConfigurationDescriptor {
 } __attribute__((packed));
 typedef struct ConfigurationDescriptor ConfigurationDescriptor;
 
-struct InterfaceDescriptor {
+struct InterfaceDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint8_t bInterfaceNumber;
@@ -80,7 +85,8 @@ struct InterfaceDescriptor {
 } __attribute__((packed));
 typedef struct InterfaceDescriptor InterfaceDescriptor;
 
-struct EndpointDescriptor {
+struct EndpointDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint8_t bEndpointAddress;
@@ -90,21 +96,24 @@ struct EndpointDescriptor {
 } __attribute__((packed));
 typedef struct EndpointDescriptor EndpointDescriptor;
 
-struct StringDescriptorLang {
+struct StringDescriptorLang
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t wLANGID[1];
 } __attribute__((packed));
 typedef struct StringDescriptorLang StringDescriptorLang;
 
-struct StringDescriptorStr {
+struct StringDescriptorStr
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   char bString[];
 } __attribute__((packed));
 typedef struct StringDescriptorStr StringDescriptorStr;
 
-typedef enum {
+typedef enum
+{
   GET_STATUS = 0,
   CLEAR_FEATURE,
   SET_FEATURE = 3,

@@ -8,7 +8,8 @@ extern uint32_t sysclock_frequency; /*!< This is global variable. Read this vari
 /**
  *
  */
-typedef enum {
+typedef enum
+{
   PLLMul_18 = 0,
   PLLMul_3,
   PLLMul_4,

@@ -1,7 +1,8 @@
 #ifndef _USB_H
 #define _USB_H
 
-enum {
+enum
+{
   DEVICE_DESCRIPTOR = 1,
   CONFIGURATION_DESCRIPTOR,
   STRING_DESCRIPTOR,
@@ -9,7 +10,8 @@ enum {
   ENDPOINT_DESCRIPTOR,
 };
 
-struct SetupPacket {
+struct SetupPacket
+{
   uint8_t bmRequestType;
   uint8_t bRequest;
   uint16_t wValue;
@@ -19,7 +21,8 @@ struct SetupPacket {
 
 typedef struct SetupPacket SetupPacket;
 
-struct DeviceDescriptor {
+struct DeviceDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t bcdUSB;
@@ -37,7 +40,8 @@ struct DeviceDescriptor {
 } __attribute__((packed));
 typedef struct DeviceDescriptor DeviceDescriptor;
 
-struct ConfigurationDescriptor {
+struct ConfigurationDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t wTotalLength;
@@ -49,7 +53,8 @@ struct ConfigurationDescriptor {
 } __attribute__((packed));
 typedef struct ConfigurationDescriptor ConfigurationDescriptor;
 
-struct InterfaceDescriptor {
+struct InterfaceDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint8_t bInterfaceNumber;
@@ -62,7 +67,8 @@ struct InterfaceDescriptor {
 } __attribute__((packed));
 typedef struct InterfaceDescriptor InterfaceDescriptor;
 
-struct EndpointDescriptor {
+struct EndpointDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint8_t bEndpointAddress;
@@ -72,7 +78,8 @@ struct EndpointDescriptor {
 } __attribute__((packed));
 typedef struct EndpointDescriptor EndpointDescriptor;
 
-struct CompoundDescriptor {
+struct CompoundDescriptor
+{
   ConfigurationDescriptor config_descr;
   InterfaceDescriptor iface_descr;
   EndpointDescriptor ep_descr;
@@ -81,21 +88,24 @@ struct CompoundDescriptor {
 } __attribute__((packed));
 typedef struct CompoundDescriptor CompoundDescriptor;
 
-struct StringDescriptor {
+struct StringDescriptor
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   uint16_t wLANGID[1];
 } __attribute__((packed));
 typedef struct StringDescriptor StringDescriptor;
 
-struct USB_DescriptorString {
+struct USB_DescriptorString
+{
   uint8_t bLength;
   uint8_t bDescriptorType;
   char bString[];
 } __attribute__((packed));
 typedef struct USB_DescriptorString USB_DescriptorString;
 
-typedef enum {
+typedef enum
+{
   GET_STATUS = 0,
   CLEAR_FEATURE,
   SET_FEATURE = 3,

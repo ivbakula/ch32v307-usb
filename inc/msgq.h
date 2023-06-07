@@ -7,8 +7,10 @@
 
 #define MSGQ_NOMSG 100 /* max number of messages in message queue */
 
-typedef union {
-  struct {
+typedef union
+{
+  struct
+  {
     uint32_t size;
     uint8_t data[8];
   } __attribute__((__packed__));
@@ -35,7 +37,8 @@ typedef union {
  *        event will never have a chance to occur and you will be
  *        stuck while waiting for Godot.
  */
-typedef struct {
+typedef struct
+{
   volatile uint8_t counter;
   uint32_t current_msg;
   uint32_t bottom_msg;
@@ -78,14 +81,14 @@ size_t msgq_enqueue(MSG_queue *q, void *msg, size_t size, bool is_blocking);
 size_t msgq_dequeue(MSG_queue *q, void *msg, bool is_blocking);
 
 #ifndef UNITTEST
-  #include "irq.h"
-  #include "time.h"
-  #define MSGQ_LOCK(X)   irq_disable_interrupts_g()
-  #define MSGQ_UNLOCK(X) irq_enable_interrupts_g()
+#include "irq.h"
+#include "time.h"
+#define MSGQ_LOCK(X)   irq_disable_interrupts_g()
+#define MSGQ_UNLOCK(X) irq_enable_interrupts_g()
 #else
-  #define MSGQ_LOCK(x)
-  #define MSGQ_UNLOCK(x)
-  #include <unistd.h>
+#define MSGQ_LOCK(x)
+#define MSGQ_UNLOCK(x)
+#include <unistd.h>
 
 void wait_us(uint32_t us);
 

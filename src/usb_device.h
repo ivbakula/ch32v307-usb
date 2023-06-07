@@ -1,8 +1,9 @@
 #ifndef USB_DEVICE_H
 #define USB_DEVICE_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
+
 #include "usb_interface.h"
 
 #define TOKEN_MASK  ((uint8_t)(0b11 << 4))
@@ -11,15 +12,17 @@
 #define TOKEN_IN    ((uint8_t)(0b10 << 4))
 #define TOKEN_SETUP ((uint8_t)((0b11 << 4)))
 
-typedef enum {
+typedef enum
+{
   EP_IDLE,
   EP_TX_IN_PROGRESS,
   EP_RX_IN_PROGRESS,
   EP_TX_DONE,
-  EP_RX_DONE
+  EP_RX_DONE,
 } EP_Status;
 
-struct USB_Ctrl_Endpoint {
+struct USB_Ctrl_Endpoint
+{
   uint8_t rx_dma_buffer[8];
 
   size_t packet_size;
@@ -27,7 +30,8 @@ struct USB_Ctrl_Endpoint {
   EP_Status status;
 };
 
-typedef enum {
+typedef enum
+{
   USBD_UNINITIALIZED,
   USBD_INITIALIZED,
   USBD_DESCRIPTOR_EXCHANGE,
@@ -37,63 +41,65 @@ typedef enum {
   USBD_READY
 } USBD_State;
 
-struct USB_Device {
+struct USB_Device
+{
   volatile USBD_State state;
-  size_t max_packet_size_ctrl;  /* Max USB packet size for control transfers   */
-  size_t max_packet_size_irq;   /* Max USB packet size for interrupt transfers */
+  size_t max_packet_size_ctrl; /* Max USB packet size for control transfers   */
+  size_t max_packet_size_irq;  /* Max USB packet size for interrupt transfers */
 
   struct USB_Ctrl_Endpoint ep0;
 };
 
-typedef struct {
+typedef struct
+{
   /* STOLEN from ch32v307 repo */
-  volatile uint8_t  CONTROL;
-  volatile uint8_t  HOST_CTRL;
-  volatile uint8_t  INT_EN;
-  volatile uint8_t  DEV_AD;
+  volatile uint8_t CONTROL;
+  volatile uint8_t HOST_CTRL;
+  volatile uint8_t INT_EN;
+  volatile uint8_t DEV_AD;
   volatile uint16_t FRAME_NO;
-  volatile uint8_t  SUSPEND;
-  volatile uint8_t  RESERVED0;
-  volatile uint8_t  SPEED_TYPE;
-  volatile uint8_t  MIS_ST;
-  volatile uint8_t  INT_FG;
-  volatile uint8_t  INT_ST;
+  volatile uint8_t SUSPEND;
+  volatile uint8_t RESERVED0;
+  volatile uint8_t SPEED_TYPE;
+  volatile uint8_t MIS_ST;
+  volatile uint8_t INT_FG;
+  volatile uint8_t INT_ST;
   volatile uint16_t RX_LEN;
   volatile uint16_t RESERVED1;
   volatile uint32_t ENDP_CONFIG;
   volatile uint32_t ENDP_TYPE;
   volatile uint32_t BUF_MODE;
-  volatile uint32_t UEP0_DMA;               
-  volatile uint32_t UEP1_RX_DMA;       
-  volatile uint32_t UEP2_RX_DMA;       
-  volatile uint32_t UEP3_RX_DMA;       
-  volatile uint32_t UEP4_RX_DMA;       
-  volatile uint32_t UEP5_RX_DMA;       
-  volatile uint32_t UEP6_RX_DMA;       
-  volatile uint32_t UEP7_RX_DMA;       
-  volatile uint32_t UEP8_RX_DMA;      
-  volatile uint32_t UEP9_RX_DMA;       
-  volatile uint32_t UEP10_RX_DMA;      
-  volatile uint32_t UEP11_RX_DMA;      
-  volatile uint32_t UEP12_RX_DMA;      
-  volatile uint32_t UEP13_RX_DMA;      
-  volatile uint32_t UEP14_RX_DMA;      
-  volatile uint32_t UEP15_RX_DMA;      
-  volatile uint32_t UEP1_TX_DMA;       
-  volatile uint32_t UEP2_TX_DMA;       
-  volatile uint32_t UEP3_TX_DMA;       
-  volatile uint32_t UEP4_TX_DMA;       
-  volatile uint32_t UEP5_TX_DMA;      
-  volatile uint32_t UEP6_TX_DMA;      
-  volatile uint32_t UEP7_TX_DMA;       
-  volatile uint32_t UEP8_TX_DMA;      
-  volatile uint32_t UEP9_TX_DMA;       
-  volatile uint32_t UEP10_TX_DMA;      
-  volatile uint32_t UEP11_TX_DMA;      
-  volatile uint32_t UEP12_TX_DMA;    
-  volatile uint32_t UEP13_TX_DMA;      
-  volatile uint32_t UEP14_TX_DMA;     
-  volatile uint32_t UEP15_TX_DMA;      
+  volatile uint32_t UEP0_DMA;
+  volatile uint32_t UEP1_RX_DMA;
+  volatile uint32_t UEP2_RX_DMA;
+  volatile uint32_t UEP3_RX_DMA;
+  volatile uint32_t UEP4_RX_DMA;
+  volatile uint32_t UEP5_RX_DMA;
+  volatile uint32_t UEP6_RX_DMA;
+  volatile uint32_t UEP7_RX_DMA;
+  volatile uint32_t UEP8_RX_DMA;
+  volatile uint32_t UEP9_RX_DMA;
+  volatile uint32_t UEP10_RX_DMA;
+  volatile uint32_t UEP11_RX_DMA;
+  volatile uint32_t UEP12_RX_DMA;
+  volatile uint32_t UEP13_RX_DMA;
+  volatile uint32_t UEP14_RX_DMA;
+  volatile uint32_t UEP15_RX_DMA;
+  volatile uint32_t UEP1_TX_DMA;
+  volatile uint32_t UEP2_TX_DMA;
+  volatile uint32_t UEP3_TX_DMA;
+  volatile uint32_t UEP4_TX_DMA;
+  volatile uint32_t UEP5_TX_DMA;
+  volatile uint32_t UEP6_TX_DMA;
+  volatile uint32_t UEP7_TX_DMA;
+  volatile uint32_t UEP8_TX_DMA;
+  volatile uint32_t UEP9_TX_DMA;
+  volatile uint32_t UEP10_TX_DMA;
+  volatile uint32_t UEP11_TX_DMA;
+  volatile uint32_t UEP12_TX_DMA;
+  volatile uint32_t UEP13_TX_DMA;
+  volatile uint32_t UEP14_TX_DMA;
+  volatile uint32_t UEP15_TX_DMA;
   volatile uint16_t UEP0_MAX_LEN;
   volatile uint16_t RESERVED2;
   volatile uint16_t UEP1_MAX_LEN;
@@ -127,57 +133,57 @@ typedef struct {
   volatile uint16_t UEP15_MAX_LEN;
   volatile uint16_t RESERVED17;
   volatile uint16_t UEP0_TX_LEN;
-  volatile uint8_t  UEP0_TX_CTRL;
-  volatile uint8_t  UEP0_RX_CTRL;
+  volatile uint8_t UEP0_TX_CTRL;
+  volatile uint8_t UEP0_RX_CTRL;
   volatile uint16_t UEP1_TX_LEN;
-  volatile uint8_t  UEP1_TX_CTRL;
-  volatile uint8_t  UEP1_RX_CTRL;
+  volatile uint8_t UEP1_TX_CTRL;
+  volatile uint8_t UEP1_RX_CTRL;
   volatile uint16_t UEP2_TX_LEN;
-  volatile uint8_t  UEP2_TX_CTRL;
-  volatile uint8_t  UEP2_RX_CTRL;
+  volatile uint8_t UEP2_TX_CTRL;
+  volatile uint8_t UEP2_RX_CTRL;
   volatile uint16_t UEP3_TX_LEN;
-  volatile uint8_t  UEP3_TX_CTRL;
-  volatile uint8_t  UEP3_RX_CTRL;
+  volatile uint8_t UEP3_TX_CTRL;
+  volatile uint8_t UEP3_RX_CTRL;
   volatile uint16_t UEP4_TX_LEN;
-  volatile uint8_t  UEP4_TX_CTRL;
-  volatile uint8_t  UEP4_RX_CTRL;
+  volatile uint8_t UEP4_TX_CTRL;
+  volatile uint8_t UEP4_RX_CTRL;
   volatile uint16_t UEP5_TX_LEN;
-  volatile uint8_t  UEP5_TX_CTRL;
-  volatile uint8_t  UEP5_RX_CTRL;
+  volatile uint8_t UEP5_TX_CTRL;
+  volatile uint8_t UEP5_RX_CTRL;
   volatile uint16_t UEP6_TX_LEN;
-  volatile uint8_t  UEP6_TX_CTRL;
-  volatile uint8_t  UEP6_RX_CTRL;
+  volatile uint8_t UEP6_TX_CTRL;
+  volatile uint8_t UEP6_RX_CTRL;
   volatile uint16_t UEP7_TX_LEN;
-  volatile uint8_t  UEP7_TX_CTRL;
-  volatile uint8_t  UEP7_RX_CTRL;
+  volatile uint8_t UEP7_TX_CTRL;
+  volatile uint8_t UEP7_RX_CTRL;
   volatile uint16_t UEP8_TX_LEN;
-  volatile uint8_t  UEP8_TX_CTRL;
-  volatile uint8_t  UEP8_RX_CTRL;
+  volatile uint8_t UEP8_TX_CTRL;
+  volatile uint8_t UEP8_RX_CTRL;
   volatile uint16_t UEP9_TX_LEN;
-  volatile uint8_t  UEP9_TX_CTRL;
-  volatile uint8_t  UEP9_RX_CTRL;
+  volatile uint8_t UEP9_TX_CTRL;
+  volatile uint8_t UEP9_RX_CTRL;
   volatile uint16_t UEP10_TX_LEN;
-  volatile uint8_t  UEP10_TX_CTRL;
-  volatile uint8_t  UEP10_RX_CTRL;
+  volatile uint8_t UEP10_TX_CTRL;
+  volatile uint8_t UEP10_RX_CTRL;
   volatile uint16_t UEP11_TX_LEN;
-  volatile uint8_t  UEP11_TX_CTRL;
-  volatile uint8_t  UEP11_RX_CTRL;
+  volatile uint8_t UEP11_TX_CTRL;
+  volatile uint8_t UEP11_RX_CTRL;
   volatile uint16_t UEP12_TX_LEN;
-  volatile uint8_t  UEP12_TX_CTRL;
-  volatile uint8_t  UEP12_RX_CTRL;
+  volatile uint8_t UEP12_TX_CTRL;
+  volatile uint8_t UEP12_RX_CTRL;
   volatile uint16_t UEP13_TX_LEN;
-  volatile uint8_t  UEP13_TX_CTRL;
-  volatile uint8_t  UEP13_RX_CTRL;
+  volatile uint8_t UEP13_TX_CTRL;
+  volatile uint8_t UEP13_RX_CTRL;
   volatile uint16_t UEP14_TX_LEN;
-  volatile uint8_t  UEP14_TX_CTRL;
-  volatile uint8_t  UEP14_RX_CTRL;
+  volatile uint8_t UEP14_TX_CTRL;
+  volatile uint8_t UEP14_RX_CTRL;
   volatile uint16_t UEP15_TX_LEN;
-  volatile uint8_t  UEP15_TX_CTRL;
-  volatile uint8_t  UEP15_RX_CTRL;  
+  volatile uint8_t UEP15_TX_CTRL;
+  volatile uint8_t UEP15_RX_CTRL;
 } USBHD_Regfile;
 
 #define USBHD_BASE ((uint32_t)0x40023400)
-#define USBHD ((USBHD_Regfile *) USBHD_BASE)
+#define USBHD      ((USBHD_Regfile *)USBHD_BASE)
 
 /* See table RCC_CFGR2 register description (pg 50 in manual) */
 #define USB_HSSRC_USBPHY (U32_BIT(31))
@@ -214,12 +220,12 @@ typedef struct {
 #define USBHD_HOST_CTRL_PHY_SUSPEND (U8_BIT(4))
 
 #define USBHD_INTFG_BUSRST  (U8_BIT(0)) /*< USBD: bus reset event;     */
-#define USBHD_INTFG_UIF     (U8_BIT(0)) /*< USBH: device connect event */ 
+#define USBHD_INTFG_UIF     (U8_BIT(0)) /*< USBH: device connect event */
 #define USBHD_INTFG_TRANS   (U8_BIT(1)) /*< Transfer complete event    */
 #define USBHD_INTFG_SUSPEND (U8_BIT(2)) /*< Suspend/wake-up event      */
-#define USBHD_INTFG_SOF   (U8_BIT(3))   /*< SOF timer interrupt flag   */
-#define USBHD_INTFG_FIFO  (U8_BIT(4))   /*< USB FIFO overflow interrupt*/
-#define USBHD_INTFG_SETUP (U8_BIT(5))   /*< SETUP transaction complete */
+#define USBHD_INTFG_SOF     (U8_BIT(3)) /*< SOF timer interrupt flag   */
+#define USBHD_INTFG_FIFO    (U8_BIT(4)) /*< USB FIFO overflow interrupt*/
+#define USBHD_INTFG_SETUP   (U8_BIT(5)) /*< SETUP transaction complete */
 #define USBHD_INTFG_ISO_ACT (U8_BIT(6)) /*< Sync transmission start send/recv */
 
 #endif

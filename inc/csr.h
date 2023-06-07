@@ -3,21 +3,26 @@
 
 #include <stdint.h>
 
-typedef union {
-  struct {
+typedef union
+{
+  struct
+  {
     uint32_t code : 31;
     uint32_t type : 1;
   };
   uint32_t data;
 } CSR_mcause;
 
-enum {
+enum
+{
   MCAUSE_TYPE_EXCEPTION = 0,
   MCAUSE_TYPE_INTERRUPT,
 };
 
-typedef union {
-  struct {
+typedef union
+{
+  struct
+  {
     uint32_t reserved0 : 3;
     uint32_t MIE : 1; /* Machine mode  Interrupt Enable */
     uint32_t reserved1 : 3;
@@ -30,8 +35,10 @@ typedef union {
   uint32_t data;
 } CSR_mstatus;
 
-typedef union {
-  struct {
+typedef union
+{
+  struct
+  {
     uint32_t HWSTKEN : 1; /* Enable HW stack.
                            * 0b0: HPE function is off
                            * 0b1: HPE function is on */
@@ -94,7 +101,7 @@ static inline void csr_write_mcause(CSR_mcause mcause)
 
 static inline CSR_mstatus csr_read_mstatus(void)
 {
-  CSR_mstatus mstatus = { .data = 0 };
+  CSR_mstatus mstatus = {.data = 0};
   __asm__ volatile("csrr %0, mstatus"
                    : "=r"(mstatus.data) /* output : register */
                    :                    /* input : none */
@@ -115,7 +122,7 @@ static inline void csr_write_mstatus(CSR_mstatus mstatus)
 
 static inline CSR_Intsyscr csr_read_intsyscr(void)
 {
-  CSR_Intsyscr intsyscr = { .data = 0 };
+  CSR_Intsyscr intsyscr = {.data = 0};
   __asm__ volatile("csrr %0, 0x804"
                    : "=r"(intsyscr.data) /* output : register */
                    :                     /* input : none */

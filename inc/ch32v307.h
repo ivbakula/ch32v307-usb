@@ -2,7 +2,7 @@
 #define CH32V307_H
 
 #include <stdint.h>
-#define APB_CLOCK 8000000 // Peripherial clock. This is the default value
+#define APB_CLOCK 8000000  // Peripherial clock. This is the default value
 
 /* Helper macros */
 #define U8_BIT(x)  ((uint8_t)(1 << x))
@@ -13,7 +13,8 @@
 #define MUL_4(x) (x << 2)
 
 /* RCC stuff */
-typedef struct {
+typedef struct
+{
   volatile uint32_t R32_RCC_CTRL;
   volatile uint32_t R32_RCC_CFGR0;
   volatile uint32_t R32_RCC_INTR;
@@ -55,7 +56,8 @@ typedef struct {
 #define RCC ((RCC_Regfile *)RCC_BASE)
 
 /* GPIO stuff */
-typedef struct {
+typedef struct
+{
   volatile uint32_t R32_GPIO_CFGLR;
   volatile uint32_t R32_GPIO_CFGHR;
   volatile uint32_t R32_GPIO_INDR;
@@ -74,7 +76,8 @@ typedef struct {
 #define GPIOB      ((GPIO_Regfile *)GPIOB_BASE)
 
 /* USART stuff */
-typedef struct {
+typedef struct
+{
   volatile uint32_t R32_USART_STATR;
   volatile uint32_t R32_USART_DATAR;
   volatile uint32_t R32_USART_BRR;
@@ -95,7 +98,8 @@ typedef struct {
 #define USART1      ((USART_Regfile *)USART1_BASE)
 
 /* IRQ stuff */
-typedef struct {
+typedef struct
+{
   volatile uint32_t R32_PFIC_ISR1;
   /* TODO add everything else */
 
@@ -104,7 +108,10 @@ typedef struct {
 #define PFIC_BASE ((uint32_t)0xE000E000)
 #define PFIC      ((PFIC_Regfile *)PFIC_BASE)
 
-typedef enum { IRQ_SysTick = 12 } IRQ_Line;
+typedef enum
+{
+  IRQ_SysTick = 12
+} IRQ_Line;
 
 /* Extended configuration stuff */
 #define EXTCFG_BASE ((uint32_t)0x40023800)
