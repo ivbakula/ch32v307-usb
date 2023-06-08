@@ -79,29 +79,27 @@ compoundDescriptor = {
   }
 };
 
-StringDescriptorLang stringDescriptorLang = {
-  .bLength         = sizeof(StringDescriptorLang),
-  .bDescriptorType = STRING_DESCRIPTOR,
-  .wLANGID[0]      = 0x0409,
+struct StringDescriptorLang {
+  StringDescriptorComm comm;
+  uint16_t wLANGID[1];
+} __attribute__((packed)) stringDescriptorLang = {
+  .comm = {
+    .bLength = sizeof(struct StringDescriptorLang),
+    .bDescriptorType = STRING_DESCRIPTOR,
+  },
+  .wLANGID[0] = 0x0409,
 };
 
-StringDescriptorStr stringDescriptorStr = {
-  .bLength         = sizeof(stringDescriptorStr) + sizeof("Hello world!") * 2,
-  .bDescriptorType = STRING_DESCRIPTOR,
-  .bString = {
-    'H', 0x00,
-    'e', 0x00,
-    'l', 0x00,
-    'l', 0x00,
-    'o', 0x00,
-    ' ', 0x00,
-    'w', 0x00,
-    'o', 0x00,
-    'r', 0x00,
-    'l', 0x00,
-    'd', 0x00,
-    '!', 0x00,
-    0x00,0x00
-  },
+struct StringDescriptorStr {
+  StringDescriptorComm comm;
+  char bString[sizeof("Hello World!") * 2];
+} __attribute__((packed)) stringDescriptorStr = {
+  .comm =
+    {
+      .bLength = sizeof(stringDescriptorStr) + sizeof("Hello world!") * 2,
+      .bDescriptorType = STRING_DESCRIPTOR,
+    },
+  .bString = {'H', 0x00, 'e', 0x00, 'l', 0x00, 'l', 0x00, 'o', 0x00, ' ', 0x00, 'w', 0x00, 'o', 0x00, 'r', 0x00, 'l', 0x00,
+    'd', 0x00, '!', 0x00, 0x00, 0x00},
 };
 #endif

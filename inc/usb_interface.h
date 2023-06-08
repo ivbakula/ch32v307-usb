@@ -96,21 +96,12 @@ struct EndpointDescriptor
 } __attribute__((packed));
 typedef struct EndpointDescriptor EndpointDescriptor;
 
-struct StringDescriptorLang
+struct StringDescriptorComm
 {
   uint8_t bLength;
   uint8_t bDescriptorType;
-  uint16_t wLANGID[1];
 } __attribute__((packed));
-typedef struct StringDescriptorLang StringDescriptorLang;
-
-struct StringDescriptorStr
-{
-  uint8_t bLength;
-  uint8_t bDescriptorType;
-  char bString[];
-} __attribute__((packed));
-typedef struct StringDescriptorStr StringDescriptorStr;
+typedef struct StringDescriptorComm StringDescriptorComm;
 
 typedef enum
 {

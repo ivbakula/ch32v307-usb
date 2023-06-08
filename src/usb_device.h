@@ -27,17 +27,14 @@ struct USB_Ctrl_Endpoint
 
   size_t packet_size;
   size_t tx_data_left;
-  EP_Status status;
 };
 
 typedef enum
 {
   USBD_UNINITIALIZED,
   USBD_INITIALIZED,
-  USBD_DESCRIPTOR_EXCHANGE,
   USBD_ADDRESS_ASSIGNEMENT,
   USBD_CONFIGURATION_EXCHANGE,
-  USBD_ENUM_DONE,
   USBD_READY
 } USBD_State;
 
@@ -47,6 +44,7 @@ struct USB_Device
   size_t max_packet_size_ctrl; /* Max USB packet size for control transfers   */
   size_t max_packet_size_irq;  /* Max USB packet size for interrupt transfers */
 
+  uint8_t address;
   struct USB_Ctrl_Endpoint ep0;
 };
 

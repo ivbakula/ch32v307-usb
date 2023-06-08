@@ -6,6 +6,7 @@
 #include "common.h"
 #include "usb_device.descr"
 #include "usb_interface.h"
+#define DEBUG
 
 static struct USB_Device usb_device = {
   .state                = USBD_UNINITIALIZED,
@@ -14,28 +15,41 @@ static struct USB_Device usb_device = {
   .ep0 = {
     .packet_size = 0,
     .tx_data_left = 0,
-    .status = EP_IDLE
   }
 };
 
-/* TODO generalize this function */
-static void write_endpoint0(void *data, size_t size)
+static void usb_write_ep0(void *data, size_t size)
 {
   struct USB_Ctrl_Endpoint *ep0 = &usb_device.ep0;
-  USBHD->UEP0_DMA               = (uintptr_t)((uint8_t *)data);
+  ep0->packet_size = (usb_device.max_packet_size_ctrl > size) ? size : usb_device.max_packet_size_ctrl;
 
-  ep0->tx_data_left = size;
-  ep0->packet_size = (size < usb_device.max_packet_size_ctrl) ? size : usb_device.max_packet_size_ctrl;
-
-  USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x8) ^ 0x8;
+  if (size) {
+    ep0->tx_data_left = size;
+    USBHD->UEP0_DMA = (uintptr_t) ((uint8_t *)data);
+  }
+  USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x08) ^ 0x08;
   USBHD->UEP0_TX_LEN = ep0->packet_size;
 }
 
-static void reset_enpoint0(void)
+static void usb_update_ep0(void)
 {
-  USBHD->UEP0_DMA = (uintptr_t)((uint8_t *)usb_device.ep0.rx_dma_buffer);
-  USBHD->UEP0_TX_LEN = 0;
-  USBHD->UEP0_TX_CTRL = USBHD_TXCTRL_RES_NAK; /* Respond NAK to IN packets on EP0 */      
+  struct USB_Ctrl_Endpoint *ep0 = &usb_device.ep0;
+  ep0->tx_data_left -= ep0->packet_size;
+
+  if (!ep0->tx_data_left) { /* No more data; Reset endpoint */
+    USBHD->UEP0_TX_CTRL &= ~0x8;
+    USBHD->UEP0_TX_LEN = 0;
+    USBHD->UEP0_DMA = (uintptr_t)((uint8_t *)ep0->rx_dma_buffer);
+    ep0->packet_size = 0;
+    return;
+  }
+
+  USBHD->UEP0_DMA += ep0->packet_size;
+  if (ep0->packet_size > ep0->tx_data_left)
+    ep0->packet_size = ep0->tx_data_left;
+
+  USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x8) ^ 0x08;
+  USBHD->UEP0_TX_LEN = ep0->packet_size;
 }
 
 /* ====================================================================== */
@@ -84,7 +98,7 @@ static inline void debug_interrupt_on(void)
   if (USBHD->INT_FG & U8_BIT(6))
     __dbg_pin |= 1 << 14;
 
-  GPIOB->R32_GPIO_OUTDR |= pin;
+  GPIOB->R32_GPIO_OUTDR |= __dbg_pin;
 }
 
 static inline void debug_interrupt_off(void) __attribute__((always_inline));
@@ -99,25 +113,34 @@ static inline void debug_interrupt_off(void)
 static inline void handle_bus_rst(void) __attribute__((always_inline));
 static inline void handle_bus_rst(void)
 {
-  // TODO handle reset event properly
+  USBHD->DEV_AD = 0;
+  usb_device.address = 0;
+  usb_device.state = USBD_INITIALIZED;
+}
+
+static inline void do_handle_transfer_ep0(void) __attribute__((always_inline));
+static inline void do_handle_transfer_ep0(void)
+{
+  switch (USBHD->INT_ST & TOKEN_MASK) {
+    case TOKEN_IN:
+      usb_update_ep0();
+      if (usb_device.state == USBD_ADDRESS_ASSIGNEMENT)
+        USBHD->DEV_AD = usb_device.address;
+      break;
+      
+    case TOKEN_OUT:
+      break;
+  }
 }
 
 static inline void handle_transfer(void) __attribute__((always_inline));
 static inline void handle_transfer(void)
 {
-  // TODO handle transmission complete event
-}
+  /* check which endpoint */
+  if ((USBHD->INT_ST & 0b111) == 0)
+    do_handle_transfer_ep0();
 
-static inline void handle_suspend(void) __attribute__((always_inline));
-static inline void handle_suspend(void)
-{
-  // TODO handle suspend event
-}
-
-static inline void handle_fifo_overflow(void) __attribute__((always_inline));
-static inline void handle_fifo_overflow(void)
-{
-  // TODO do something about fifo overflow.
+  /* do something for other endpoints */
 }
 
 static inline void handle_setup(void) __attribute__((always_inline));
@@ -125,29 +148,52 @@ static inline void handle_setup(void)
 {
   SetupPacket *sp = (SetupPacket *)usb_device.ep0.rx_dma_buffer;
   struct USB_Ctrl_Endpoint *ep0 = &usb_device.ep0;
-  
+  void *data = 0;
+  size_t size = 0;
+
   if (sp->bRequest == GET_DESCRIPTOR) {
     switch (sp->wValue >> 8)
     {
       case DEVICE_DESCRIPTOR:
-        write_endpoint0(&deviceDescriptor, sizeof(DeviceDescriptor));
+        data = &deviceDescriptor;
+        size = sizeof(DeviceDescriptor);
         break;
 
       case CONFIGURATION_DESCRIPTOR:
-        write_endpoint0(&compoundDescriptor.configurationDescriptor, sizeof(ConfigurationDescriptor));
+        if (usb_device.state == USBD_CONFIGURATION_EXCHANGE) {
+          data = &compoundDescriptor;
+          size = sizeof(compoundDescriptor);
+        } else {
+          data = &compoundDescriptor.configurationDescriptor;
+          size = sizeof(compoundDescriptor.configurationDescriptor);
+          usb_device.state = USBD_CONFIGURATION_EXCHANGE;          
+        }
         break;
 
       case STRING_DESCRIPTOR:
+        if (sp->wIndex == 0) {
+          data = &stringDescriptorLang;
+          size = sizeof(struct StringDescriptorLang);
+        } else {
+          data = &stringDescriptorStr;
+          size = sizeof(struct StringDescriptorStr);
+        }
         
       default:
         // do nothing.
         break;
     }
   } else if (sp->bRequest == SET_ADDRESS) {
-    
-  } else {
-    // do nothing. We're not handling this case.
+    usb_device.state = USBD_ADDRESS_ASSIGNEMENT;
+    usb_device.address = sp->wValue;
+  } else if (sp->bRequest == SET_CONFIGURATION) {
+      // THIS MEANS THAT ENUMERATION PROCESS IS DONE SO JUST CHANGE STATE TO READY
+      usb_device.state = USBD_READY;
   }
+
+  // Every SETUP transaction ends with IN token, so we need to write something
+  // to the EP0.
+  usb_write_ep0(data, size);
 }
 
 static void usb_irqhandler(void)
@@ -158,9 +204,19 @@ static void usb_irqhandler(void)
   switch (USBHD->INT_FG)
   {
     case USBHD_INTFG_BUSRST:
+      handle_bus_rst();
+      break;
+      
     case USBHD_INTFG_TRANS:
+      handle_transfer();
+      break;
+
     case USBHD_INTFG_SUSPEND:
+      break;
+
     case USBHD_INTFG_FIFO:
+      break;
+      
     case USBHD_INTFG_SETUP:
       handle_setup();
       break;

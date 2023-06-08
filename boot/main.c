@@ -5,7 +5,6 @@
 #include "time.h"
 #include "irq.h"
 #include "mmem.h"
-#include "usb.h"
 #include "usb_interface.h"
 
 extern uint32_t _susrstack;
