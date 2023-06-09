@@ -1,15 +1,16 @@
 /* -*- mode: c -*- */
 #ifndef __USB_DEVICE_DESCR
 #include "usb_interface.h"
+#include "usb_lowspeed.cfg"
 
 static DeviceDescriptor deviceDescriptor = {
-  .bLength            = sizeof(deviceDescriptor),
-  .bDescriptorType    = 0x01,
-  .bcdUSB             = 0x0001,
+  .bLength = sizeof(deviceDescriptor),
+  .bDescriptorType = 0x01,
+  .bcdUSB = USB_PROTOCOL,
   .bDeviceClass       = 0x02,
   .bDeviceSubClass    = 0x00,
   .bDeviceProtocol    = 0x00,
-  .bMaxPacketSize0    = 8,
+  .bMaxPacketSize0    = USB_MAX_PACKET_SIZE,
   .idVendor           = 0x6976,
   .idProduct          = 0x616e,
   .bcdDevice          = 0x01,
@@ -96,7 +97,7 @@ struct StringDescriptorStr {
 } __attribute__((packed)) stringDescriptorStr = {
   .comm =
     {
-      .bLength = sizeof(stringDescriptorStr) + sizeof("Hello world!") * 2,
+      .bLength = sizeof(StringDescriptorComm) + sizeof("Hello world!") * 2,
       .bDescriptorType = STRING_DESCRIPTOR,
     },
   .bString = {'H', 0x00, 'e', 0x00, 'l', 0x00, 'l', 0x00, 'o', 0x00, ' ', 0x00, 'w', 0x00, 'o', 0x00, 'r', 0x00, 'l', 0x00,

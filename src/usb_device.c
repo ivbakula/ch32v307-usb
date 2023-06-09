@@ -4,12 +4,12 @@
 #include "irq.h"
 #include "time.h"
 #include "common.h"
-#include "usb_device.descr"
+#include "usb-config/usb_device_full-speed.descr"
 #include "usb_interface.h"
 #define DEBUG
 
 static struct USB_Device usb_device = {
-  .state                = USBD_UNINITIALIZED,
+  .state                = 0,
   .max_packet_size_ctrl = 0,
   .max_packet_size_irq  = 0,
   .ep0 = {
@@ -52,6 +52,16 @@ static void usb_update_ep0(void)
   USBHD->UEP0_TX_LEN = ep0->packet_size;
 }
 
+static void usb_update_ep_tx(struct USB_Endpoint *ep)
+{
+
+}
+
+static void usb_update_ep_rx(struct USB_Endpoint *ep)
+{
+  
+}
+
 /* ====================================================================== */
 /* ===============================DEBUG================================== */
 #ifdef DEBUG
@@ -89,6 +99,10 @@ static inline void debug_interrupt_on(void)
   if (USBHD->INT_FG & U8_BIT(2))
     __dbg_pin |= 1 << 11;
 
+  /*  
+  if (USBHD->INT_FG & U8_BIT(3))
+    __dbg_pin |= 1 << 10;
+  */
   if (USBHD->INT_FG & U8_BIT(1))
     __dbg_pin |= 1 << 10;
 
@@ -115,7 +129,6 @@ static inline void handle_bus_rst(void)
 {
   USBHD->DEV_AD = 0;
   usb_device.address = 0;
-  usb_device.state = USBD_INITIALIZED;
 }
 
 static inline void do_handle_transfer_ep0(void) __attribute__((always_inline));
@@ -190,7 +203,7 @@ static inline void handle_setup(void)
       // THIS MEANS THAT ENUMERATION PROCESS IS DONE SO JUST CHANGE STATE TO READY
       usb_device.state = USBD_READY;
   }
-
+  
   // Every SETUP transaction ends with IN token, so we need to write something
   // to the EP0.
   usb_write_ep0(data, size);
@@ -246,11 +259,11 @@ static inline void usb_hw_init(USB_DeviceMode mode)
 
   /* Enable some interrupts */
   USBHD->INT_EN = USBHD_INTEN_BUSRST | USBHD_INTEN_TRANSFER | USBHD_INTEN_SUSPEND |
-                  USBHD_INTEN_FIFO | USBHD_INTEN_SETUP;
+                  USBHD_INTEN_SOFACT | USBHD_INTEN_FIFO | USBHD_INTEN_SETUP;
 
   USBHD->CONTROL = USBHD_CONTROL_DMA_EN | USBHD_CONTROL_BSY | USBHD_CONTROL_SPEED_TYPE(mode);
 
-  usb_device.max_packet_size_irq = usb_device.max_packet_size_ctrl = (mode == USB_LOW_SPEED) ? 8 : 64;
+  usb_device.max_packet_size_irq = usb_device.max_packet_size_ctrl = USB_MAX_PACKET_SIZE;//(mode == USB_LOW_SPEED) ? 8 : 64;
 
   /* Initialize endpoint 0 */
   USBHD->UEP0_MAX_LEN = usb_device.max_packet_size_ctrl;
@@ -260,6 +273,17 @@ static inline void usb_hw_init(USB_DeviceMode mode)
   USBHD->UEP0_TX_CTRL = USBHD_TXCTRL_RES_NAK; /* Respond NAK to IN packets on EP0 */
   USBHD->UEP0_TX_LEN  = 0;                    /* Nothing to transmit yet */
   USBHD->UEP0_RX_CTRL = 0x00;                 /* Data ready and expect ACK */
+
+
+  /* Initialize endpoint 1 */
+  USBHD->ENDP_CONFIG = U32_BIT(1) | U32_BIT(17); /* Enable EP1 Tx and EP1 Rx */
+  USBHD->UEP1_MAX_LEN = usb_device.max_packet_size_irq;
+  
+  USBHD->UEP1_TX_DMA = (uintptr_t)((uint8_t *)usb_device.ep1.tx_dma_buffer);
+  USBHD->UEP1_RX_DMA = (uintptr_t)((uint8_t *)usb_device.ep1.rx_dma_buffer);
+
+  USBHD->UEP1_RX_CTRL = 0;
+  USBHD->UEP1_TX_CTRL = 2;
 
   /* Register USB device interrupt handler and enable USB device interrupt line */
   irq_register_interrupt_handler(USBHS_IRQn, usb_irqhandler);
@@ -271,11 +295,8 @@ static inline void usb_hw_init(USB_DeviceMode mode)
 
 void init_usb_device(USB_DeviceMode mode)
 {
-  usb_device.state = USBD_UNINITIALIZED;
   usb_hw_init(mode);
-
   #ifdef DEBUG
   enable_usbd_debug();
   #endif
-  usb_device.state = USBD_INITIALIZED;
 }    

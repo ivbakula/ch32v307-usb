@@ -118,7 +118,7 @@ int main()
   enable_uart(sysclock_frequency, 9600);
   //  enable_usbd();
   //  usbd_clock_enable();
-  init_usb_device(USB_LOW_SPEED);
+  init_usb_device(USB_FULL_SPEED);
   //  irq_enable_interrupt(USBHS_IRQn);
 
   char *str = (char *)allocm(sizeof(char) * 256);

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "usb_interface.h"
+#include "circ_buff.h"
 
 #define TOKEN_MASK  ((uint8_t)(0b11 << 4))
 #define TOKEN_OUT   ((uint8_t)(0b00 << 4))
@@ -12,18 +13,9 @@
 #define TOKEN_IN    ((uint8_t)(0b10 << 4))
 #define TOKEN_SETUP ((uint8_t)((0b11 << 4)))
 
-typedef enum
-{
-  EP_IDLE,
-  EP_TX_IN_PROGRESS,
-  EP_RX_IN_PROGRESS,
-  EP_TX_DONE,
-  EP_RX_DONE,
-} EP_Status;
-
 struct USB_Ctrl_Endpoint
 {
-  uint8_t rx_dma_buffer[8];
+  uint8_t rx_dma_buffer[64];
 
   size_t packet_size;
   size_t tx_data_left;
@@ -31,8 +23,27 @@ struct USB_Ctrl_Endpoint
 
 typedef enum
 {
-  USBD_UNINITIALIZED,
-  USBD_INITIALIZED,
+  EP_IDLE,
+  EP_TX_PROGRESS,
+  EP_RX_DATA_RDY
+} Endpoint_State;
+
+struct USB_Endpoint
+{
+  size_t packet_size;
+
+  size_t tx_data_left;
+  size_t tx_packet_size;
+
+  volatile Endpoint_State tx_state;
+  volatile Endpoint_State rx_state;
+  
+  char tx_dma_buffer[64];
+  char rx_dma_buffer[64];
+};
+
+typedef enum
+{
   USBD_ADDRESS_ASSIGNEMENT,
   USBD_CONFIGURATION_EXCHANGE,
   USBD_READY
@@ -46,6 +57,7 @@ struct USB_Device
 
   uint8_t address;
   struct USB_Ctrl_Endpoint ep0;
+  struct USB_Endpoint ep1;
 };
 
 typedef struct
