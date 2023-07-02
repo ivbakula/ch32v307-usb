@@ -1,0 +1,32 @@
+* CH32v307 stuff
+
+Here you can find some basic examples for CH32V307x MCU. CH32V307 is pretty cheap and capable chinese MCU based on QingKeV4 32-bit RISC-V core.
+You can find more info about ch32v307x here https://github.com/openwch/ch32v307 and in ~doc~ directory. Currently, only official way to develop
+and deploy software to ch32v307 MCU is via MounRiver IDE. This is proprietary development enviroment which can be downloaded from wch site. It 
+is deployed along with cross compiler (gcc) and with OpenOCD which is used for flashing. The end goal of this project is to provide relatively
+simple to use and more importantly really fast and small development framework (device drivers ...). 
+
+
+Similar project: https://github.com/cnlohr/ch32v003fun
+
+
+
+
+** Dependencies and stuff
++ CMake >= 3.15
++ make
++ riscv toolchain.
++ wchisp
+
+*** Install toolchain
+Toolchain I use is xPacks riscv-none-embed-. You can find installation instructions here:
+https://xpack.github.io/dev-tools/riscv-none-elf-gcc/install/
+
+*** Wchisp
+For flashing I use ~wchisp~ utility. Home of wchisp is this github repo  https://github.com/ch32-rs/wchisp.
+
+*** Devboard
+[[./doc/ch32v307-devboard.jpg]]
+
+** Build instructions
+
