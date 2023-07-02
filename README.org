@@ -28,5 +28,26 @@ For flashing I use ~wchisp~ utility. Home of wchisp is this github repo  https:/
 *** Devboard
 [[./doc/ch32v307-devboard.jpg]]
 
-** Build instructions
+** Build  and flash instructions
 
+Inside the repo, create build directory, and cd to it. Run cmake utility
+#+BEGIN_SRC :bash
+cmake ..
+#+END_SRC
+
+This command will take default cross compiler toolchain prefix; ~riscv-none-embed-~. If you want to use another toolchain, run:
+#+BEGIN_SRC :bash
+cmake .. -DTOOLCHAIN_PREFIX=<riscv-toolchain-prefix->
+#+END_SRC
+
+Then:
+#+BEGIN_SRC :bash
+make
+#+END_SRC
+
+After successful compilation, you should flash your code to the devboard. Before flashing press and hold BOOT0 and press RST. Release both keys. To flash
+software to devboard, run
+
+#+BEGIN_SRC
+make flashit
+#+END_SRC
