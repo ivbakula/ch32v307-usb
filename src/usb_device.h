@@ -5,7 +5,6 @@
 #include <stdint.h>
 
 #include "usb_interface.h"
-#include "circ_buff.h"
 
 #define TOKEN_MASK  ((uint8_t)(0b11 << 4))
 #define TOKEN_OUT   ((uint8_t)(0b00 << 4))

@@ -3,7 +3,6 @@
 #include "ch32v307.h"
 #include "irq.h"
 #include "time.h"
-#include "common.h"
 #include "usb-config/usb_device_full-speed.descr"
 #include "usb_interface.h"
 #define DEBUG
