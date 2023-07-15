@@ -7,10 +7,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_executable(${PROJECT_TARGET_ELF} ${BOOT_SOURCES})
 
-target_link_libraries(${PROJECT_TARGET_ELF} src)
+target_link_libraries(${PROJECT_TARGET_ELF} src utils)
 
 target_include_directories(${PROJECT_TARGET_ELF} PUBLIC
-  "${PROJECT_SOURCE_DIR}/inc")
+  "${PROJECT_SOURCE_DIR}/inc"
+  "${PROJECT_SOURCE_DIR}/utils")
 
 add_custom_command(
   TARGET ${PROJECT_TARGET_ELF} POST_BUILD
