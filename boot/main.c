@@ -127,6 +127,17 @@ int main()
   uart_puts("Initialization complete!\r\n");
   while (1)
   {
+    //    uart_puts("loop\r\n");
+    size_t transfer_size = 0;
+    transfer_size = read_endpoint(buffer, 64, 1);
+
+    buffer[transfer_size+1] = 0;
+
+    write_endpoint(" world", strlen(" world"), 1);
+
+    //    uart_puts(buffer);
+    //    uart_puts("\r\n");
+    
     /* size_t size = usb_poll(buffer, 3, 64); */
     /* if (size > 0) */
     /* { */

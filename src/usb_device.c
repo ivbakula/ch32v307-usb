@@ -5,6 +5,8 @@
 #include "time.h"
 #include "usb-config/usb_device_full-speed.descr"
 #include "usb_interface.h"
+#include <string.h>
+
 #define DEBUG
 
 static struct USB_Device usb_device = {
@@ -49,16 +51,6 @@ static void usb_update_ep0(void)
 
   USBHD->UEP0_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x8) ^ 0x08;
   USBHD->UEP0_TX_LEN = ep0->packet_size;
-}
-
-static void usb_update_ep_tx(struct USB_Endpoint *ep)
-{
-
-}
-
-static void usb_update_ep_rx(struct USB_Endpoint *ep)
-{
-  
 }
 
 /* ====================================================================== */
@@ -145,14 +137,41 @@ static inline void do_handle_transfer_ep0(void)
   }
 }
 
+static inline void do_handle_transfer(void) __attribute__((always_inline));
+static inline void do_handle_transfer(void)
+{
+  switch (USBHD->INT_ST & TOKEN_MASK) {
+    case TOKEN_OUT:
+      usb_device.ep1.rx_transfer_size = USBHD->RX_LEN;
+      usb_device.ep1.rx_state = EP_RX_DATA_RDY;
+      break;
+    case TOKEN_IN:
+      //      USBHD->UEP1_TX_CTRL = (USBHD->UEP0_TX_CTRL & 0x08) ^ 0x08;
+      USBHD->UEP1_TX_LEN = 0;
+      USBHD->UEP1_TX_CTRL |= 3;
+      usb_device.ep1.tx_state = EP_IDLE;
+      break;
+    default:
+      // unsupported
+      break;
+  }
+}
+
 static inline void handle_transfer(void) __attribute__((always_inline));
 static inline void handle_transfer(void)
 {
-  /* check which endpoint */
-  if ((USBHD->INT_ST & 0b111) == 0)
-    do_handle_transfer_ep0();
-
-  /* do something for other endpoints */
+  uint8_t endpoint = USBHD->INT_ST & 0b111;
+  switch (endpoint) {
+    case 0:
+      do_handle_transfer_ep0();
+      break;
+    case 1:
+      do_handle_transfer();
+      break;
+    default:
+      // not supported for now. We'll see later how to handle this
+      break;
+  }
 }
 
 static inline void handle_setup(void) __attribute__((always_inline));
@@ -282,7 +301,7 @@ static inline void usb_hw_init(USB_DeviceMode mode)
   USBHD->UEP1_RX_DMA = (uintptr_t)((uint8_t *)usb_device.ep1.rx_dma_buffer);
 
   USBHD->UEP1_RX_CTRL = 0;
-  USBHD->UEP1_TX_CTRL = 2;
+  USBHD->UEP1_TX_CTRL = U8_BIT(5) | U8_BIT(1);
 
   /* Register USB device interrupt handler and enable USB device interrupt line */
   irq_register_interrupt_handler(USBHS_IRQn, usb_irqhandler);
@@ -298,4 +317,31 @@ void init_usb_device(USB_DeviceMode mode)
   #ifdef DEBUG
   enable_usbd_debug();
   #endif
-}    
+}
+
+/* TODO make this function more generic (Read every possible endpoint). */
+size_t read_endpoint(char *buffer, size_t buffer_sz, int endpoint)
+{
+  while (usb_device.ep1.rx_state != EP_RX_DATA_RDY)
+    ;
+
+  size_t cpy_sz = (usb_device.ep1.rx_transfer_size > buffer_sz) ? buffer_sz : usb_device.ep1.rx_transfer_size;
+
+  memcpy(buffer, usb_device.ep1.rx_dma_buffer, cpy_sz);
+
+  usb_device.ep1.rx_state = EP_IDLE;
+  return cpy_sz;
+}
+
+void write_endpoint(char *buffer, size_t buffer_sz, int endpoint)
+{
+  /* while (usb_device.ep1.tx_state != EP_IDLE) */
+  /*   ; */
+  
+  size_t cpy_sz = (buffer_sz > 64) ? 64 : buffer_sz;
+
+  memcpy(usb_device.ep1.tx_dma_buffer, buffer, cpy_sz);
+  USBHD->UEP1_TX_LEN = cpy_sz;
+  USBHD->UEP1_TX_CTRL &= ~0b11;
+  usb_device.ep1.tx_state = EP_TX_PROGRESS;
+}

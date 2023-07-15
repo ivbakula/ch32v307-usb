@@ -2,6 +2,7 @@
 #define USB_INTERFACE_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef enum
 {
@@ -18,6 +19,10 @@ typedef enum
  * @param mode: USB device speed mode: USB_FULL_SPEED|USB_HIGH_SPEED|USB_LOW_SPEED
  */
 void init_usb_device(USB_DeviceMode mode);
+
+size_t read_endpoint(char *buffer, size_t buffer_sz, int endpoint);
+
+void write_endpoint(char *buffer, size_t buffer_sz, int endpoint);
 
 enum
 {
