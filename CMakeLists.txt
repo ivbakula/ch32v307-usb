@@ -19,7 +19,6 @@ set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc)
 
 add_subdirectory(boot)
 add_subdirectory(src)
-add_subdirectory(utils)
 
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/ch32v307.ld)
 
