@@ -67,7 +67,16 @@ typedef struct
   volatile uint32_t R32_GPIO_LCKR;
 } GPIO_Regfile;
 
-#define GPIO_PUSH_PULL_ALTERNATE_OUTPUT 0b1001
+#define GPIO_PUSH_PULL_OUTPUT_MODE 0b0000
+#define GPIO_GENERAL_OPEN_DRAIN_OUTPUT 0b0100
+#define GPIO_PUSH_PULL_ALTERNATE_OUTPUT 0b1000
+#define GPIO_OPEN_DRAIN_ALTERNATE_OUTPUT 0b1100
+
+#define GPIO_OUTPUT_SPEED_10MHZ 0b0001
+#define GPIO_OUTPUT_SPEED_2MHZ  0b0010
+#define GPIO_OUTPUT_SPEED_50MHZ 0b0011
+
+//#define GPIO_PUSH_PULL_ALTERNATE_OUTPUT 0b1001
 #define GPIO_PULL_UP_INPUT              0b1000
 
 #define GPIOA_BASE ((uint32_t)0x40010800)
@@ -96,6 +105,32 @@ typedef struct
 
 #define USART1_BASE ((uint32_t)0x40013800)
 #define USART1      ((USART_Regfile *)USART1_BASE)
+
+typedef struct
+{
+  volatile uint16_t CTLR1;
+  volatile uint16_t padding_1;
+  volatile uint16_t CTLR2;
+  volatile uint16_t padding_2;
+  volatile uint16_t STATR;
+  volatile uint16_t padding_3;
+  volatile uint16_t DATAR;
+  volatile uint16_t padding_4;
+  volatile uint16_t CRCR;
+  volatile uint16_t padding_5;
+  volatile uint16_t RCRCR;
+  volatile uint16_t padding_6;
+  volatile uint16_t TCRCR;
+  volatile uint16_t padding_7;
+  volatile uint16_t I2S_CFGR;
+  volatile uint16_t padding_8;
+  volatile uint16_t HSCR;
+} SPI_Regfile;
+
+#define SPI1_BASE ((uintptr_t)0x40013000)
+#define SPI2_BASE ((uintptr_t)0x40003800)
+#define SPI1      ((SPI_Regfile *)SPI1_BASE)
+#define SPI2      ((SPI_Regfile *)SPI2_BASE)
 
 /* IRQ stuff */
 typedef struct

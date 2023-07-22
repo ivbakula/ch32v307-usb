@@ -56,7 +56,7 @@ void enable_uart(uint32_t apbclk, uint16_t baud)
   RCC->R32_RCC_APB2PCENR |= RCC_APB2PCENR_USART1EN;
   
   gpio_port_config(GPIOA_BASE, 10, GPIO_PULL_UP_INPUT);
-  gpio_port_config(GPIOA_BASE, 9, GPIO_PUSH_PULL_ALTERNATE_OUTPUT);
+  gpio_port_config(GPIOA_BASE, 9, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
 
   USART1->R32_USART_CTRL1 = USART_CTRL1_TE | USART_CTRL1_RE;
   USART1->R32_USART_CTRL2 = 0;
@@ -91,6 +91,95 @@ void red_light(void)
   GPIOA->R32_GPIO_OUTDR |= 0b1 << 15;
 }
 
+void irq_spi1(void)
+{
+  /* if (SPI1->STATR & U16_BIT(7)) */
+  /*   uart_puts("BSY"); */
+
+  /* if (SPI1->STATR & U16_BIT(6)) */
+  /*   uart_puts("OVR"); */
+
+  /* if (SPI1->STATR & U16_BIT(5)) */
+  /*   uart_puts("MODF"); */
+
+  /* if (SPI1->STATR & U16_BIT(4)) */
+  /*   uart_puts("CRCERR"); */
+
+  /* if (SPI1->STATR & U16_BIT(3)) */
+  /*   uart_puts("UDR"); */
+
+  /* if (SPI1->STATR & U16_BIT(2)) */
+  /*   uart_puts("CHSID"); */
+
+  /* if (SPI1->STATR & U16_BIT(1)) */
+  /*   uart_puts("TXE"); */
+
+  /* if (SPI1->STATR & U16_BIT(0)) */
+  /*   uart_puts("RXNE"); */
+}
+
+void spi_dump_registers()
+{
+  uart_puts("===================SPI_REGISTER_DUMP_START===================\r\n");
+  char buff[256] = {0};
+
+  
+  sprintf(buff, "CTRL1 [0x%08x]: 0x%04x\r\n", &SPI1->CTLR1, SPI1->CTLR1);
+  uart_puts(buff);
+  memset(buff, 0, 256);
+
+  sprintf(buff, "CTRL2 [0x%08x]: 0x%04x\r\n", &SPI1->CTLR2, SPI1->CTLR2);
+  uart_puts(buff);
+  memset(buff, 0, 256);
+
+  sprintf(buff, "STATR [0x%08x]: 0x%04x\r\n", &SPI1->STATR, SPI1->STATR);
+  uart_puts(buff);
+  memset(buff, 0, 256);
+  uart_puts("===================SPI_REGISTER_DUMP_END===================\r\n");  
+}
+
+void spi_init(void)
+{
+  RCC->R32_RCC_APB2PCENR |= U32_BIT(12) | U32_BIT(2);
+  //  RCC->R32_RCC_APB2PRSTR |= U32_BIT(12);
+  
+  gpio_port_config(GPIOA_BASE, 4, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
+  gpio_port_config(GPIOA_BASE, 5, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
+  gpio_port_config(GPIOA_BASE, 7, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
+
+  //  SPI1->CTLR1 = 0b100 << 3 | U16_BIT(2) | U16_BIT(8) | U16_BIT(9) | U16_BIT(6);
+  //  SPI1->CTLR2 |= U16_BIT(2) | U16_BIT(5) | U16_BIT(6) | U16_BIT(7);
+
+
+  SPI1->CTLR1 = 0b100 << 3;
+  SPI1->CTLR1 |= U16_BIT(0) | U16_BIT(1);
+  SPI1->CTLR1 |= U16_BIT(11);
+  SPI1->CTLR1 |= U16_BIT(9);
+  SPI1->CTLR1 |= U16_BIT(8);
+  //  SPI1->CTLR2 = U16_BIT(2);
+  SPI1->CTLR1 |= U16_BIT(2);
+  SPI1->CTLR1 |= U16_BIT(6);
+
+  //  wait_ms(100);
+  // SPI1->CTLR1 |= U16_BIT(6);
+
+  irq_register_interrupt_handler(SPI1_IRQn, irq_spi1);
+  irq_enable_interrupt(SPI1_IRQn);
+}
+
+void spi_master_write(uint8_t byte)
+{
+  while (!(SPI1->STATR & U16_BIT(1)))
+    ;
+  SPI1->DATAR = byte;
+}
+
+void spi_master_transfer(char data[], size_t size)
+{
+  for (int i = 0; i < size; i++)
+    spi_master_write(data[i]);
+}
+
 extern void enable_usbd(void);
 extern uint8_t USBHS_EP0_Buf;
 DeviceDescriptor sp = {
@@ -111,57 +200,39 @@ DeviceDescriptor sp = {
 
 size_t usb_poll(void *buffer, uint8_t endpoint, size_t buffer_size);
 
+typedef struct
+{
+  uint8_t command;
+  uint8_t data[56];
+} USB_Packet;
+
+#define SPI_WRITE_COMMAND 0x1
+
 int main()
 {
   system_pll_clock_init(PLLMul_6);
   mmem_init();
   enable_uart(sysclock_frequency, 9600);
-  //  enable_usbd();
-  //  usbd_clock_enable();
   init_usb_device(USB_FULL_SPEED);
-  //  irq_enable_interrupt(USBHS_IRQn);
-
-  char *str = (char *)allocm(sizeof(char) * 256);
-
+  spi_init();
   char buffer[64];
   uart_puts("Initialization complete!\r\n");
+  spi_dump_registers();
   while (1)
   {
-    //    uart_puts("loop\r\n");
     size_t transfer_size = 0;
     transfer_size = read_endpoint(buffer, 64, 1);
-
-    buffer[transfer_size+1] = 0;
-
-    write_endpoint(" world", strlen(" world"), 1);
-
-    //    uart_puts(buffer);
-    //    uart_puts("\r\n");
-    
-    /* size_t size = usb_poll(buffer, 3, 64); */
-    /* if (size > 0) */
-    /* { */
-    /*   sprintf(str, "Data received: %s\n", buffer); */
-    /*   uart_puts(str); */
-    /* } */
-    /* size_t size = usb_setup_read_ep0(buffer); */
-    /* if (size) */
-    /* { */
-    /*   switch (((SetupPacket *)buffer)->bRequest) */
-    /*   { */
-    /*     case 0x06: */
-    /*     -  usb_setup_write_ep0(&sp, sizeof(sp)); */
-    /*       break; */
-    /*     case 0x05: */
-    /*       //          usb_setup_write_ep0(0, 0); */
-    /*       /\* sprintf(str, "0x%x\r\n", ((SetupPacket *)buffer)->wValue); *\/ */
-    /*       /\* uart_puts(str); *\/ */
-    /*       wait_us(100); */
-    /*       usb_assign_address(((SetupPacket *)buffer)->wValue); */
-    /*       break; */
-    /*   } */
-    //    }
-
+    USB_Packet *p = (USB_Packet *)buffer;
+    switch (p->command)
+      {
+      case SPI_WRITE_COMMAND:
+        uart_puts("SPI_WRITE_COMMAND\r\n");
+	spi_master_transfer(p->data, strlen(p->data));
+        break;
+      default:
+	uart_puts("UNKNOWN\r\n");
+	break;
+      }
   }
 
 }    
