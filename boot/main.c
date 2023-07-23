@@ -12,6 +12,19 @@ extern uint32_t _susrstack;
 extern uint32_t _heap_end;
 extern uint32_t _heap_start;
 
+void gpio_pin_output(uintptr_t gpio_base, uint8_t pin, int status)
+{
+  if (status)
+    ((GPIO_Regfile *)gpio_base)->R32_GPIO_OUTDR |= U16_BIT(pin);
+  else
+    ((GPIO_Regfile *)gpio_base)->R32_GPIO_OUTDR &= ~U16_BIT(pin);
+}
+
+int gpio_pin_input(uintptr_t gpio_base, uint8_t pin)
+{
+  return ((((GPIO_Regfile *)gpio_base)->R32_GPIO_INDR & (1 << pin)) >> pin);
+}  
+
 void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg)
 {
   uint8_t shift = 0;
@@ -138,30 +151,16 @@ void spi_dump_registers()
   uart_puts("===================SPI_REGISTER_DUMP_END===================\r\n");  
 }
 
+
 void spi_init(void)
 {
   RCC->R32_RCC_APB2PCENR |= U32_BIT(12) | U32_BIT(2);
-  //  RCC->R32_RCC_APB2PRSTR |= U32_BIT(12);
   
-  gpio_port_config(GPIOA_BASE, 4, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
-  gpio_port_config(GPIOA_BASE, 5, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
-  gpio_port_config(GPIOA_BASE, 7, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
+  gpio_port_config(GPIOA_BASE, 4, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_50MHZ);
+  gpio_port_config(GPIOA_BASE, 5, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_50MHZ);
+  gpio_port_config(GPIOA_BASE, 7, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_50MHZ);
 
-  //  SPI1->CTLR1 = 0b100 << 3 | U16_BIT(2) | U16_BIT(8) | U16_BIT(9) | U16_BIT(6);
-  //  SPI1->CTLR2 |= U16_BIT(2) | U16_BIT(5) | U16_BIT(6) | U16_BIT(7);
-
-
-  SPI1->CTLR1 = 0b100 << 3;
-  SPI1->CTLR1 |= U16_BIT(0) | U16_BIT(1);
-  SPI1->CTLR1 |= U16_BIT(11);
-  SPI1->CTLR1 |= U16_BIT(9);
-  SPI1->CTLR1 |= U16_BIT(8);
-  //  SPI1->CTLR2 = U16_BIT(2);
-  SPI1->CTLR1 |= U16_BIT(2);
-  SPI1->CTLR1 |= U16_BIT(6);
-
-  //  wait_ms(100);
-  // SPI1->CTLR1 |= U16_BIT(6);
+  SPI1->CTLR1 = U16_BIT(15) | U16_BIT(14) | U16_BIT(9) | U16_BIT(8) | U16_BIT(6)| U16_BIT(4) | U16_BIT(3) | U16_BIT(2);
 
   irq_register_interrupt_handler(SPI1_IRQn, irq_spi1);
   irq_enable_interrupt(SPI1_IRQn);
@@ -202,11 +201,97 @@ size_t usb_poll(void *buffer, uint8_t endpoint, size_t buffer_size);
 
 typedef struct
 {
-  uint8_t command;
-  uint8_t data[56];
+  uint32_t command;
+  uint8_t data[60];
 } USB_Packet;
 
+typedef struct
+{
+  uint32_t command;
+  uint32_t pll_registers[6];
+} USB_PllSetFrequency;
+
+
 #define SPI_WRITE_COMMAND 0x1
+#define PLL_SET_FREQUENCY 0x2
+#define HIGH              1
+#define LOW               0
+
+#define ADF435x_LE 1
+#define ADF435x_CE 0
+#define ADF435x_LD 2
+void adf435x_configure_interface()
+{
+  gpio_port_config(GPIOA_BASE, ADF435x_CE, GPIO_PUSH_PULL_OUTPUT_MODE | GPIO_OUTPUT_SPEED_50MHZ);
+  gpio_port_config(GPIOA_BASE, ADF435x_LE, GPIO_PUSH_PULL_OUTPUT_MODE | GPIO_OUTPUT_SPEED_50MHZ);
+  gpio_port_config(GPIOA_BASE, ADF435x_LD, GPIO_PULL_UP_INPUT);
+  
+  gpio_pin_output(GPIOA_BASE, ADF435x_LE, HIGH);
+  gpio_pin_output(GPIOA_BASE, ADF435x_CE, HIGH);
+}
+
+typedef union
+{
+  uint8_t q[4];
+  uint32_t reg;
+} PLL_InternalRegStructure;
+
+void adf435x_write_register(uint32_t reg)
+{
+  PLL_InternalRegStructure ser = {.reg = reg};
+  
+  //  GPIOA->R32_GPIO_OUTDR &= ~(0b1 << 1);
+  gpio_pin_output(GPIOA_BASE, ADF435x_LE, LOW);
+  //  wait_us(1);
+  for (int i = 0; i < 4; i++) {
+    spi_master_write(ser.q[3-i]);
+  }
+  while (!(SPI1->STATR & U16_BIT(1)))
+    ;
+  wait_us(5);
+  gpio_pin_output(GPIOA_BASE, ADF435x_LE, HIGH);
+  wait_us(100);
+  gpio_pin_output(GPIOA_BASE, 7, LOW);
+  spi_master_write(0);
+  wait_us(100);
+  wait_us(1);
+}
+
+void adf435x_configure_device(uint32_t *registers, size_t size)
+{
+  for (int i = 0; i < size; i++) {
+    adf435x_write_register(registers[size-1-i]);
+  }
+}
+
+void adf435x_dump_registers(USB_PllSetFrequency *req)
+{
+  uart_puts("ADF435x_REGISTER_DUMP START\r\n");
+  char buff[256] = {0};
+  sprintf(buff, "R0: 0x%08x\r\n", req->pll_registers[0]);
+  uart_puts(buff);
+
+  memset(buff, 0, 256);
+  sprintf(buff, "R1: 0x%08x\r\n", req->pll_registers[1]);
+  uart_puts(buff);
+
+  memset(buff, 0, 256);
+  sprintf(buff, "R2: 0x%08x\r\n", req->pll_registers[2]);
+  uart_puts(buff);
+
+  memset(buff, 0, 256);
+  sprintf(buff, "R3: 0x%08x\r\n", req->pll_registers[3]);
+  uart_puts(buff);
+
+  memset(buff, 0, 256);
+  sprintf(buff, "R4: 0x%08x\r\n", req->pll_registers[4]);
+  uart_puts(buff);
+
+  memset(buff, 0, 256);
+  sprintf(buff, "R5: 0x%08x\r\n", req->pll_registers[5]);
+  uart_puts(buff);
+  uart_puts("ADF435x_REGISTER_DUMP END\r\n");  
+}
 
 int main()
 {
@@ -215,6 +300,8 @@ int main()
   enable_uart(sysclock_frequency, 9600);
   init_usb_device(USB_FULL_SPEED);
   spi_init();
+  adf435x_configure_interface();
+  
   char buffer[64];
   uart_puts("Initialization complete!\r\n");
   spi_dump_registers();
@@ -229,6 +316,15 @@ int main()
         uart_puts("SPI_WRITE_COMMAND\r\n");
 	spi_master_transfer(p->data, strlen(p->data));
         break;
+      case PLL_SET_FREQUENCY:
+        uart_puts("PLL_SET_FREQUENCY\r\n");
+        adf435x_dump_registers(((USB_PllSetFrequency *)buffer));
+        adf435x_configure_device(((USB_PllSetFrequency *)buffer)->pll_registers, 6);
+	uart_puts("waiting for PLL to lock\r\n");
+        while (gpio_pin_input(GPIOA_BASE, ADF435x_LD))
+          ;
+	uart_puts("PLL Locked\r\n");
+	break;
       default:
 	uart_puts("UNKNOWN\r\n");
 	break;
