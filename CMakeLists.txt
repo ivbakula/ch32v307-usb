@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 
+set(PROJECT firmware)
+project(${PROJECT} LANGUAGES C ASM)
+
 if (NOT TOOLCHAIN_PREFIX)
   message(INFO " TOOLCHAIN_PREFIX is not set. Using default \"riscv-none-embed-\"")
   set(TOOLCHAIN_PREFIX riscv-none-embed-)
@@ -9,7 +12,6 @@ if (TARGET_GROUP STREQUAL test)
    message(INFO "Build unit tests")
    include(CTest)
    add_subdirectory(external)
-   add_subdirectory(src)
    add_subdirectory(test)
 else ()
     message(INFO "This is not a test :D. Build the real thing.")
@@ -17,9 +19,6 @@ else ()
 
     set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-    set(PROJECT firmware)
-
-    project(${PROJECT} LANGUAGES C ASM)
 
     set(PROJECT_TARGET_ELF "${PROJECT}.elf")
 
