@@ -41,7 +41,7 @@ else ()
       -fno-common
     )
 
-    set(CMAKE_C_FLAGS -Os -Wunused -Wuninitialized -g)
+    set(CMAKE_C_FLAGS -Os -Werror -Wunused -Wuninitialized -g)
 
     target_compile_options(${PROJECT_TARGET_ELF} PUBLIC
       ${RISCV_CH32V30x_CPU}
