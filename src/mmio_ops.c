@@ -1,8 +1,5 @@
 #include "mmio_ops.h"
-
-#define UINT8_T(x) ((uint8_t *)x)
-#define UINT16_T(x) ((uint16_t *)x)
-#define UINT32_T(x) ((uint32_t *)x)
+#include "helpers.h"
 
 inline void mmio_or_writeb(uintptr_t base, uint8_t data) __attribute__((always_inline));
 inline void mmio_or_writeb(uintptr_t base, uint8_t data)

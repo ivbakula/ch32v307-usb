@@ -2,8 +2,6 @@
 #include "mmio_ops.h"
 #include "helpers.h"
 
-#define UINTPTR_T(x) ((uintptr_t)&x)
-
 void setUp(void)
 {
 }

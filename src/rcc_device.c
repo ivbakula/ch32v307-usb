@@ -1,11 +1,13 @@
 #include "rcc_device.h"
 #include "rcc_interface.h"
+#include "mmio_ops.h"
+
 
 static inline void rcc_manipulate_periph(uint32_t periph, uint32_t mask, uint32_t device)
 {
   switch (periph) {
     case RCC_AHB_DEVICE_MASK:
-      RCC->R32_RCC_AHBPCENR |= device
+      RCC->R32_RCC_AHBPCENR |= device;
       break;
       
     case RCC_APB1_DEVICE_MASK:
@@ -20,6 +22,7 @@ static inline void rcc_manipulate_periph(uint32_t periph, uint32_t mask, uint32_
       break;
   }
 }
+
 void rcc_enable_periph(RCC_DevId rcc_devid)
 {
   uint32_t device = rcc_devid & (~RCC_DEVICE_EN_MASK);

@@ -129,4 +129,5 @@ uint16_t mmio_readw(uintptr_t base);
  * @param base: base address of MMIO register.
  */
 uint32_t mmio_readdw(uintptr_t base);
+
 #endif
