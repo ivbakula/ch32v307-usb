@@ -1,8 +1,8 @@
 #ifndef USB_INTERFACE_H
 #define USB_INTERFACE_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 typedef enum
 {

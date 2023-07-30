@@ -10,7 +10,7 @@ typedef uint32_t RCC_DevId;
  *
  * @brief Enables periph device clock. This action needs to be preformed
  *        for all peripherial devices prior to configuration.
- *        
+ *
  * @param device: Device id of desired device. RCC Device IDs are definied
  *                below in section "RCC_DevID_definitions"
  */
@@ -25,7 +25,6 @@ void rcc_enable_periph(RCC_DevId device);
  *                below in section "RCC_DevID_definitions"
  */
 void rcc_disable_periph(RCC_DevId device);
-
 
 /**
  * @name RCC_DevID_definitions
@@ -64,49 +63,49 @@ void rcc_disable_periph(RCC_DevId device);
 #define RCC_DEVICE_EN_MASK   ((RCC_DevId)0xc0000000)
 
 /* RCC Device ID definitions */
-#define RCC_DMA1_EN ((RCC_DevId)(U32_BIT(0) | RCC_AHB_DEVICE_MASK))
-#define RCC_DMA2_EN ((RCC_DevId)(U32_BIT(1) | RCC_AHB_DEVICE_MASK))
-#define RCC_SRAMEN  ((RCC_DevId)(U32_BIT(2) | RCC_AHB_DEVICE_MASK))
-#define RCC_CRCEN   ((RCC_DevId)(U32_BIT(6) | RCC_AHB_DEVICE_MASK))
-#define RCC_FSMCEN  ((RCC_DevId)(U32_BIT(8) | RCC_AHB_DEVICE_MASK))
-#define RCC_RNGEN   ((RCC_DevId)(U32_BIT(9) | RCC_AHB_DEVICE_MASK))
-#define RCC_SDIOEN  ((RCC_DevId)(U32_BIT(10) | RCC_AHB_DEVICE_MASK))
-#define RCC_USBHSEN ((RCC_DevId)(U32_BIT(11) | RCC_AHB_DEVICE_MASK))
-#define RCC_OTGFSEN ((RCC_DevId)(U32_BIT(12) | RCC_AHB_DEVICE_MASK))
-#define RCC_DVPEN   ((RCC_DevId)(U32_BIT(13) | RCC_AHB_DEVICE_MASK))
-#define RCC_ETHMACEN ((RCC_DevId)(U32_BIT(14) | RCC_AHB_DEVICE_MASK))
+#define RCC_DMA1_EN    ((RCC_DevId)(U32_BIT(0) | RCC_AHB_DEVICE_MASK))
+#define RCC_DMA2_EN    ((RCC_DevId)(U32_BIT(1) | RCC_AHB_DEVICE_MASK))
+#define RCC_SRAMEN     ((RCC_DevId)(U32_BIT(2) | RCC_AHB_DEVICE_MASK))
+#define RCC_CRCEN      ((RCC_DevId)(U32_BIT(6) | RCC_AHB_DEVICE_MASK))
+#define RCC_FSMCEN     ((RCC_DevId)(U32_BIT(8) | RCC_AHB_DEVICE_MASK))
+#define RCC_RNGEN      ((RCC_DevId)(U32_BIT(9) | RCC_AHB_DEVICE_MASK))
+#define RCC_SDIOEN     ((RCC_DevId)(U32_BIT(10) | RCC_AHB_DEVICE_MASK))
+#define RCC_USBHSEN    ((RCC_DevId)(U32_BIT(11) | RCC_AHB_DEVICE_MASK))
+#define RCC_OTGFSEN    ((RCC_DevId)(U32_BIT(12) | RCC_AHB_DEVICE_MASK))
+#define RCC_DVPEN      ((RCC_DevId)(U32_BIT(13) | RCC_AHB_DEVICE_MASK))
+#define RCC_ETHMACEN   ((RCC_DevId)(U32_BIT(14) | RCC_AHB_DEVICE_MASK))
 #define RCC_ETHMACTXEN ((RCC_DevId)(U32_BIT(15) | RCC_AHB_DEVICE_MASK))
 #define RCC_ETHMACRXEN ((RCC_DevId)(U32_BIT(16) | RCC_AHB_DEVICE_MASK))
 #define RCC_BLECEN     ((RCC_DevId)(U32_BIT(16) | RCC_AHB_DEVICE_MASK))
 #define RCC_BLESEN     ((RCC_DevId)(U32_BIT(17) | RCC_AHB_DEVICE_MASK))
 
-#define RCC_AFIOEN ((RCC_DevId)(U32_BIT(0) | RCC_APB2_DEVICE_MASK))
-#define RCC_IOPAEN ((RCC_DevId)(U32_BIT(2) | RCC_APB2_DEVICE_MASK))
-#define RCC_IOPBEN ((RCC_DevId)(U32_BIT(3) | RCC_APB2_DEVICE_MASK))
-#define RCC_IOPCEN ((RCC_DevId)(U32_BIT(4) | RCC_APB2_DEVICE_MASK))
-#define RCC_IOPDEN ((RCC_DevId)(U32_BIT(5) | RCC_APB2_DEVICE_MASK))
-#define RCC_IOPEEN ((RCC_DevId)(U32_BIT(6) | RCC_APB2_DEVICE_MASK))
-#define RCC_ADC1EN ((RCC_DevId)(U32_BIT(9) | RCC_APB2_DEVICE_MASK))
-#define RCC_ADC2EN ((RCC_DevId)(U32_BIT(10) | RCC_APB2_DEVICE_MASK))
-#define RCC_TIM1EN ((RCC_DevId)(U32_BIT(11) | RCC_APB2_DEVICE_MASK))
-#define RCC_SPI1EN ((RCC_DevId)(U32_BIT(12) | RCC_APB2_DEVICE_MASK))
-#define RCC_TIM8EN ((RCC_DevId)(U32_BIT(13) | RCC_APB2_DEVICE_MASK))
+#define RCC_AFIOEN   ((RCC_DevId)(U32_BIT(0) | RCC_APB2_DEVICE_MASK))
+#define RCC_IOPAEN   ((RCC_DevId)(U32_BIT(2) | RCC_APB2_DEVICE_MASK))
+#define RCC_IOPBEN   ((RCC_DevId)(U32_BIT(3) | RCC_APB2_DEVICE_MASK))
+#define RCC_IOPCEN   ((RCC_DevId)(U32_BIT(4) | RCC_APB2_DEVICE_MASK))
+#define RCC_IOPDEN   ((RCC_DevId)(U32_BIT(5) | RCC_APB2_DEVICE_MASK))
+#define RCC_IOPEEN   ((RCC_DevId)(U32_BIT(6) | RCC_APB2_DEVICE_MASK))
+#define RCC_ADC1EN   ((RCC_DevId)(U32_BIT(9) | RCC_APB2_DEVICE_MASK))
+#define RCC_ADC2EN   ((RCC_DevId)(U32_BIT(10) | RCC_APB2_DEVICE_MASK))
+#define RCC_TIM1EN   ((RCC_DevId)(U32_BIT(11) | RCC_APB2_DEVICE_MASK))
+#define RCC_SPI1EN   ((RCC_DevId)(U32_BIT(12) | RCC_APB2_DEVICE_MASK))
+#define RCC_TIM8EN   ((RCC_DevId)(U32_BIT(13) | RCC_APB2_DEVICE_MASK))
 #define RCC_USART1EN ((RCC_DevId)(U32_BIT(14) | RCC_APB2_DEVICE_MASK))
 #define RCC_TIM9EN   ((RCC_DevId)(U32_BIT(19) | RCC_APB2_DEVICE_MASK))
 #define RCC_TIM10EN  ((RCC_DevId)(U32_BIT(20) | RCC_APB2_DEVICE_MASK))
 
-#define RCC_TIM2EN ((RCC_DevId)(U32_BIT(0) | RCC_APB1_DEVICE_MASK))
-#define RCC_TIM3EN ((RCC_DevId)(U32_BIT(1) | RCC_APB1_DEVICE_MASK))
-#define RCC_TIM4EN ((RCC_DevId)(U32_BIT(2) | RCC_APB1_DEVICE_MASK))
-#define RCC_TIM5EN ((RCC_DevId)(U32_BIT(3) | RCC_APB1_DEVICE_MASK))
-#define RCC_TIM6EN ((RCC_DevId)(U32_BIT(4) | RCC_APB1_DEVICE_MASK))
-#define RCC_TIM7EN ((RCC_DevId)(U32_BIT(5) | RCC_APB1_DEVICE_MASK))
-#define RCC_UART6EN ((RCC_DevId)(U32_BIT(6) | RCC_APB1_DEVICE_MASK))
-#define RCC_UART7EN ((RCC_DevId)(U32_BIT(7) | RCC_APB1_DEVICE_MASK))
-#define RCC_UART8EN ((RCC_DevId)(U32_BIT(8) | RCC_APB1_DEVICE_MASK))
-#define RCC_WWDGEN  ((RCC_DevId)(U32_BIT(11) | RCC_APB1_DEVICE_MASK))
-#define RCC_SPI2EN  ((RCC_DevId)(U32_BIT(14) | RCC_APB1_DEVICE_MASK))
-#define RCC_SPI3EN  ((RCC_DevId)(U32_BIT(15) | RCC_APB1_DEVICE_MASK))
+#define RCC_TIM2EN   ((RCC_DevId)(U32_BIT(0) | RCC_APB1_DEVICE_MASK))
+#define RCC_TIM3EN   ((RCC_DevId)(U32_BIT(1) | RCC_APB1_DEVICE_MASK))
+#define RCC_TIM4EN   ((RCC_DevId)(U32_BIT(2) | RCC_APB1_DEVICE_MASK))
+#define RCC_TIM5EN   ((RCC_DevId)(U32_BIT(3) | RCC_APB1_DEVICE_MASK))
+#define RCC_TIM6EN   ((RCC_DevId)(U32_BIT(4) | RCC_APB1_DEVICE_MASK))
+#define RCC_TIM7EN   ((RCC_DevId)(U32_BIT(5) | RCC_APB1_DEVICE_MASK))
+#define RCC_UART6EN  ((RCC_DevId)(U32_BIT(6) | RCC_APB1_DEVICE_MASK))
+#define RCC_UART7EN  ((RCC_DevId)(U32_BIT(7) | RCC_APB1_DEVICE_MASK))
+#define RCC_UART8EN  ((RCC_DevId)(U32_BIT(8) | RCC_APB1_DEVICE_MASK))
+#define RCC_WWDGEN   ((RCC_DevId)(U32_BIT(11) | RCC_APB1_DEVICE_MASK))
+#define RCC_SPI2EN   ((RCC_DevId)(U32_BIT(14) | RCC_APB1_DEVICE_MASK))
+#define RCC_SPI3EN   ((RCC_DevId)(U32_BIT(15) | RCC_APB1_DEVICE_MASK))
 #define RCC_USART2EN ((RCC_DevId)(U32_BIT(17) | RCC_APB1_DEVICE_MASK))
 #define RCC_USART3EN ((RCC_DevId)(U32_BIT(18) | RCC_APB1_DEVICE_MASK))
 #define RCC_UART4EN  ((RCC_DevId)(U32_BIT(19) | RCC_APB1_DEVICE_MASK))

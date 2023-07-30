@@ -22,5 +22,4 @@ void spi_write_u16(DeviceDescriptor *spi_dev, uint16_t data);
 uint8_t spi_read_u8(DeviceDescriptor *spi_dev);
 uint16_t spi_read_u16(DeviceDescriptor *spi_dev);
 
-
 #endif

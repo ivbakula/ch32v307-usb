@@ -1,8 +1,8 @@
 #ifndef INC_MMIO_H
 #define INC_MMIO_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /**
  * @fn mmio_or_writeb
@@ -60,7 +60,7 @@ void mmio_and_writew(uintptr_t base, uint16_t data);
  * @brief Write to one double word wide MMIO register using bitwise and.
  *
  * @param base: Base address of MMIO register.
- * @param data: Data to write. 
+ * @param data: Data to write.
  */
 void mmio_and_writedw(uintptr_t base, uint32_t data);
 
@@ -116,7 +116,7 @@ uint8_t mmio_readb(uintptr_t base);
  * @fn mmio_readw
  *
  * @brief Read one word (16 bits) wide MMIO register.
- * 
+ *
  * @param base: base address of MMIO register.
  */
 uint16_t mmio_readw(uintptr_t base);
