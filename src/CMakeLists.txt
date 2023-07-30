@@ -4,6 +4,7 @@ set(SRC_SOURCES
   usb_device.c
   mmem.c
   msgq.c
+  mmio_ops.c
 )
 
 add_library(src STATIC ${SRC_SOURCES})
