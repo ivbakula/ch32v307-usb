@@ -2,29 +2,22 @@
 #define INC_RCC_INTERFACE_H
 
 #include "helpers.h"
+#include <stdbool.h>
 
 typedef uint32_t RCC_DevId;
 
-/**
- * @fn rcc_enable_periph
- *
- * @brief Enables periph device clock. This action needs to be preformed
- *        for all peripherial devices prior to configuration.
- *
- * @param device: Device id of desired device. RCC Device IDs are definied
- *                below in section "RCC_DevID_definitions"
- */
-void rcc_enable_periph(RCC_DevId device);
+#define RCC_ENABLE  true
+#define RCC_DISABLE false
 
 /**
- * @fn rcc_disable_periph
+ * @fn rcc_pcendis
  *
- * @brief Disables peripherial device clock.
- *
- * @param device: Device id of desired device. RCC device IDS are defined
- *                below in section "RCC_DevID_definitions"
+ * @brief Enable or disable peripherial device clock.
+ * @param device: RCC device id of desired device. RCC device IDs are defined below, in section "RCC_DevID_definitions"
+ * @param on: [true] Enable peripherial clock for given device
+ *            [false] Disable peripherial clock for given device
  */
-void rcc_disable_periph(RCC_DevId device);
+void rcc_pcendis(RCC_DevId devid, bool on);
 
 /**
  * @name RCC_DevID_definitions
@@ -52,6 +45,8 @@ void rcc_disable_periph(RCC_DevId device);
  *       As you can see from this picture, bits 31 and 30 are used as mask which will
  *       designate bank on which device is connected to, and bits 0-29 are used as device designator.
  *
+ *       NOTE: [31:30] bitmask is called RCC_PERIPH_BANK_MASK
+ *
  *       NOTE that DeviceBit in RCC_DevId corresponds to device bit in RCC_(AHBPCENR|APB1PCENR|APB2PCENR)
  *       register
  */
@@ -60,7 +55,7 @@ void rcc_disable_periph(RCC_DevId device);
 #define RCC_AHB_DEVICE_MASK  ((RCC_DevId)0)
 #define RCC_APB1_DEVICE_MASK ((RCC_DevId)0x40000000)
 #define RCC_APB2_DEVICE_MASK ((RCC_DevId)0x80000000)
-#define RCC_DEVICE_EN_MASK   ((RCC_DevId)0xc0000000)
+#define RCC_PERIPH_BANK_MASK   ((RCC_DevId)0xc0000000)
 
 /* RCC Device ID definitions */
 #define RCC_DMA1_EN    ((RCC_DevId)(U32_BIT(0) | RCC_AHB_DEVICE_MASK))

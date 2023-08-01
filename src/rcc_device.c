@@ -1,38 +1,37 @@
 #include "rcc_device.h"
 #include "rcc_interface.h"
+#include "rcc_device.h"
 #include "mmio_ops.h"
 
+#ifdef UNITTEST
+RCC_Regfile rcc_regfile; /*< Used for mocking of RCC registers */
+#endif
 
-static inline void rcc_manipulate_periph(uint32_t periph, uint32_t mask, uint32_t device)
+static uintptr_t get_periph_rcc_register(uint32_t rcc_devid_mask)
 {
-  switch (periph) {
+  switch (rcc_devid_mask)
+    {
     case RCC_AHB_DEVICE_MASK:
-      RCC->R32_RCC_AHBPCENR |= device;
-      break;
-      
+      return _RCC_REGISTER(R32_RCC_AHBPCENR);
     case RCC_APB1_DEVICE_MASK:
-      RCC->R32_RCC_APB1PCENR |= device;
-      break;
-
+      return _RCC_REGISTER(R32_RCC_APB1PCENR);
     case RCC_APB2_DEVICE_MASK:
-      RCC->R32_RCC_APB2PCENR |= device;
-      break;
-    default:
-      // not implemented
-      break;
+      return _RCC_REGISTER(R32_RCC_APB2PCENR);
+    }
+
+  // invalid periph mask
+  return 0;
+}
+
+void rcc_pcendis(RCC_DevId devid, bool on)
+{
+  uint32_t device = devid & (~RCC_PERIPH_BANK_MASK);
+  uint32_t rcc_bank_mask = devid & RCC_PERIPH_BANK_MASK;
+  uintptr_t bank_register = get_periph_rcc_register(rcc_bank_mask);
+
+  if (on) {
+    mmio_or_writedw(bank_register, device);
+  } else {
+    mmio_and_writedw(bank_register, ~device);
   }
 }
-
-void rcc_enable_periph(RCC_DevId rcc_devid)
-{
-  uint32_t device = rcc_devid & (~RCC_DEVICE_EN_MASK);
-  uint32_t periph = rcc_devid & RCC_DEVICE_EN_MASK;
-  rcc_manipulate_periph(periph, device, device);
-}
-
-void rcc_disable_periph(RCC_DevId rcc_devid)
-{
-  uint32_t device = rcc_devid & (~RCC_DEVICE_EN_MASK);
-  uint32_t periph = rcc_devid & RCC_DEVICE_EN_MASK;
-  rcc_manipulate_periph(periph, device, ~device);
-}  

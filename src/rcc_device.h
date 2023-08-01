@@ -2,7 +2,9 @@
 #define SRC_RCC_DEVICE_H
 #include <stddef.h>
 #include <stdint.h>
-#
+
+#include "rcc_interface.h"
+
 /* RCC Register definitions */
 typedef struct
 {
@@ -14,7 +16,7 @@ typedef struct
   volatile uint32_t R32_RCC_AHBPCENR;
   volatile uint32_t R32_RCC_APB2PCENR;
   volatile uint32_t R32_RCC_APB1PCENR;
-  volatile uint32_t R32_RCC_BDCTLR;
+  volatile uint32_t R32_RCC_BDCTRL;
   volatile uint32_t R32_RCC_RSTSCKR;
   volatile uint32_t R32_RCC_AHBRSTR;
   volatile uint32_t R32_RCC_CFGR2;
@@ -23,18 +25,12 @@ typedef struct
 #ifndef UNITTEST
 #define RCC_BASE ((uintptr_t)0x40021000)
 #else
-static RCC_Regfile rcc_regfile;
+extern RCC_Regfile rcc_regfile;
 #define RCC_BASE ((uintptr_t)&rcc_regfile)
 #endif
 
-#define CTRL      (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_CTRL))
-#define CFGR0     (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_CFGR0))
-#define INTR      (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_INTR))
-#define APB2PRSTR (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_APB2PRSTR))
-#define APB1PRSTR (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_APB1PRSTR))
-#define AHBPCENR  (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_AHBPCENR))
-#define APB2PCENR (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_APB2PCENR))
-#define APB1PCENR (RCC_BASE + offsetof(RCC_Regfile, R32_RCC_APB1PCENR))
-#define APB
+
+/* This macro is probably very very bad idea */
+#define _RCC_REGISTER(y) ((uintptr_t) &(((RCC_Regfile *) RCC_BASE)->y))
 
 #endif
