@@ -1,0 +1,4 @@
+#ifndef INC_GPIO_INTERFACE
+#define INC_GPIO_INTERFACE
+
+#endif
