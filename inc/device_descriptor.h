@@ -1,8 +1,9 @@
 #ifndef INC_DEVICE_DESCRIPTOR_H
 #define INC_DEVICE_DESCRIPTOR_H
 
-#include "rcc_devids.h"
 #include <stdbool.h>
+
+#include "rcc_devids.h"
 
 typedef enum
 {
@@ -10,7 +11,7 @@ typedef enum
   DEV_UART,
   DEV_SPI,
   DEV_USB,
-  // TODO add every possible device  
+  // TODO add every possible device
   DEV_MAX
 } DeviceId;
 

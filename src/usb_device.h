@@ -34,10 +34,10 @@ struct USB_Endpoint
   size_t tx_data_left;
   size_t tx_packet_size;
   size_t rx_transfer_size;
-  
+
   volatile Endpoint_State tx_state;
   volatile Endpoint_State rx_state;
-  
+
   char tx_dma_buffer[64];
   char rx_dma_buffer[64];
 };

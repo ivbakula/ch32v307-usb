@@ -1,5 +1,6 @@
-#include "spi_interface.h"
 #include <stdint.h>
+
+#include "spi_interface.h"
 
 #define SPI1_BASE ((uintptr_t)0x40013000)
 #define SPI2_BASE ((uintptr_t)0x40003800)
@@ -19,10 +20,10 @@ typedef struct
 
 /* TODO move following definitions to GPIO file. Or somewhere else  */
 #define PORT_DESIGNATOR_MASK (U8_BIT(6) | U8_BIT(7))
-#define PORTA_MASK 0
-#define PORTB_MASK U8_BIT(6)
-#define PORTC_MASK U8_BIT(7)
-#define PORTD_MASK (U8_BIT(6) | U8_BIT(7))
+#define PORTA_MASK           0
+#define PORTB_MASK           U8_BIT(6)
+#define PORTC_MASK           U8_BIT(7)
+#define PORTD_MASK           (U8_BIT(6) | U8_BIT(7))
 
 #define PIN_PA(x) (x | PORTA_MASK)
 #define PIN_PB(x) (x | PORTB_MASK)
