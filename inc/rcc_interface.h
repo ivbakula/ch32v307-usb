@@ -1,8 +1,9 @@
 #ifndef INC_RCC_INTERFACE_H
 #define INC_RCC_INTERFACE_H
 
-#include "helpers.h"
 #include <stdbool.h>
+
+#include "helpers.h"
 
 typedef uint32_t RCC_DevId;
 
@@ -55,7 +56,7 @@ void rcc_pcendis(RCC_DevId devid, bool on);
 #define RCC_AHB_DEVICE_MASK  ((RCC_DevId)0)
 #define RCC_APB1_DEVICE_MASK ((RCC_DevId)0x40000000)
 #define RCC_APB2_DEVICE_MASK ((RCC_DevId)0x80000000)
-#define RCC_PERIPH_BANK_MASK   ((RCC_DevId)0xc0000000)
+#define RCC_PERIPH_BANK_MASK ((RCC_DevId)0xc0000000)
 
 /* RCC Device ID definitions */
 #define RCC_DMA1_EN    ((RCC_DevId)(U32_BIT(0) | RCC_AHB_DEVICE_MASK))
