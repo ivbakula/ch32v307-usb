@@ -130,4 +130,40 @@ uint16_t mmio_readw(uintptr_t base);
  */
 uint32_t mmio_readdw(uintptr_t base);
 
+/**
+ * @fn mmio_and_readb
+ *
+ * @brief Read one bits selected with mask from one byte wide MMIO register starting at base
+ *
+ * @param base: base address of MMIO register
+ *
+ * @param mask: bits to remember. This mask is applied with bitwise and after reading the register
+ *
+ */
+uint8_t mmio_and_readb(uintptr_t base, uint8_t mask);
+
+/**
+ * @fn mmio_and_readw
+ *
+ * @brief Read one bits selected with mask from one word wide MMIO register starting at base
+ *
+ * @param base: base address of MMIO register
+ *
+ * @param mask: bits to remember. This mask is applied with bitwise and after reading the register
+ *
+ */
+uint16_t mmio_and_readw(uintptr_t base, uint16_t mask);
+
+/**
+ * @fn mmio_and_readdw
+ *
+ * @brief Read one bits selected with mask from one double word wide MMIO register starting at base
+ *
+ * @param base: base address of MMIO register
+ *
+ * @param mask: bits to remember. This mask is applied with bitwise and after reading the register
+ *
+ */
+uint32_t mmio_and_readdw(uintptr_t base, uint32_t mask);
+
 #endif

@@ -46,3 +46,32 @@ target_include_directories(suite_rcc_device PUBLIC
 add_test(suite_rcc_device_test suite_rcc_device)
 
 
+##
+## TEST_GPIO
+##
+##
+## TEST_RCC_DEVICE
+##
+add_executable(suite_gpio_device
+    test_gpio_device.c
+    "${PROJECT_SOURCE_DIR}/src/gpio_device.c"
+    "${PROJECT_SOURCE_DIR}/src/rcc_device.c"
+    "${PROJECT_SOURCE_DIR}/src/mmio_ops.c"
+)
+
+target_link_libraries(suite_gpio_device
+  Unity
+)
+
+target_compile_options(suite_gpio_device PUBLIC
+  -ggdb -D UNITTEST
+)
+
+target_include_directories(suite_gpio_device PUBLIC
+  "${PROJECT_SOURCE_DIR}/inc"
+  "${PROJECT_SOURCE_DIR}/src"
+)
+
+add_test(suite_gpio_device_test suite_gpio_device)
+
+
