@@ -29,8 +29,7 @@ extern RCC_Regfile rcc_regfile;
 #define RCC_BASE ((uintptr_t)&rcc_regfile)
 #endif
 
-
 /* This macro is probably very very bad idea */
-#define _RCC_REGISTER(y) ((uintptr_t) &(((RCC_Regfile *) RCC_BASE)->y))
+#define _RCC_REGISTER(y) ((uintptr_t) & (((RCC_Regfile *)RCC_BASE)->y))
 
 #endif
