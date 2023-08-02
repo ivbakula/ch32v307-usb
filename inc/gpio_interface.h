@@ -15,6 +15,11 @@ typedef uint32_t GPIO_Port;
 #define GPIO_PORTD     ((GPIO_Port)(4 << 29))
 #define GPIO_PORTE     ((GPIO_Port)(5 << 29))
 
+/**
+ * @name PIN_DEFINITIONS
+ * @brief
+ */
+///@{
 #define PA0  ((GPIO_Pin)(GPIO_PORTA | U32_BIT(0)))
 #define PA1  ((GPIO_Pin)(GPIO_PORTA | U32_BIT(1)))
 #define PA2  ((GPIO_Pin)(GPIO_PORTA | U32_BIT(2)))
@@ -99,6 +104,7 @@ typedef uint32_t GPIO_Port;
 #define PE13 ((GPIO_Pin)(GPIO_PORTE | U32_BIT(13)))
 #define PE14 ((GPIO_Pin)(GPIO_PORTE | U32_BIT(14)))
 #define PE15 ((GPIO_Pin)(GPIO_PORTE | U32_BIT(15)))
+///@}
 
 typedef enum
 {
@@ -128,64 +134,91 @@ typedef uint8_t GPIO_State;
 
 typedef enum
 {
-  GPIO_Success,
-  GPIO_PinClaimed,
-} GPIO_err;
+  GPIO_Success,   /*< GPIO pin successfuly claimed */
+  GPIO_Claimed,   /*< Requested GPIO pin is already taken. */
+  GPIO_Ownership, /*< GPIO pin is not claimed by provided RCC_DevId, so pin cannot be freed */
+} GPIO_Err;
 
 /**
  * @fn gpio_port_enable
  *
- * @brief
- * @param port
+ * @brief Peripherial clock enable for GPIO port.
+ *
+ * @param port: GPIO port that we wish to enable.
  */
 void gpio_port_enable(GPIO_Port port);
 
 /**
+ * @fn gpio_port_disable
+ *
+ * @brief Peripherial clock disable for GPIO port.
+ *
+ * @param port: GPIO port that we wish to disable.
+ */
+void gpio_port_disable(GPIO_Port port);
+
+/**
  * @fn gpio_claim_pin
  *
- * @brief
- * @param rcc_devid
- * @param pin
- * @return
+ * @brief Claim specific GPIO pin from a bank; This operation is usually performed by device driver. After
+ *        successful invocation of this function, requested pin belongs to the device with provided
+ *        rcc_devid, and it shouldn't be for anything or anyone except the entity that claimed it.
+ *        If claimed pin is not needed any more, it shall be freed. Free operation is preformed with
+ *        \gpio_free_pin\ function.
+ *
+ * @param rcc_devid: RCC Device ID of peripherial device that is trying to claim the pin. For devices
+ *                   not residing within MCU, GPIO bank RCC_DevId shall be provided.
+ *
+ * @param pin: Pin from GPIO bank. Check section PIN_DEFINITIONS for available options
+ *
+ * @return GPIO_Err, GPIO_Success if operation was successfuly completed, error code otherwise.
  */
-GPIO_Err gpio_claim_pin(RCC_DeviceId rcc_devid, GPIO_Pin pin);
+GPIO_Err gpio_claim_pin(RCC_DevId rcc_devid, GPIO_Pin pin);
 
 /**
  * @fn gpio_free_pin
  *
- * @brief
- * @param rcc_devid: TODO: make following description better; either RCC device ID of actual device in case of "real"
- * peripherial device (e.g. SPI1, USART1...) or RCC device ID of GPIO bank in case of some external device connected like LEDs
- * or something else.
- * @param
+ * @brief Free previously claimed GPIO pin.
+ *
+ * @param rcc_devid: RCC Device ID of peripherial device that is trying to free the pin. For devices
+ *                   not residing within MCU, GPIO bank RCC_DevId shall be provided.
+ *
+ * @param GPIO_Err, GPIO_Success if operation was successfuly completed, error code otherwise.
  */
-GPIO_Err gpio_free_pin(RCC_DeviceId rcc_devid, GPIO_Pin pin);
+GPIO_Err gpio_free_pin(RCC_DevId rcc_devid, GPIO_Pin pin);
 
 /**
  * @fn gpio_pin_config
  *
- * @brief
+ * @brief Configure GPIO pin.
  *
- * @param pin
- * @param mode
- * @param config
+ * @param pin: Desired pin
+ *
+ * @param mode:
+ *
+ * @param config:
  */
 void gpio_pin_config(GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config);
 
 /**
  * @fn gpio_pin_input
  *
- * @brief
- * @param pin
+ * @brief Receive input from GPIO pin.
+ *
+ * @param pin: GPIO pin to read input from.
+ *
+ * @return GPIO_HIGH or GPIO_LOW
  */
 GPIO_State gpio_pin_input(GPIO_Pin pin);
 
 /**
  * @fn gpio_pin_output
  *
- * @brief
- * @param pin
- * @param state
+ * @brief Output bit to GPIO pin.
+ *
+ * @param pin: GPIO pin to write output to.
+ *
+ * @param state GPIO_HIGH, GPIO_LOW
  */
 void gpio_pin_output(GPIO_Pin pin, GPIO_State state);
 
