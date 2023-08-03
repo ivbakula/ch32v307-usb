@@ -23,10 +23,26 @@ typedef struct
 } RCC_Regfile;
 
 #ifndef UNITTEST
+
+/*************************************/
+/* BEGIN PRODUCTION DEFINITIONS      */
+/*************************************/
 #define RCC_BASE ((uintptr_t)0x40021000)
+/*************************************/
+/* END PRODUCTION DEFINITIONS        */
+/*************************************/
+
 #else
+
+/************************************/
+/* BEGIN UNITTEST DEFINITIONS       */
+/************************************/
 extern RCC_Regfile rcc_regfile;
 #define RCC_BASE ((uintptr_t)&rcc_regfile)
+/************************************/
+/* END UNITTEST DEFINITIONS         */
+/************************************/
+
 #endif
 
 /* This macro is probably very very bad idea */

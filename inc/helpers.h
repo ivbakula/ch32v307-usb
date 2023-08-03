@@ -14,7 +14,4 @@
 #define __IO_UINT16_T(x) ((volatile uint16_t *)x)
 #define __IO_UINT32_T(x) ((volatile uint32_t *)x)
 
-#define DIV_4(x) (x >> 2)
-#define MUL_4(x) (x << 2)
-
 #endif
