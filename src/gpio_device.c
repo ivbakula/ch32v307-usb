@@ -1,4 +1,5 @@
 #include "gpio_device.h"
+
 #include "gpio_interface.h"
 #include "mmio_ops.h"
 #include "rcc_interface.h"
@@ -23,8 +24,7 @@ static uint32_t __attribute__((section(".data"))) gpio_pin_lock[5][16] = {
 
 static RCC_DevId gpio_get_port_rcc_mapping(GPIO_Port port)
 {
-  switch (GET_GPIO_PORT(port))
-    {
+  switch (GET_GPIO_PORT(port)) {
     case GPIO_PORTA:
       return RCC_IOPAEN;
     case GPIO_PORTB:
@@ -38,8 +38,8 @@ static RCC_DevId gpio_get_port_rcc_mapping(GPIO_Port port)
     default:
       // not supported. Do something about this case
       return -1;
-    }    
-}  
+  }
+}
 
 void gpio_port_enable(GPIO_Port port)
 {
@@ -57,7 +57,7 @@ void gpio_port_disable(GPIO_Port port)
   RCC_DevId devid = gpio_get_port_rcc_mapping(port);
   if (devid == ERROR)
     // OOPS something went wrong. You provided invalid GPIO port.
-    // TODO: do something about this 
+    // TODO: do something about this
     return;
 
   rcc_pcendis(devid, RCC_DISABLE);
@@ -90,8 +90,7 @@ GPIO_Err gpio_unlock_pin(RCC_DevId rcc_devid, GPIO_Pin pin)
 
 static uintptr_t gpio_get_port_base_address_mapping(GPIO_Pin pin)
 {
-  switch (GET_GPIO_PORT(pin))
-    {
+  switch (GET_GPIO_PORT(pin)) {
     case GPIO_PORTA:
       return GPIOA_BASE;
     case GPIO_PORTB:
@@ -106,7 +105,7 @@ static uintptr_t gpio_get_port_base_address_mapping(GPIO_Pin pin)
       // OOPS this should never happen. How???
       // TODO do something about it.
       return ERROR;
-    }    
+  }
 }
 
 void gpio_pin_config(GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config)
@@ -116,13 +115,13 @@ void gpio_pin_config(GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config)
   uint8_t val = mode | (config << 2);
   uint8_t pin_index = GET_GPIO_PIN_INDEX(pin);
   uintptr_t base = gpio_get_port_base_address_mapping(pin);
-  
+
   if (pin_index < 8) {
     shift = pin_index << 2;
-    reg = (uint32_t *) (_GPIO_REGISTER(base, R32_GPIO_CFGLR));
+    reg = (uint32_t *)(_GPIO_REGISTER(base, R32_GPIO_CFGLR));
   } else {
     shift = (pin_index - 8) << 2;
-    reg = (uint32_t *) (_GPIO_REGISTER(base, R32_GPIO_CFGHR));
+    reg = (uint32_t *)(_GPIO_REGISTER(base, R32_GPIO_CFGHR));
   }
 
   *reg &= ~(0xf << shift);

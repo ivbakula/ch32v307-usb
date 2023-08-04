@@ -1,8 +1,10 @@
-#include <stddef.h>
 #include "mmem.h"
-#include <string.h>
-#include "time.h"
+
 #include <stdbool.h>
+#include <stddef.h>
+#include <string.h>
+
+#include "time.h"
 
 extern uint32_t _heap_start;
 extern uint32_t _heap_end;
@@ -37,8 +39,7 @@ static header **find_free(size_t size)
 {
   header **h = &blk_list;
 
-  while (GET_PTR(*h))
-  {
+  while (GET_PTR(*h)) {
     if (IS_FREE(*h) && (*h)->size >= size)
       return h;
     h = &GET_PTR(*h)->next;
@@ -53,14 +54,13 @@ static header **find_prev_hdr(void *ptr)
 
   // Find hdr pointer in linked list of memory blocks
   header **h = &blk_list;
-  while (GET_PTR(*h))
-  {
+  while (GET_PTR(*h)) {
     if (GET_PTR(GET_PTR(*h)->next) == hdr)
       return h;
     h = &(GET_PTR(*h)->next);
   }
   return 0;
-}    
+}
 
 void *allocm(uint32_t size)
 {
@@ -78,12 +78,11 @@ void *allocm(uint32_t size)
   nnxt->size = (*free_blk)->size - size - sizeof(header);
 
   /* if size of next block is zero, there is no point in creating it. */
-  if (nnxt->size > 0)
-  {
+  if (nnxt->size > 0) {
     nnxt->next = (*free_blk)->next;
     (*free_blk)->next = nnxt;
     (*free_blk)->size = size;
-  }    
+  }
 
   void *ret = (void *)((uintptr_t)(*free_blk) + sizeof(header));
   /* Mark our newly allocated block BLK_ALLOCD */
@@ -97,21 +96,19 @@ void freem(void *ptr)
   header **prev = find_prev_hdr(ptr);
   if (!prev)
     return;
-  
+
   header **current = &(GET_PTR(*prev)->next);
   header *next = GET_PTR(*current)->next;
 
   // Mark current block as free
   *current = (header *)((uintptr_t)(*current) & (~1));
 
-  if (GET_STATUS(next) == BLK_FREED)
-  {
+  if (GET_STATUS(next) == BLK_FREED) {
     (*current)->size += sizeof(header) + next->size;
     (*current)->next = next->next;
   }
 
-  if (GET_STATUS(*prev) == BLK_FREED)
-  {
+  if (GET_STATUS(*prev) == BLK_FREED) {
     (*prev)->size += sizeof(header) + (*current)->size;
     (*prev)->next = (*current)->next;
   }

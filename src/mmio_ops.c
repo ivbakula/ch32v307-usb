@@ -1,4 +1,5 @@
 #include "mmio_ops.h"
+
 #include "helpers.h"
 
 inline void mmio_or_writeb(uintptr_t base, uint8_t data) __attribute__((always_inline));
@@ -89,4 +90,4 @@ inline uint32_t mmio_and_readdw(uintptr_t base, uint32_t mask) __attribute__((al
 inline uint32_t mmio_and_readdw(uintptr_t base, uint32_t mask)
 {
   return (*__IO_UINT32_T(base) & mask);
-}  
+}

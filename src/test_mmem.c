@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "mmem.h"
@@ -27,11 +27,9 @@ typedef struct
 void dump_heap(void)
 {
   header *h = blk_list;
-  while (GET_PTR(h))
-  {
-    printf("HEADER: 0x%08tx\n is_occupied: %d\n size: %d\n next: 0x%08tx\n ",
-           (uintptr_t)GET_PTR(h), (int)GET_STATUS(h), GET_PTR(h)->size,
-           (uintptr_t)GET_PTR(h)->next);
+  while (GET_PTR(h)) {
+    printf("HEADER: 0x%08tx\n is_occupied: %d\n size: %d\n next: 0x%08tx\n ", (uintptr_t)GET_PTR(h), (int)GET_STATUS(h),
+      GET_PTR(h)->size, (uintptr_t)GET_PTR(h)->next);
     h = GET_PTR(h)->next;
   }
 }
@@ -39,20 +37,18 @@ void dump_heap(void)
 void hexdump_heap(void)
 {
   header *h = blk_list;
-  while (GET_PTR(h))
-  {
+  while (GET_PTR(h)) {
     puts("=================\n");
     printf("BLOCK: 0x%08tx\n", (uintptr_t)GET_PTR(h));
     uint8_t *c = (char *)GET_PTR(h);
-    for (int i = 0; i < GET_PTR(h)->size + sizeof(header); i++)
-    {
+    for (int i = 0; i < GET_PTR(h)->size + sizeof(header); i++) {
       printf("%02x", c[i]);
       if (i % 4 == 0)
         putchar('\n');
     }
     puts("\n=================\n");
     h = GET_PTR(h)->next;
-  } 
+  }
 }
 
 void test_allocm(void)
@@ -81,7 +77,6 @@ void test_allocm(void)
 
 void alloc_blocks(void)
 {
-  
 }
 
 void test_allocm_stress(void)
@@ -97,7 +92,7 @@ void test_allocm_stress(void)
   assert(astr->b == 0xacabc0fe);
   assert(astr->c == 0xff00ff00);
   assert(astr->d == 0xaefbacff);
-  
+
   AlignedStruct *bstr = (AlignedStruct *)allocm(sizeof(*bstr));
   bstr->a = 0x12345678;
   bstr->b = 0xaaaaaaaa;
@@ -108,7 +103,7 @@ void test_allocm_stress(void)
   assert(bstr->b == 0xaaaaaaaa);
   assert(bstr->c == 0xbbbbbbbb);
   assert(bstr->d == 0xcccccccc);
-  
+
   AlignedStruct *cstr = (AlignedStruct *)allocm(sizeof(*cstr));
   cstr->a = 0xdddddddd;
   cstr->b = 0xeeeeeeee;
@@ -119,7 +114,7 @@ void test_allocm_stress(void)
   assert(cstr->b == 0xeeeeeeee);
   assert(cstr->c == 0xffffffff);
   assert(cstr->d == 0xfaceb007);
-  
+
   AlignedStruct *dstr = (AlignedStruct *)allocm(sizeof(*dstr));
   dstr->a = 0xaefbacff;
   dstr->b = 0xff0ff00f;
@@ -203,4 +198,4 @@ int main()
   //  test_free();
   //  test_allocm();
   //  test_allocm_stress();
-}    
+}

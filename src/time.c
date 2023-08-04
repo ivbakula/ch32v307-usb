@@ -1,8 +1,11 @@
-#include <stdint.h>
 #include "time.h"
+
+#include <stdint.h>
+
 #include "ch32v307.h"
 
-typedef struct {
+typedef struct
+{
   volatile uint32_t R32_STK_CTRL;
   volatile uint32_t R32_STK_SR;
   volatile uint32_t R32_STK_CNTL;
@@ -11,17 +14,17 @@ typedef struct {
   volatile uint32_t R32_STK_CMPHR;
 } SysTick_Regfile;
 
-#define SYSTICK_BASE ((uint32_t)0xE000F000)
-#define SYSTICK_CTRL_STE U32_BIT(0)
-#define SYSTICK_CTRL_STIE U32_BIT(1)
+#define SYSTICK_BASE       ((uint32_t)0xE000F000)
+#define SYSTICK_CTRL_STE   U32_BIT(0)
+#define SYSTICK_CTRL_STIE  U32_BIT(1)
 #define SYSTICK_CTRL_STCLK U32_BIT(2)
-#define SYSTICK_CTRL_STRE U32_BIT(3)
-#define SYSTICK_CTRL_MODE U32_BIT(4)
-#define SYSTICK_CTRL_INIT U32_BIT(5)
-#define SYSTICK_CTRL_SWIE U32_BIT(31)
-#define _PLLMULF(x) (x << 18)
+#define SYSTICK_CTRL_STRE  U32_BIT(3)
+#define SYSTICK_CTRL_MODE  U32_BIT(4)
+#define SYSTICK_CTRL_INIT  U32_BIT(5)
+#define SYSTICK_CTRL_SWIE  U32_BIT(31)
+#define _PLLMULF(x)        (x << 18)
 
-#define SYSTICK ((SysTick_Regfile *) SYSTICK_BASE)
+#define SYSTICK ((SysTick_Regfile *)SYSTICK_BASE)
 
 uint32_t sysclock_frequency = HSI_CLOCK_FREQUENCY;
 
@@ -36,14 +39,15 @@ static void delay(uint32_t n)
 
   SYSTICK->R32_STK_CTRL |= SYSTICK_CTRL_STE | SYSTICK_CTRL_STCLK;
 
-  while (!(SYSTICK->R32_STK_SR & U32_BIT(0)));
+  while (!(SYSTICK->R32_STK_SR & U32_BIT(0)))
+    ;
 
   SYSTICK->R32_STK_CTRL &= ~(SYSTICK_CTRL_STE | SYSTICK_CTRL_STCLK);
 }
 
 void wait_ms(uint32_t ms)
 {
-  uint32_t N = 48000; // number of ticks for one milisecond per 48MHz clock frequency. Hardcoded for now
+  uint32_t N = 48000;  // number of ticks for one milisecond per 48MHz clock frequency. Hardcoded for now
   uint32_t n = N * ms;
 
   delay(n);
@@ -56,24 +60,9 @@ void wait_us(uint32_t us)
   delay(n);
 }
 
-static uint8_t pllmul_factor[] = {
-  18,
-  3,
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11,
-  12,
-  13,
-  14,
+static uint8_t pllmul_factor[] = {18, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
   7, /* this is not correct. This should be 6.5 but leave it as it is now */
-  15,
-  16
-};
+  15, 16};
 
 void system_pll_clock_init(PLLMul mul)
 {

@@ -1,8 +1,10 @@
+#include "spi_device.h"
+
 #include <stdint.h>
+
+#include "mmem.h"
 #include "rcc_devids.h"
 #include "rcc_interface.h"
-#include "spi_device.h"
-#include "mmem.h"
 #include "spi_interface.h"
 
 static const uint32_t spi_rccdevid_mapping[] = {
@@ -17,7 +19,8 @@ static const uintptr_t spi_mmio_mapping[] = {
   SPI3_BASE,
 };
 
-struct SPI_GPIOPort {
+struct SPI_GPIOPort
+{
   int len;
   uint32_t gpio_port_rccid[4];
 };
@@ -29,7 +32,8 @@ static const struct SPI_GPIOPort spi_gpio_port_mapping[] = {
   {},
 };
 
-struct GPIO_Pins {
+struct GPIO_Pins
+{
   uint8_t nss;
   uint8_t sck;
   uint8_t miso;
@@ -49,7 +53,7 @@ DeviceDescriptor *spi_create_dd(SPI_Device dev_id)
 {
   if (dev_id >= SPI_Max)
     return 0;
-  
+
   DeviceDescriptor *dev = (DeviceDescriptor *)allocm(sizeof(*dev));
 
   if (!dev)
@@ -67,7 +71,6 @@ void spi_enable_dev(DeviceDescriptor *dev)
   if (!dev)
     return;
 
-
   rcc_enable_periph(dev->rcc_id);
 
   /* Enable GPIO port */
@@ -76,4 +79,4 @@ void spi_enable_dev(DeviceDescriptor *dev)
   for (int i = 0; i < ports->len; i++) {
     rcc_enable_periph(ports->gpio_port_rccid);
   }
-}  
+}
