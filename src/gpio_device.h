@@ -14,22 +14,21 @@ typedef struct
   volatile uint32_t R32_GPIO_LCKR;
 } GPIO_Regfile;
 
-
 #ifndef UNITTEST
 
 /*************************************/
 /* BEGIN PRODUCTION DEFINITIONS      */
 /*************************************/
-#define GPIOA_BASE ((uintptr_t) 0x40010800)
-#define GPIOB_BASE ((uintptr_t) 0x40010C00)
-#define GPIOC_BASE ((uintptr_t) 0x40011000)
-#define GPIOD_BASE ((uintptr_t) 0x40011400)
-#define GPIOE_BASE ((uintptr_t) 0x40011800)
+#define GPIOA_BASE ((uintptr_t)0x40010800)
+#define GPIOB_BASE ((uintptr_t)0x40010C00)
+#define GPIOC_BASE ((uintptr_t)0x40011000)
+#define GPIOD_BASE ((uintptr_t)0x40011400)
+#define GPIOE_BASE ((uintptr_t)0x40011800)
 /*************************************/
 /* END PRODUCTION DEFINITIONS        */
 /*************************************/
 
-#else 
+#else
 
 /************************************/
 /* BEGIN UNITTEST DEFINITIONS       */
@@ -52,5 +51,6 @@ extern GPIO_Regfile gpioe_regfile; /*< Used for mocking of GPIO registers */
 
 #endif
 
+#define _GPIO_REGISTER(x, y) ((uintptr_t) & (((GPIO_Regfile *)x)->y))
 
 #endif
