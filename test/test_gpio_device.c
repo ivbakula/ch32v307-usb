@@ -87,7 +87,8 @@ void test_gpio_pin_input(void)
   TEST_ASSERT_EQUAL(GPIO_HIGH, gpio_pin_input(PA15));
 
   gpioa_regfile.R32_GPIO_INDR &= ~U16_BIT(15);
-  TEST_ASSERT_EQUAL(GPIO_LOW, gpio_pin_input(PA15));  
+  TEST_ASSERT_EQUAL(GPIO_LOW, gpio_pin_input(PA15));
+  TEST_ASSERT_EQUAL(true, false);
 }
 
 int main(void)
