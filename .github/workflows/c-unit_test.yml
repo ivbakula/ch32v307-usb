@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: prepare
+      run: git submodule update --init --recursive
+    - name: configure
+      run: cmake -DTARGET_GROUP=test
+    - name: make
+      run: make
+    - name: run tests
+      run: ctest --verbose
