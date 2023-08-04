@@ -1,7 +1,8 @@
 #include "rcc_device.h"
-#include "rcc_interface.h"
-#include "rcc_device.h"
+
 #include "mmio_ops.h"
+#include "rcc_device.h"
+#include "rcc_interface.h"
 
 #ifdef UNITTEST
 RCC_Regfile rcc_regfile; /*< Used for mocking of RCC registers */
@@ -9,15 +10,14 @@ RCC_Regfile rcc_regfile; /*< Used for mocking of RCC registers */
 
 static uintptr_t get_periph_rcc_register(uint32_t rcc_devid_mask)
 {
-  switch (rcc_devid_mask)
-    {
+  switch (rcc_devid_mask) {
     case RCC_AHB_DEVICE_MASK:
       return _RCC_REGISTER(R32_RCC_AHBPCENR);
     case RCC_APB1_DEVICE_MASK:
       return _RCC_REGISTER(R32_RCC_APB1PCENR);
     case RCC_APB2_DEVICE_MASK:
       return _RCC_REGISTER(R32_RCC_APB2PCENR);
-    }
+  }
 
   // invalid periph mask
   return 0;

@@ -1,6 +1,6 @@
 #include <unity.h>
-#include "helpers.h"
 
+#include "helpers.h"
 #include "rcc_device.h"
 
 void setUp(void)
@@ -82,6 +82,6 @@ int main(void)
   RUN_TEST(test_rcc_enable_disable_multiple_ahbpcenr_periph);
   RUN_TEST(test_rcc_enable_disable_apb2pcenr_periph);
   RUN_TEST(test_rcc_enable_disable_apb1pcenr_periph);
-  
+
   return UNITY_END();
-}  
+}

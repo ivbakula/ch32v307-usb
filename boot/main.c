@@ -1,10 +1,11 @@
-#include "ch32v307.h"
 #include <stddef.h>
 #include <stdio.h>
+
+#include "ch32v307.h"
 #include "csr.h"
-#include "time.h"
 #include "irq.h"
 #include "mmem.h"
+#include "time.h"
 #include "usb_interface.h"
 
 extern uint32_t _susrstack;
@@ -23,7 +24,7 @@ void gpio_pin_output(uintptr_t gpio_base, uint8_t pin, int status)
 int gpio_pin_input(uintptr_t gpio_base, uint8_t pin)
 {
   return ((((GPIO_Regfile *)gpio_base)->R32_GPIO_INDR & (1 << pin)) >> pin);
-}  
+}
 
 void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg)
 {
@@ -32,7 +33,7 @@ void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg)
 
   if (port > 15)
     return;
-  
+
   if (port < 8) {
     shift = port << 2;
     reg = (uint32_t *)(gpio_base + offsetof(GPIO_Regfile, R32_GPIO_CFGLR));
@@ -51,7 +52,7 @@ uint16_t calculate_brr(uint32_t apb_clock, uint32_t uart_baud_rate)
   uint16_t integer_divider = (25 * (apb_clock)) / ((over8div) * (uart_baud_rate));
   uint16_t fractional_divider = integer_divider % 100;
 
-  return ((((integer_divider) / 100) << 4) | (((((fractional_divider) * ((over8div)*2)) + 50)/100)&7));
+  return ((((integer_divider) / 100) << 4) | (((((fractional_divider) * ((over8div)*2)) + 50) / 100) & 7));
 }
 
 void irq_uart_rx(void)
@@ -59,7 +60,7 @@ void irq_uart_rx(void)
   char c = 0;
   if (USART1->R32_USART_STATR & U32_BIT(5))
     c = USART1->R32_USART_DATAR;
-  
+
   return;
 }
 
@@ -67,7 +68,7 @@ void enable_uart(uint32_t apbclk, uint16_t baud)
 {
   RCC->R32_RCC_APB2PCENR |= RCC_APB2PCENR_IOPAEN;
   RCC->R32_RCC_APB2PCENR |= RCC_APB2PCENR_USART1EN;
-  
+
   gpio_port_config(GPIOA_BASE, 10, GPIO_PULL_UP_INPUT);
   gpio_port_config(GPIOA_BASE, 9, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_10MHZ);
 
@@ -136,7 +137,6 @@ void spi_dump_registers()
   uart_puts("===================SPI_REGISTER_DUMP_START===================\r\n");
   char buff[256] = {0};
 
-  
   sprintf(buff, "CTRL1 [0x%08x]: 0x%04x\r\n", &SPI1->CTLR1, SPI1->CTLR1);
   uart_puts(buff);
   memset(buff, 0, 256);
@@ -148,19 +148,18 @@ void spi_dump_registers()
   sprintf(buff, "STATR [0x%08x]: 0x%04x\r\n", &SPI1->STATR, SPI1->STATR);
   uart_puts(buff);
   memset(buff, 0, 256);
-  uart_puts("===================SPI_REGISTER_DUMP_END===================\r\n");  
+  uart_puts("===================SPI_REGISTER_DUMP_END===================\r\n");
 }
-
 
 void spi_init(void)
 {
   RCC->R32_RCC_APB2PCENR |= U32_BIT(12) | U32_BIT(2);
-  
+
   gpio_port_config(GPIOA_BASE, 4, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_50MHZ);
   gpio_port_config(GPIOA_BASE, 5, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_50MHZ);
   gpio_port_config(GPIOA_BASE, 7, GPIO_PUSH_PULL_ALTERNATE_OUTPUT | GPIO_OUTPUT_SPEED_50MHZ);
 
-  SPI1->CTLR1 = U16_BIT(15) | U16_BIT(14) | U16_BIT(9) | U16_BIT(8) | U16_BIT(6)| U16_BIT(4) | U16_BIT(3) | U16_BIT(2);
+  SPI1->CTLR1 = U16_BIT(15) | U16_BIT(14) | U16_BIT(9) | U16_BIT(8) | U16_BIT(6) | U16_BIT(4) | U16_BIT(3) | U16_BIT(2);
 
   irq_register_interrupt_handler(SPI1_IRQn, irq_spi1);
   irq_enable_interrupt(SPI1_IRQn);
@@ -182,18 +181,18 @@ void spi_master_transfer(char data[], size_t size)
 extern void enable_usbd(void);
 extern uint8_t USBHS_EP0_Buf;
 DeviceDescriptor sp = {
-  .bLength            = 0x12,
-  .bDescriptorType    = 0x01,
-  .bcdUSB             = 0x01,
-  .bDeviceClass       = 0x02,
-  .bDeviceSubClass    = 0x00,
-  .bDeviceProtocol    = 0x00,
-  .bMaxPacketSize0    = 64,
-  .idVendor           = 0x6976, /*iv*/
-  .idProduct          = 0x616e, /*an*/
-  .bcdDevice          = 0x01,
-  .iProduct           = 0x02,
-  .iSerialNumber      = 0x03,
+  .bLength = 0x12,
+  .bDescriptorType = 0x01,
+  .bcdUSB = 0x01,
+  .bDeviceClass = 0x02,
+  .bDeviceSubClass = 0x00,
+  .bDeviceProtocol = 0x00,
+  .bMaxPacketSize0 = 64,
+  .idVendor = 0x6976,  /*iv*/
+  .idProduct = 0x616e, /*an*/
+  .bcdDevice = 0x01,
+  .iProduct = 0x02,
+  .iSerialNumber = 0x03,
   .bNumConfigurations = 0x01,
 };
 
@@ -211,7 +210,6 @@ typedef struct
   uint32_t pll_registers[6];
 } USB_PllSetFrequency;
 
-
 #define SPI_WRITE_COMMAND 0x1
 #define PLL_SET_FREQUENCY 0x2
 #define HIGH              1
@@ -225,7 +223,7 @@ void adf435x_configure_interface()
   gpio_port_config(GPIOA_BASE, ADF435x_CE, GPIO_PUSH_PULL_OUTPUT_MODE | GPIO_OUTPUT_SPEED_50MHZ);
   gpio_port_config(GPIOA_BASE, ADF435x_LE, GPIO_PUSH_PULL_OUTPUT_MODE | GPIO_OUTPUT_SPEED_50MHZ);
   gpio_port_config(GPIOA_BASE, ADF435x_LD, GPIO_PULL_UP_INPUT);
-  
+
   gpio_pin_output(GPIOA_BASE, ADF435x_LE, HIGH);
   gpio_pin_output(GPIOA_BASE, ADF435x_CE, HIGH);
 }
@@ -239,12 +237,12 @@ typedef union
 void adf435x_write_register(uint32_t reg)
 {
   PLL_InternalRegStructure ser = {.reg = reg};
-  
+
   //  GPIOA->R32_GPIO_OUTDR &= ~(0b1 << 1);
   gpio_pin_output(GPIOA_BASE, ADF435x_LE, LOW);
   //  wait_us(1);
   for (int i = 0; i < 4; i++) {
-    spi_master_write(ser.q[3-i]);
+    spi_master_write(ser.q[3 - i]);
   }
   while (!(SPI1->STATR & U16_BIT(1)))
     ;
@@ -260,7 +258,7 @@ void adf435x_write_register(uint32_t reg)
 void adf435x_configure_device(uint32_t *registers, size_t size)
 {
   for (int i = 0; i < size; i++) {
-    adf435x_write_register(registers[size-1-i]);
+    adf435x_write_register(registers[size - 1 - i]);
   }
 }
 
@@ -290,7 +288,7 @@ void adf435x_dump_registers(USB_PllSetFrequency *req)
   memset(buff, 0, 256);
   sprintf(buff, "R5: 0x%08x\r\n", req->pll_registers[5]);
   uart_puts(buff);
-  uart_puts("ADF435x_REGISTER_DUMP END\r\n");  
+  uart_puts("ADF435x_REGISTER_DUMP END\r\n");
 }
 
 int main()
@@ -301,34 +299,31 @@ int main()
   init_usb_device(USB_FULL_SPEED);
   spi_init();
   adf435x_configure_interface();
-  
+
   char buffer[64];
   uart_puts("Initialization complete!\r\n");
   spi_dump_registers();
-  while (1)
-  {
+  while (1) {
     size_t transfer_size = 0;
     transfer_size = read_endpoint(buffer, 64, 1);
     USB_Packet *p = (USB_Packet *)buffer;
-    switch (p->command)
-      {
+    switch (p->command) {
       case SPI_WRITE_COMMAND:
         uart_puts("SPI_WRITE_COMMAND\r\n");
-	spi_master_transfer(p->data, strlen(p->data));
+        spi_master_transfer(p->data, strlen(p->data));
         break;
       case PLL_SET_FREQUENCY:
         uart_puts("PLL_SET_FREQUENCY\r\n");
         adf435x_dump_registers(((USB_PllSetFrequency *)buffer));
         adf435x_configure_device(((USB_PllSetFrequency *)buffer)->pll_registers, 6);
-	uart_puts("waiting for PLL to lock\r\n");
+        uart_puts("waiting for PLL to lock\r\n");
         while (gpio_pin_input(GPIOA_BASE, ADF435x_LD))
           ;
-	uart_puts("PLL Locked\r\n");
-	break;
+        uart_puts("PLL Locked\r\n");
+        break;
       default:
-	uart_puts("UNKNOWN\r\n");
-	break;
-      }
+        uart_puts("UNKNOWN\r\n");
+        break;
+    }
   }
-
-}    
+}

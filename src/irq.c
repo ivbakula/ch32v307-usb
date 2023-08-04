@@ -1,8 +1,11 @@
 #include "irq.h"
-#include "csr.h"
+
 #include <string.h>
 
-typedef struct {
+#include "csr.h"
+
+typedef struct
+{
   volatile uint32_t ISR[8];
   volatile uint32_t IPR[8];
   volatile uint32_t ITHRESDR;
@@ -28,7 +31,7 @@ typedef struct {
   volatile uint32_t SCTLR;
 } PFIC_Regfile;
 
-#define PFIC ((PFIC_Regfile *) 0xE000E000)
+#define PFIC ((PFIC_Regfile *)0xE000E000)
 
 __attribute__((section(".data"))) __irq_handler IRQ_interrupt_vector[256];
 __attribute__((section(".data"))) __irq_handler IRQ_exception_vector[16];
@@ -40,7 +43,7 @@ void irq_register_interrupt_handler(Interrupt_IRQn n, __irq_handler h)
   IRQ_interrupt_vector[n] = h;
 }
 
-void irq_deregister_interrupt_handler (Interrupt_IRQn n)
+void irq_deregister_interrupt_handler(Interrupt_IRQn n)
 {
   if (n > 255)
     return;
@@ -56,7 +59,7 @@ void irq_register_exception_handler(Exception_IRQn n, __irq_handler h)
     IRQ_exception_vector[n] = h;
 }
 
-void irq_deregister_exception_handler (Exception_IRQn n)
+void irq_deregister_exception_handler(Exception_IRQn n)
 {
   if (n < 256)
     IRQ_exception_vector[n] = 0;
@@ -69,12 +72,12 @@ void irq_enable_interrupt(Interrupt_IRQn irq)
 
 void irq_disable_interrupt(Interrupt_IRQn irq)
 {
-  PFIC->IRER[((uint32_t)(irq) >> 5)] = (1 << ((uint32_t)(irq) & 0x1F));
+  PFIC->IRER[((uint32_t)(irq) >> 5)] = (1 << ((uint32_t)(irq)&0x1F));
 }
 
 uint32_t irq_get_interrupt_status(Interrupt_IRQn irq)
 {
-  return((uint32_t) ((PFIC->ISR[(uint32_t)(irq) >> 5] & (1 << ((uint32_t)(irq) & 0x1F)))?1:0)); 
+  return ((uint32_t)((PFIC->ISR[(uint32_t)(irq) >> 5] & (1 << ((uint32_t)(irq)&0x1F))) ? 1 : 0));
 }
 
 static inline void __trap_handle_interrupt(uint32_t irqn) __attribute__((always_inline));
@@ -102,17 +105,16 @@ static inline void __trap_handle_exception(uint32_t excn)
  *        code is determined, this function will call it's interrupt handler
  *        by consulting with IRQ_(interrupt|exception)_vector array
  */
-void _irq_trap (void) __attribute__((interrupt));
-void _irq_trap (void)
+void _irq_trap(void) __attribute__((interrupt));
+void _irq_trap(void)
 {
   CSR_mcause mcause = csr_read_mcause();
-  switch (mcause.type)
-  {
-  case MCAUSE_TYPE_INTERRUPT:
-    __trap_handle_interrupt(mcause.code);
-    break;
+  switch (mcause.type) {
+    case MCAUSE_TYPE_INTERRUPT:
+      __trap_handle_interrupt(mcause.code);
+      break;
 
-  case MCAUSE_TYPE_EXCEPTION:
-    __trap_handle_exception(mcause.code);
+    case MCAUSE_TYPE_EXCEPTION:
+      __trap_handle_exception(mcause.code);
   }
 }

@@ -1,7 +1,8 @@
-#include <stdio.h>
 #include <assert.h>
-#include "msgq.h"
+#include <stdio.h>
 #include <string.h>
+
+#include "msgq.h"
 #include "usb.h"
 
 void msq_lock(void)
@@ -25,8 +26,8 @@ void hexdump(char c[], int size)
     printf("%02x %02x %02x %02x\n", c[i], c[i + 1], c[i + 2], c[i + 3]);
 }
 
-
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
   uint8_t header;
   uint16_t nesto;
   uint32_t nestoDrugo;
@@ -38,8 +39,7 @@ void test_enqueue_dequeue_one(void)
   MSG_queue q;
   msgq_init(&q);
 
-
-  TestMsg tmsg = { .header = 0xde, .nesto = 0xadbe, .nestoDrugo = 0xffc0ffee, .taman = 0xaa };
+  TestMsg tmsg = {.header = 0xde, .nesto = 0xadbe, .nestoDrugo = 0xffc0ffee, .taman = 0xaa};
   msgq_enqueue(&q, &tmsg, sizeof(TestMsg), false);
 
   printf("%lu\n", sizeof(TestMsg));
@@ -73,7 +73,7 @@ void test_enqueue_full(void)
   assert(q.bottom_msg == 0);
 
   assert(msgq_enqueue(&q, msg, 8, false) == 0);
-  
+
   char buff[8];
   for (int i = 0; i < 100; i++) {
     msgq_dequeue(&q, buff, false);
@@ -100,25 +100,27 @@ void test_enqueue_dequeue_usbsetup(void)
   msgq_init(&q);
 
   DescriptorPacket sp = {
-    .bLength            = 0x12, // 8
-    .bDescriptorType    = 0x01, // 8
-    .bcdUSB             = 0x01, // 16
-    .bDeviceClass       = 0x02, // 8
-    .bDeviceSubClass    = 0x00, // 8
-    .bDeviceProtocol    = 0x00, // 8
-    .bMaxPacketSize0    = 64, // 8
-    .idVendor           = 0x6976, /*iv*/ // 16
-    .idProduct          = 0x616e, /*an*/ // 16
-    .bcdDevice          = 0x01, // 16
-    .iProduct           = 0x02, // 8
-    .iSerialNumber      = 0x03, // 8
-    .bNumConfigurations = 0x01, // 8
+    .bLength = 0x12,          // 8
+    .bDescriptorType = 0x01,  // 8
+    .bcdUSB = 0x01,           // 16
+    .bDeviceClass = 0x02,     // 8
+    .bDeviceSubClass = 0x00,  // 8
+    .bDeviceProtocol = 0x00,  // 8
+    .bMaxPacketSize0 = 64,    // 8
+    .idVendor = 0x6976,
+    /*iv*/  // 16
+    .idProduct = 0x616e,
+    /*an*/                       // 16
+    .bcdDevice = 0x01,           // 16
+    .iProduct = 0x02,            // 8
+    .iSerialNumber = 0x03,       // 8
+    .bNumConfigurations = 0x01,  // 8
   };
 
   msgq_enqueue(&q, &sp, sizeof(sp), false);
 
-  char buff[sizeof(sp)] = { 0 };
-  int sz        = msgq_dequeue(&q, &buff[0], false);
+  char buff[sizeof(sp)] = {0};
+  int sz = msgq_dequeue(&q, &buff[0], false);
   assert(sz == 8);
 
   sz = msgq_dequeue(&q, &buff[8], false);
@@ -128,7 +130,7 @@ void test_enqueue_dequeue_usbsetup(void)
   assert(sz == 2);
 
   hexdump(buff, sizeof(sp));
-  
+
   assert(((DescriptorPacket *)buff)->bLength == sp.bLength);
   assert(((DescriptorPacket *)buff)->bDescriptorType == sp.bDescriptorType);
   assert(((DescriptorPacket *)buff)->bcdUSB == sp.bcdUSB);
@@ -154,4 +156,4 @@ int main()
 
   test_enqueue_dequeue_usbsetup();
   return 0;
-}    
+}

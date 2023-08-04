@@ -1,5 +1,6 @@
 #include <string.h>
 #include <unity.h>
+
 #include "gpio_device.h"
 #include "rcc_device.h"
 
@@ -17,7 +18,7 @@ void tearDown(void)
 void test_gpio_port_enable_disable(void)
 {
   TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, 0);
-  
+
   gpio_port_enable(GPIO_PORTA);
   TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, U32_BIT(2));
 
@@ -40,11 +41,11 @@ void test_gpio_port_enable_disable(void)
   TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, (U32_BIT(2) | U32_BIT(3) | U32_BIT(4)));
 
   gpio_port_disable(GPIO_PORTC);
-  TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, (U32_BIT(2) | U32_BIT(3)));  
+  TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, (U32_BIT(2) | U32_BIT(3)));
 
   gpio_port_disable(GPIO_PORTB);
   TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, U32_BIT(2));
-  
+
   gpio_port_disable(GPIO_PORTA);
   TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, 0);
 }
@@ -87,7 +88,7 @@ void test_gpio_pin_input(void)
   TEST_ASSERT_EQUAL(GPIO_HIGH, gpio_pin_input(PA15));
 
   gpioa_regfile.R32_GPIO_INDR &= ~U16_BIT(15);
-  TEST_ASSERT_EQUAL(GPIO_LOW, gpio_pin_input(PA15));  
+  TEST_ASSERT_EQUAL(GPIO_LOW, gpio_pin_input(PA15));
 }
 
 int main(void)
@@ -97,7 +98,6 @@ int main(void)
   RUN_TEST(test_gpio_lock_unlock_pin);
   RUN_TEST(test_gpio_pin_config);
   RUN_TEST(test_gpio_pin_output);
-  RUN_TEST(test_gpio_pin_input);  
+  RUN_TEST(test_gpio_pin_input);
   return UNITY_END();
 }
-

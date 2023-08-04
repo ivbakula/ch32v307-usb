@@ -1,6 +1,7 @@
 #include <unity.h>
-#include "mmio_ops.h"
+
 #include "helpers.h"
+#include "mmio_ops.h"
 
 void setUp(void)
 {
