@@ -5,6 +5,8 @@ set(SRC_SOURCES
   mmem.c
   msgq.c
   mmio_ops.c
+  rcc_device.c
+  gpio_device.c
 )
 
 add_library(src STATIC ${SRC_SOURCES})

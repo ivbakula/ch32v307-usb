@@ -72,3 +72,21 @@ inline uint32_t mmio_readdw(uintptr_t base)
 {
   return *__IO_UINT32_T(base);
 }
+
+inline uint8_t mmio_and_readb(uintptr_t base, uint8_t mask) __attribute__((always_inline));
+inline uint8_t mmio_and_readb(uintptr_t base, uint8_t mask)
+{
+  return (*__IO_UINT32_T(base) & mask);
+}
+
+inline uint16_t mmio_and_readw(uintptr_t base, uint16_t mask) __attribute__((always_inline));
+inline uint16_t mmio_and_readw(uintptr_t base, uint16_t mask)
+{
+  return (*__IO_UINT32_T(base) & mask);
+}
+
+inline uint32_t mmio_and_readdw(uintptr_t base, uint32_t mask) __attribute__((always_inline));
+inline uint32_t mmio_and_readdw(uintptr_t base, uint32_t mask)
+{
+  return (*__IO_UINT32_T(base) & mask);
+}  

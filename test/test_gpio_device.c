@@ -49,12 +49,12 @@ void test_gpio_port_enable_disable(void)
   TEST_ASSERT_EQUAL(rcc_regfile.R32_RCC_APB2PCENR, 0);
 }
 
-void test_gpio_claim_free_pin(void)
+void test_gpio_lock_unlock_pin(void)
 {
-  TEST_ASSERT_EQUAL(gpio_claim_pin(RCC_SPI1EN, 1), GPIO_Success);
-  TEST_ASSERT_EQUAL(gpio_claim_pin(RCC_SPI2EN, 1), GPIO_Claimed);
-  TEST_ASSERT_EQUAL(gpio_free_pin(RCC_SPI2EN, 1), GPIO_Ownership);
-  TEST_ASSERT_EQUAL(gpio_free_pin(RCC_SPI1EN, 1), GPIO_Success);
+  TEST_ASSERT_EQUAL(gpio_lock_pin(RCC_SPI1EN, 1), GPIO_Success);
+  TEST_ASSERT_EQUAL(gpio_lock_pin(RCC_SPI2EN, 1), GPIO_Locked);
+  TEST_ASSERT_EQUAL(gpio_unlock_pin(RCC_SPI2EN, 1), GPIO_Ownership);
+  TEST_ASSERT_EQUAL(gpio_unlock_pin(RCC_SPI1EN, 1), GPIO_Success);
 }
 
 void test_gpio_pin_config(void)
@@ -63,34 +63,41 @@ void test_gpio_pin_config(void)
   TEST_ASSERT_EQUAL(gpioa_regfile.R32_GPIO_CFGLR, 0b1011);
 
   gpio_pin_config(PB5, GPIO_Mode_Input, GPIO_Input_Float);
-  TEST_ASSERT_EQUAL(gpiob_regfile.R32_GPIO_CFGLR, (0b0100 << 6));
+  TEST_ASSERT_EQUAL(gpiob_regfile.R32_GPIO_CFGLR, (0b0100 << 20));
 
   gpio_pin_config(PC8, GPIO_Mode_Output_10MHz, GPIO_Output_OpenDrain);
   TEST_ASSERT_EQUAL(gpioc_regfile.R32_GPIO_CFGHR, (0b0101));
 
-  gpio_pin_config(PD13, GPIO_Input_PullUpDown, GPIO_Input_Analog);
-  TEST_ASSERT_EQUAL(gpiod_regfile.R32_GPIO_CFGHR, (0b1000 << 6));
+  gpio_pin_config(PD13, GPIO_Mode_Input, GPIO_Input_PullUpDown);
+  TEST_ASSERT_EQUAL(gpiod_regfile.R32_GPIO_CFGHR, (0b1000 << 20));
 }
 
 void test_gpio_pin_output(void)
 {
-  
+  gpio_pin_output(PA15, GPIO_HIGH);
+  TEST_ASSERT_EQUAL(gpioa_regfile.R32_GPIO_OUTDR, U32_BIT(15));
+
+  gpio_pin_output(PA15, GPIO_LOW);
+  TEST_ASSERT_EQUAL(gpioa_regfile.R32_GPIO_OUTDR, 0);
 }
 
 void test_gpio_pin_input(void)
 {
-  
-}
+  gpioa_regfile.R32_GPIO_INDR |= U16_BIT(15);
+  TEST_ASSERT_EQUAL(GPIO_HIGH, gpio_pin_input(PA15));
 
+  gpioa_regfile.R32_GPIO_INDR &= ~U16_BIT(15);
+  TEST_ASSERT_EQUAL(GPIO_LOW, gpio_pin_input(PA15));  
+}
 
 int main(void)
 {
   UNITY_BEGIN();
   RUN_TEST(test_gpio_port_enable_disable);
-  RUN_TEST(test_gpio_claim_free_pin);
+  RUN_TEST(test_gpio_lock_unlock_pin);
   RUN_TEST(test_gpio_pin_config);
   RUN_TEST(test_gpio_pin_output);
-  RUN_TEST(test_gpio_pin_input);
+  RUN_TEST(test_gpio_pin_input);  
   return UNITY_END();
 }
 

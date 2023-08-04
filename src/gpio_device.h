@@ -51,4 +51,6 @@ extern GPIO_Regfile gpioe_regfile; /*< Used for mocking of GPIO registers */
 
 #endif
 
+#define _GPIO_REGISTER(x, y) ((uintptr_t) & (((GPIO_Regfile *)x)->y))
+
 #endif
