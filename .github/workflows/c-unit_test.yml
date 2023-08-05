@@ -21,3 +21,5 @@ jobs:
       run: make
     - name: run tests
       run: ctest --verbose
+    - name: codestyle
+      run: find . -regex '.*\.\(cpp\|hpp\|c\|cxx\|h\|hxx\)' -exec clang-format --dry-run --Werror {} \;
