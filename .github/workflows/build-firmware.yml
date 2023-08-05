@@ -21,6 +21,8 @@ jobs:
       run: export PATH=$PATH:$(pwd)/xpack-riscv-none-embed-gcc-10.2.0-1.2-linux-x64/bin
     - name: check the environment 
       run: echo $PATH
+    - name: print working directory
+      run: pwd
     - name: configure
       run: cmake .
     - name: make
