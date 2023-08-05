@@ -23,7 +23,7 @@ jobs:
       run: echo $PATH
     - name: print working directory
       run: pwd
-    - name: configure
+    - name: configure -DCMAKE_C_COMPILER=$(pwd)/xpack-riscv-none-embed-gcc-10.2.0-1.2-linux-x64/bin/riscv-none-embed-gcc -DCMAKE_ASM_COMPILER=$(pwd)/xpack-riscv-none-embed-gcc-10.2.0-1.2-linux-x64/bin/riscv-none-embed-gcc
       run: cmake .
     - name: make
       run: make
