@@ -42,27 +42,27 @@ typedef uint8_t UART_PinConfig;
  * @name USART1_DEFAULT_MAPPING
  *
  * @brief Default PIN mapping for USART1.
- * 
+ *
  * |------+-----+-----+------+------+------+
  * | FUNC | CK  | TX  | RX   | CTS  | RTS  |
  * |------+-----+-----+------+------+------+
  * | PIN  | PA8 | PA9 | PA10 | PA11 | PA12 |
  * |------+-----+-----+------+------+------|
- * 
+ *
  */
-#define USART1_DEFAULT_MAPPING ((UART_PinConfig) 0b00)
+#define USART1_DEFAULT_MAPPING ((UART_PinConfig)0b00)
 
 /**
  * @name USART1_ALTERNATE_MAPPING_1
  *
  * @brief First alternative pin mapping for USART1
- * 
+ *
  * |------+-----+-----+-----+------+------|
  * | FUNC | CK  | TX  | RX  | CTS  | RTS  |
  * |------+-----+-----+-----+------+------|
  * | PIN  | PA8 | PB6 | PB7 | PA11 | PA12 |
  * |------+-----+-----+-----+------+------|
- * 
+ *
  */
 #define USART1_ALTERNATE_MAPPING_1 ((UART_PinConfig)0b01)
 
@@ -76,7 +76,7 @@ typedef uint8_t UART_PinConfig;
  * |------+------+------+-----+-----+-----|
  * | PIN  | PA10 | PB15 | PA8 | PA5 | PA9 |
  * |------+------+------+-----+-----+-----|
- * 
+ *
  */
 #define USART1_ALTERNATE_MAPPING_2 ((UART_PinConfig)0b10)
 
@@ -90,7 +90,7 @@ typedef uint8_t UART_PinConfig;
  * |------+-----+-----+-----+-----+-----|
  * | PIN  | PA5 | PA6 | PA7 | PC4 | PC5 |
  * |------+-----+-----+-----+-----+-----|
- * 
+ *
  */
 #define USART1_ALTERNATE_MAPPING_2 ((UART_PinConfig)0b11)
 ///@}
@@ -112,10 +112,10 @@ typedef enum
  *             c) Configures GPIO pins in accordance with selected pin configuration
  *
  * @param dev: uart device to enable
- * 
+ *
  * @param pin_config: U(S)ART device pin configuration
- * 
- * @return UART_Err_Success if successful, appropriate error code otherwise. 
+ *
+ * @return UART_Err_Success if successful, appropriate error code otherwise.
  */
 UART_Err uart_enable_device(UART_Device dev, UART_PinConfig pin_config);
 
@@ -141,7 +141,7 @@ UART_Err uart_disable_device(UART_Device dev);
  * @param dev UART device to reset
  *
  * @return UART_Err_Success if successful, appropriate error code otherwise.
- * 
+ *
  */
 UART_Err uart_reset_device(UART_Device dev);
 

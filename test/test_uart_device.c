@@ -1,4 +1,5 @@
 #include <unity.h>
+
 #include "uart_interface.h"
 
 void setUp(void)

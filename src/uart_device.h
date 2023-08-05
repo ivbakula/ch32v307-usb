@@ -19,14 +19,14 @@ typedef struct
 /*************************************/
 /* BEGIN PRODUCTION DEFINITIONS      */
 /*************************************/
-#define UART1_BASE ((uintptr_t) 0x40013800)
-#define UART2_BASE ((uintptr_t) 0x40004400)
-#define UART3_BASE ((uintptr_t) 0x40004800)
-#define UART4_BASE ((uintptr_t) 0x40004C00)
-#define UART5_BASE ((uintptr_t) 0x40005000)
-#define UART6_BASE ((uintptr_t) 0x40001800)
-#define UART7_BASE ((uintptr_t) 0x40001C00)
-#define UART8_BASE ((uintptr_t) 0x40002000)
+#define UART1_BASE ((uintptr_t)0x40013800)
+#define UART2_BASE ((uintptr_t)0x40004400)
+#define UART3_BASE ((uintptr_t)0x40004800)
+#define UART4_BASE ((uintptr_t)0x40004C00)
+#define UART5_BASE ((uintptr_t)0x40005000)
+#define UART6_BASE ((uintptr_t)0x40001800)
+#define UART7_BASE ((uintptr_t)0x40001C00)
+#define UART8_BASE ((uintptr_t)0x40002000)
 /*************************************/
 /* END PRODUCTION DEFINITIONS        */
 /*************************************/
@@ -45,14 +45,14 @@ extern UART_Regfile uart6_regfile;
 extern UART_Regfile uart7_regfile;
 extern UART_Regfile uart8_regfile;
 
-#define UART1_BASE ((uintptr_t) &uart1_regfile)
-#define UART2_BASE ((uintptr_t) &uart2_regfile)
-#define UART3_BASE ((uintptr_t) &uart3_regfile)
-#define UART4_BASE ((uintptr_t) &uart4_regfile)
-#define UART5_BASE ((uintptr_t) &uart5_regfile)
-#define UART6_BASE ((uintptr_t) &uart6_regfile)
-#define UART7_BASE ((uintptr_t) &uart7_regfile)
-#define UART8_BASE ((uintptr_t) &uart8_regfile)
+#define UART1_BASE ((uintptr_t)&uart1_regfile)
+#define UART2_BASE ((uintptr_t)&uart2_regfile)
+#define UART3_BASE ((uintptr_t)&uart3_regfile)
+#define UART4_BASE ((uintptr_t)&uart4_regfile)
+#define UART5_BASE ((uintptr_t)&uart5_regfile)
+#define UART6_BASE ((uintptr_t)&uart6_regfile)
+#define UART7_BASE ((uintptr_t)&uart7_regfile)
+#define UART8_BASE ((uintptr_t)&uart8_regfile)
 /************************************/
 /* END UNITTEST DEFINITIONS         */
 /************************************/
@@ -71,6 +71,6 @@ extern UART_Regfile uart8_regfile;
  * @parameter Y: Name of the register. Offset of this register is calculated indirectly, by
  *               finding it in UART_Regfile structure.
  */
-#define _UART_REGISTER(X,Y) ((uintptr_t) &(((UART_Regfile *)X)->Y))
+#define _UART_REGISTER(X, Y) ((uintptr_t) & (((UART_Regfile *)X)->Y))
 
 #endif
