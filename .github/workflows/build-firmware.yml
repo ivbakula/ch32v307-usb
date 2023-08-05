@@ -1,0 +1,27 @@
+name: BUILD_FIRMWARE
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: get toolchain
+      run:  wget https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v10.2.0-1.2/xpack-riscv-none-embed-gcc-10.2.0-1.2-linux-x64.tar.gz
+    - name: prepare
+      run: tar -xvf xpack-riscv-none-embed-gcc-10.2.0-1.2-linux-x64.tar.gz
+    - name: set up environment
+      run: echo "$(pwd)/xpack-riscv-none-embed-gcc-10.2.0-1.2/bin" >> $GITHUB_PATH
+    - name: check the environment 
+      run: echo $PATH
+    - name: configure 
+      run: cmake .
+    - name: make
+      run: make
