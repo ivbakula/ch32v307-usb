@@ -27,8 +27,7 @@ int gpio_pin_input(uintptr_t gpio_base, uint8_t pin)
   return ((((GPIO_Regfile *)gpio_base)->R32_GPIO_INDR & (1 << pin)) >> pin);
 }
 
-void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg)
-{
+void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg) {
   uint8_t shift = 0;
   uint32_t *reg = 0;
 
