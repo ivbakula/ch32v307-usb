@@ -1,6 +1,8 @@
 #ifndef TIME_H
 #define TIME_H
 
+#include <stdint.h>
+
 extern uint32_t sysclock_frequency; /*!< This is global variable. Read this variable to check what
                                      * is current sysclock frequency. If you change sysclock or
                                      * sysclock frequency, you shoudl change this variable to
