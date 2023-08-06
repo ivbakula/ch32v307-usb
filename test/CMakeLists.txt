@@ -87,7 +87,7 @@ target_link_libraries(suite_uart_device
 )
 
 target_compile_options(suite_uart_device PUBLIC
-  -ggdb -D UNITTEST
+  -lpthread -ggdb -D UNITTEST
 )
 
 target_include_directories(suite_uart_device PUBLIC

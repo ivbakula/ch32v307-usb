@@ -1,6 +1,7 @@
 #ifndef INC_UART_INTERFACE_H
 #define INC_UART_INTERFACE_H
 
+#include <string.h>
 #include <stdint.h>
 
 typedef enum
@@ -39,9 +40,9 @@ typedef uint8_t UART_PinConfig;
 ///@{
 
 /**
- * @name USART1_DEFAULT_MAPPING
+ * @name UART1_DEFAULT_MAPPING
  *
- * @brief Default PIN mapping for USART1.
+ * @brief Default PIN mapping for UART1.
  *
  * |------+-----+-----+------+------+------+
  * | FUNC | CK  | TX  | RX   | CTS  | RTS  |
@@ -50,12 +51,12 @@ typedef uint8_t UART_PinConfig;
  * |------+-----+-----+------+------+------|
  *
  */
-#define USART1_DEFAULT_MAPPING ((UART_PinConfig)0b00)
+#define UART1_DEFAULT_MAPPING ((UART_PinConfig)0b00)
 
 /**
- * @name USART1_ALTERNATE_MAPPING_1
+ * @name UART1_ALTERNATE_MAPPING_1
  *
- * @brief First alternative pin mapping for USART1
+ * @brief First alternative pin mapping for UART1
  *
  * |------+-----+-----+-----+------+------|
  * | FUNC | CK  | TX  | RX  | CTS  | RTS  |
@@ -64,12 +65,12 @@ typedef uint8_t UART_PinConfig;
  * |------+-----+-----+-----+------+------|
  *
  */
-#define USART1_ALTERNATE_MAPPING_1 ((UART_PinConfig)0b01)
+#define UART1_ALTERNATE_MAPPING_1 ((UART_PinConfig)0b01)
 
 /**
- * @name USART1_ALTERNATE_MAPPING_2
+ * @name UART1_ALTERNATE_MAPPING_2
  *
- * @brief Second alternative pin mapping for USART1
+ * @brief Second alternative pin mapping for UART1
  *
  * |------+------+------+-----+-----+-----|
  * | FUNC | CK   | TX   | RX  | CTS | RTS |
@@ -78,12 +79,12 @@ typedef uint8_t UART_PinConfig;
  * |------+------+------+-----+-----+-----|
  *
  */
-#define USART1_ALTERNATE_MAPPING_2 ((UART_PinConfig)0b10)
+#define UART1_ALTERNATE_MAPPING_2 ((UART_PinConfig)0b10)
 
 /**
- * @name USART1_ALTERNATE_MAPPING_3
+ * @name UART1_ALTERNATE_MAPPING_3
  *
- * @brief Third alternate pin mapping for USART1
+ * @brief Third alternate pin mapping for UART1
  *
  * |------+-----+-----+-----+-----+-----|
  * | FUNC | CK  | TX  | RX  | CTS | RTS |
@@ -92,7 +93,7 @@ typedef uint8_t UART_PinConfig;
  * |------+-----+-----+-----+-----+-----|
  *
  */
-#define USART1_ALTERNATE_MAPPING_2 ((UART_PinConfig)0b11)
+#define UART1_ALTERNATE_MAPPING_3 ((UART_PinConfig)0b11)
 ///@}
 
 typedef enum

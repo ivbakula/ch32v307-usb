@@ -16,7 +16,7 @@ UART_Err uart_enable_device(UART_Device dev, UART_PinConfig pin_config)
   return UART_Err_Success;
 }
 
-UART_Err uart_diable_device(UART_Device dev)
+UART_Err uart_disable_device(UART_Device dev)
 {
   return UART_Err_Success;
 }
