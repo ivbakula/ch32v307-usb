@@ -51,6 +51,18 @@ extern GPIO_Regfile gpioe_regfile; /*< Used for mocking of GPIO registers */
 
 #endif
 
+/**
+ * @fn _GPIO_REGISTER
+ *
+ * @brief Calculate register address by using BASE address and offset of a register that is
+ *        defined in GPIO_Regfile structure. NOTE: This seems like pretty dirty solution,
+ *        it will (probably) be replaceced by something better in the future.
+ *
+ * @parameter x: MMIO base address of GPIO port
+ *
+ * @parameter y: Name of the register. Offset of this register is calculated indirectly, by
+ *               finding it in UART_Regfile structure.
+ */
 #define _GPIO_REGISTER(x, y) ((uintptr_t) & (((GPIO_Regfile *)x)->y))
 
 #endif
