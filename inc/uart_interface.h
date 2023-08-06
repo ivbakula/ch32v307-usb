@@ -1,8 +1,8 @@
 #ifndef INC_UART_INTERFACE_H
 #define INC_UART_INTERFACE_H
 
-#include <string.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef enum
 {
@@ -102,6 +102,7 @@ typedef enum
   UART_Err_ConfigFail,
   UART_Err_NotEnabled,
   UART_Err_AlreadyEnabled,
+  UART_Err_NoSuchDevice,
 } UART_Err;
 
 /**

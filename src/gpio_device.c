@@ -85,6 +85,7 @@ GPIO_Err gpio_unlock_pin(RCC_DevId rcc_devid, GPIO_Pin pin)
   if (owner != rcc_devid)
     return GPIO_Ownership;
 
+  gpio_pin_lock[port_index][pin_index] = 0;
   return GPIO_Success;
 }
 

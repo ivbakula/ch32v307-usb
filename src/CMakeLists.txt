@@ -8,6 +8,7 @@ set(SRC_SOURCES
   rcc_device.c
   gpio_device.c
   uart_device.c
+  instances/drv/uart_instances.c
 )
 
 add_library(src STATIC ${SRC_SOURCES})

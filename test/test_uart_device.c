@@ -1,10 +1,10 @@
-#include <unity.h>
-#include <unistd.h>
-#include "uart_device.h"
-#include "rcc_device.h"
-#include "gpio_device.h"
-
 #include <pthread.h>
+#include <unistd.h>
+#include <unity.h>
+
+#include "gpio_device.h"
+#include "rcc_device.h"
+#include "uart_device.h"
 
 void setUp(void)
 {
@@ -29,8 +29,7 @@ void test_uart_enable_disable(void)
 
   /* Unlock TX pin and successfuly enable UART */
   TEST_ASSERT_EQUAL(UART_Err_Success, uart_enable_device(UART_Device1, UART1_DEFAULT_MAPPING));
-  TEST_ASSERT_EQUAL(U32_BIT(14), rcc_regfile.R32_RCC_APB2PRSTR);
-  TEST_ASSERT_EQUAL(U32_BIT(2), rcc_regfile.R32_RCC_APB2PRSTR);
+  TEST_ASSERT_EQUAL(U32_BIT(14) | U32_BIT(2), rcc_regfile.R32_RCC_APB2PCENR);
   TEST_ASSERT_EQUAL(push_pull_alternate_output_50MHz_PA9, gpioa_regfile.R32_GPIO_CFGHR & pa9_mask);
   TEST_ASSERT_EQUAL(pull_up_input_PA10, gpioa_regfile.R32_GPIO_CFGHR & pa10_mask);
 
@@ -64,17 +63,16 @@ void test_uart_reset_device(void)
   // TODO as it will not be implemented in first drop
 }
 
-
 /*
  * This function will simulate real process of writing to OUTDR  register; It will
  * force uart_putc function to block until "UART device"" is ready to write
  */
 void *test_uart_putc_helper(void *)
 {
-  sleep(5);
+  sleep(1);
   uart1_regfile.R32_UART_STATR |= U32_BIT(6);
   return NULL;
-}  
+}
 
 void test_uart_putc(void)
 {
@@ -83,11 +81,12 @@ void test_uart_putc(void)
   uart_putc(UART_Device1, 'h');
 
   TEST_ASSERT_EQUAL('h', uart1_regfile.R32_UART_DATAR);
+  pthread_join(helper_thread, NULL);
 }
 
 void *test_uart_getc_helper(void *)
 {
-  sleep(5);
+  sleep(1);
   uart1_regfile.R32_UART_DATAR = 'H';
   uart1_regfile.R32_UART_STATR |= U32_BIT(5);
   return NULL;
@@ -99,6 +98,7 @@ void test_uart_getc(void)
   pthread_create(&helper_thread, NULL, test_uart_getc_helper, NULL);
 
   TEST_ASSERT_EQUAL('H', uart_getc(UART_Device1));
+  pthread_join(helper_thread, NULL);
 }
 
 int main(void)

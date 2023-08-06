@@ -1,6 +1,9 @@
 #ifndef SRC_UART_DEVICE_H
 #define SRC_UART_DEVICE_H
 
+#include "gpio_interface.h"
+#include "irq.h"
+#include "rcc_interface.h"
 #include "uart_interface.h"
 
 typedef struct
@@ -13,6 +16,27 @@ typedef struct
   volatile uint32_t R32_UART_CTRL3;
   volatile uint32_t R32_UART_GPR;
 } UART_Regfile;
+
+typedef struct _UART_Instance
+{
+  uintptr_t base;
+  RCC_DevId rcc_devid;
+  Interrupt_IRQn irqn;
+  bool enabled;
+  bool configured;
+  uint8_t chosen_pinconfig;
+  GPIO_Pin pin_configuration[4][5];
+} UART_Instance;
+
+#define UART_TX_PIN_INDEX 1
+#define UART_RX_PIN_INDEX 2
+
+#define UART_CTRL1_TX_ENABLE (U32_BIT(3))
+#define UART_CTRL1_RX_ENABLE (U32_BIT(2))
+#define UART_CTRL1_RXNEIE    (U32_BIT(5))
+#define UART_CTRL1_ENABLE    (U32_BIT(13))
+#define UART_STATR_TC        (U32_BIT(6))
+#define UART_STATR_RXNE      (U32_BIT(5))
 
 #ifndef UNITTEST
 

@@ -77,6 +77,7 @@ add_test(suite_gpio_device_test suite_gpio_device)
 add_executable(suite_uart_device
     test_uart_device.c
     "${PROJECT_SOURCE_DIR}/src/uart_device.c"
+    "${PROJECT_SOURCE_DIR}/src/instances/drv/uart_instances.c"
     "${PROJECT_SOURCE_DIR}/src/gpio_device.c"
     "${PROJECT_SOURCE_DIR}/src/rcc_device.c"
     "${PROJECT_SOURCE_DIR}/src/mmio_ops.c"
