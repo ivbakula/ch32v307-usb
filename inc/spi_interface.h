@@ -36,7 +36,6 @@ typedef uint8_t SPI_PinConfig;
  */
 #define SPI1_DEFAULT_MAPPING ((SPI_PinConfig)0b0)
 
-
 /**
  * @name SPI1_ALTERNATE_MAPPING
  *
@@ -50,6 +49,8 @@ typedef uint8_t SPI_PinConfig;
  *
  */
 #define SPI1_ALTERNATE_MAPPING ((SPI_PinConfig)0b1)
+
+#define SPI1_NO_OF_PINCONFIGS 2
 
 /**
  * @name SPI2_DEFAULT_MAPPING
@@ -65,6 +66,7 @@ typedef uint8_t SPI_PinConfig;
  */
 #define SPI2_DEFAULT_MAPPING ((SPI_PinConfig)0b0)
 
+#define SPI2_NO_OF_PINCONFIGS 1
 /**
  * @name SPI3_DEFAULT_MAPPING
  *
@@ -92,6 +94,8 @@ typedef uint8_t SPI_PinConfig;
  *
  */
 #define SPI3_ALTERNATE_MAPPING ((SPI_PinConfig)0b1)
+
+#define SPI3_NO_OF_PINCONFIGS 2
 
 ///@}
 
@@ -308,7 +312,7 @@ SPI_Err spi_configure_device(SPI_Device dev, SPI_ConfigCtrl1 ctrl1_reg);
 void spi_write_u8(SPI_Device dev, uint8_t data);
 
 /**
- * @fn spi_master_write_u16
+ * @fn spi_write_u16
  *
  * @brief
  *
@@ -317,5 +321,28 @@ void spi_write_u8(SPI_Device dev, uint8_t data);
  * @param data
  */
 void spi_write_u16(SPI_Device dev, uint16_t data);
+
+/**
+ * @fn spi_read_u8
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return
+ */
+uint8_t spi_read_u8(SPI_Device dev);
+
+/**
+ * @fn spi_read_u16
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return 
+ */
+uint16_t spi_read_u16(SPI_Device dev);
+
 
 #endif

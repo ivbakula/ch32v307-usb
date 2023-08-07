@@ -1,82 +1,45 @@
 #include "spi_device.h"
 
-#include <stdint.h>
+#ifdef UNITTEST
+SPI_Regfile spi1_regfile;
+SPI_Regfile spi2_regfile;
+SPI_Regfile spi3_regfile;
+#endif
 
-#include "mmem.h"
-#include "rcc_devids.h"
-#include "rcc_interface.h"
-#include "spi_interface.h"
-
-static const uint32_t spi_rccdevid_mapping[] = {
-  RCC_SPI1EN,
-  RCC_SPI2EN,
-  RCC_SPI3EN,
-};
-
-static const uintptr_t spi_mmio_mapping[] = {
-  SPI1_BASE,
-  SPI2_BASE,
-  SPI3_BASE,
-};
-
-struct SPI_GPIOPort
+SPI_Err spi_enable_device(SPI_Device dev, SPI_PinConfig pin_config)
 {
-  int len;
-  uint32_t gpio_port_rccid[4];
-};
-
-static const struct SPI_GPIOPort spi_gpio_port_mapping[] = {
-  {1, {RCC_IOPAEN, 0}},
-  {0, {0, 0}},
-  {2, {RCC_IOPAEN, RCC_IOPBEN, 0}},
-  {},
-};
-
-struct GPIO_Pins
-{
-  uint8_t nss;
-  uint8_t sck;
-  uint8_t miso;
-  uint8_t mosi;
-};
-
-static const struct GPIO_Pins spi_gpio_pin_mapping[] = {
-  /* SPI1 GPIO pinout */
-  {.nss = PIN_PA(4), .sck = PIN_PA(5), .miso = PIN_PA(6), .mosi = PIN_PA(7)},
-  /* SPI2 GPIO pinout (unknown, have to check in datasheet ) */
-  {0, 0, 0, 0},
-  /* SPI3 GPIO pinout */
-  {.nss = PIN_PA(15), .sck = PIN_PB(3), .miso = PIN_PB(4), .mosi = PIN_PB(5)},
-};
-
-DeviceDescriptor *spi_create_dd(SPI_Device dev_id)
-{
-  if (dev_id >= SPI_Max)
-    return 0;
-
-  DeviceDescriptor *dev = (DeviceDescriptor *)allocm(sizeof(*dev));
-
-  if (!dev)
-    return dev;
-
-  dev->mmio_base = spi_mmio_mapping[dev_id];
-  dev->device_id = DEV_SPI;
-  dev->rcc_id = spi_rccdevid_mapping[dev_id];
-  dev->instance = dev_id;
-  dev->ready = false;
+  return SPI_Err_Success;
 }
 
-void spi_enable_dev(DeviceDescriptor *dev)
+SPI_Err spi_disable_device(SPI_Device dev)
 {
-  if (!dev)
-    return;
-
-  rcc_enable_periph(dev->rcc_id);
-
-  /* Enable GPIO port */
-  const struct SPI_GPIOPort *ports = &spi_gpio_port_mapping[dev->instance];
-
-  for (int i = 0; i < ports->len; i++) {
-    rcc_enable_periph(ports->gpio_port_rccid);
-  }
+  return SPI_Err_Success;
 }
+
+SPI_Err spi_reset_device(SPI_Device dev)
+{
+  return SPI_Err_Success;
+}
+
+SPI_Err spi_configure_device(SPI_Device dev, SPI_ConfigCtrl1 ctrl1_reg)
+{
+  return SPI_Err_Success;
+}
+
+void spi_write_u8(SPI_Device dev, uint8_t data)
+{
+}
+
+void spi_write_u16(SPI_Device dev, uint16_t data)
+{
+}
+
+uint8_t spi_read_u8(SPI_Device dev)
+{
+  return 0;
+}
+
+uint16_t spi_read_u16(SPI_Device dev)
+{
+  return 0;
+}  
