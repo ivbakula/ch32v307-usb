@@ -99,3 +99,31 @@ target_include_directories(suite_uart_device PUBLIC
 add_test(suite_uart_device_test suite_uart_device)
 
 
+##
+## TEST_SPI
+##
+add_executable(suite_spi_device
+    test_spi_device.c
+    "${PROJECT_SOURCE_DIR}/src/spi_device.c"
+    "${PROJECT_SOURCE_DIR}/src/instances/drv/spi_instances.c"
+    "${PROJECT_SOURCE_DIR}/src/gpio_device.c"
+    "${PROJECT_SOURCE_DIR}/src/rcc_device.c"
+    "${PROJECT_SOURCE_DIR}/src/mmio_ops.c"
+)
+
+target_link_libraries(suite_spi_device
+  Unity
+)
+
+target_compile_options(suite_spi_device PUBLIC
+  -lpthread -ggdb -D UNITTEST
+)
+
+target_include_directories(suite_spi_device PUBLIC
+  "${PROJECT_SOURCE_DIR}/inc"
+  "${PROJECT_SOURCE_DIR}/src"
+)
+
+add_test(suite_spi_device_test suite_spi_device)
+
+
