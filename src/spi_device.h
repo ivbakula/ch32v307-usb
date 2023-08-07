@@ -1,7 +1,7 @@
-#include "spi_interface.h"
+#include "gpio_interface.h"
 #include "irq.h"
 #include "rcc_interface.h"
-#include "gpio_interface.h"
+#include "spi_interface.h"
 
 typedef struct
 {
@@ -36,8 +36,8 @@ typedef struct _SPI_Instance
   GPIO_Pin pin_configuration[2][4];
 } SPI_Instance;
 
-#define SPI_NSS_INDEX 0
-#define SPI_SCK_INDEX 1
+#define SPI_NSS_INDEX  0
+#define SPI_SCK_INDEX  1
 #define SPI_MOSI_INDEX 2
 #define SPI_MISO_INDEX 3
 

@@ -42,4 +42,4 @@ uint8_t spi_read_u8(SPI_Device dev)
 uint16_t spi_read_u16(SPI_Device dev)
 {
   return 0;
-}  
+}

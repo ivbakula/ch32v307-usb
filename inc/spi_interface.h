@@ -62,7 +62,7 @@ typedef uint8_t SPI_PinConfig;
  * |------+------+------+------+------|
  * | PIN  | PB12 | PB13 | PB14 | PB15 |
  * |------+------+------+------+------|
- * 
+ *
  */
 #define SPI2_DEFAULT_MAPPING ((SPI_PinConfig)0b0)
 
@@ -104,7 +104,7 @@ typedef uint8_t SPI_PinConfig;
  *
  * @brief This section defines macros that will be used for configuring SPI device. This section in
  *        particular, covers options for SPIx_CTRL1 register. Macros with suffix _EN, enable specific feature,
- *        
+ *
  *        For more info about SPIx_CTRL1 register, check out ch32v307-usb/doc/CH32FV2x_V3xRM.PDF
  */
 ///@{
@@ -115,7 +115,7 @@ typedef uint16_t SPI_ConfigCtrl1;
  *
  * @brief Unidirectional data mode enable. In other words, use only one line for communication. If unidirectional
  *        data mode is enabled, see SPI_CTRL1_BIDIOE_EN also.
- * 
+ *
  */
 #define SPI_CTRL1_BIDIMODE_EN ((SPI_ConfigCtrl1)U32_BIT(15))
 
@@ -132,7 +132,7 @@ typedef uint16_t SPI_ConfigCtrl1;
  *
  * @brief Hardware CRC check enable. This bit can only be written when SPE is 0. Only full duplex mode is
  *        supported by HW CRC check
- * 
+ *
  */
 #define SPI_CTRL1_HWCRC_EN ((SPI_ConfigCtrl1)U32_BIT(13))
 
@@ -145,17 +145,16 @@ typedef uint16_t SPI_ConfigCtrl1;
 #define SPI1_CTRL1_CRCNEXT_1 ((SPI_ConfigCtrl1)U32_BIT(12))
 #define SPI1_CTRL1_CRCNEXT_0 ((SPI_ConfigCtrl1)0)
 
-
 /**
  * @name SPI_CTRL1_DFF
  *
  * @brief Data frame length;
  *
- * @suffix _8: 8 bit data frame length 
+ * @suffix _8: 8 bit data frame length
  * @suffix _16: 16 bit data frame length
  *
  */
-#define SPI1_CTRL1_DFF_8 ((SPI_ConfigCtrl1)0)
+#define SPI1_CTRL1_DFF_8  ((SPI_ConfigCtrl1)0)
 #define SPI1_CTRL1_DFF_16 ((SPI_ConfigCtrl1)U16_BIT(11))
 
 /**
@@ -185,7 +184,7 @@ typedef uint16_t SPI_ConfigCtrl1;
  * @name
  *
  * @brief
- * 
+ *
  */
 #define SPI_CTRL1_LSBFIRST ((SPI_ConfigCtrl1)U16_BIT(7))
 
@@ -203,7 +202,6 @@ typedef uint16_t SPI_ConfigCtrl1;
  */
 #define SPI_CTRL1_SPIEN ((SPI_ConfigCtrl1)U16_BIT(6))
 
-
 /**
  * @name SPI_CTRL1_BR_(2|4|8|16|32|64|128|256)
  *
@@ -211,11 +209,11 @@ typedef uint16_t SPI_ConfigCtrl1;
  *        is enabled.
  */
 #define SPI_CTRL1_BR_FPCLK_2 ((SPI_ConfigCtrl1)0))
-#define SPI_CTRL1_BR_FPCLK_4 ((SPI_ConfigCtrl1)(0b001 << 3))
-#define SPI_CTRL1_BR_FPCLK_8 ((SPI_ConfigCtrl1)(0b010 << 3))
-#define SPI_CTRL1_BR_FPCLK_16 ((SPI_ConfigCtrl1)(0b011 << 3))
-#define SPI_CTRL1_BR_FPCLK_32 ((SPI_ConfigCtrl1)(0b100 << 3))
-#define SPI_CTRL1_BR_FPCLK_64 ((SPI_ConfigCtrl1)(0b101 << 3))
+#define SPI_CTRL1_BR_FPCLK_4   ((SPI_ConfigCtrl1)(0b001 << 3))
+#define SPI_CTRL1_BR_FPCLK_8   ((SPI_ConfigCtrl1)(0b010 << 3))
+#define SPI_CTRL1_BR_FPCLK_16  ((SPI_ConfigCtrl1)(0b011 << 3))
+#define SPI_CTRL1_BR_FPCLK_32  ((SPI_ConfigCtrl1)(0b100 << 3))
+#define SPI_CTRL1_BR_FPCLK_64  ((SPI_ConfigCtrl1)(0b101 << 3))
 #define SPI_CTRL1_BR_FPCLK_128 ((SPI_ConfigCtrl1)(0b110 << 3))
 #define SPI_CTRL1_BR_FPCLK_256 ((SPI_ConfigCtrl1)(0b111 << 3))
 
@@ -223,7 +221,7 @@ typedef uint16_t SPI_ConfigCtrl1;
  * @name SPI_CTRL1_MASTER
  *
  * @brief Configure SPI device as Master device. This setting cannot be changed after SPI device is enabled
- * 
+ *
  */
 #define SPI_CTRL1_MASTER ((SPI_ConfigCtrl1)U16_BIT(2))
 
@@ -340,9 +338,8 @@ uint8_t spi_read_u8(SPI_Device dev);
  *
  * @param dev
  *
- * @return 
+ * @return
  */
 uint16_t spi_read_u16(SPI_Device dev);
-
 
 #endif
