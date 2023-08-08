@@ -1,11 +1,11 @@
 #include <pthread.h>
+#include <string.h>
 #include <unistd.h>
 #include <unity.h>
-#include <string.h>
 
-#include "spi_device.h"
-#include "rcc_device.h"
 #include "gpio_device.h"
+#include "rcc_device.h"
+#include "spi_device.h"
 
 void setUp(void)
 {
@@ -25,7 +25,7 @@ void test_spi_enable_disable_device_spi1_1line_tx_config(void)
   const uint32_t pa4_mask = (0xf << 16);
   const uint32_t pa5_mask = (0xf << 20);
   const uint32_t pa7_mask = (0xf << 28);
-  
+
   /* Lock SCK pin and fail with ConfigFail error code */
   gpio_lock_pin(1, PA4);
   TEST_ASSERT_EQUAL(SPI_Err_ConfigFail, spi_enable_device(SPI_Device1, SPI1_DEFAULT_MAPPING));
@@ -51,7 +51,8 @@ void test_spi_enable_disable_device_spi1_1line_tx_config(void)
 
 void test_spi_configure_device(void)
 {
-  const uint32_t cfgr1 = U16_BIT(15) | U16_BIT(14) | U16_BIT(9) | U16_BIT(8) | U16_BIT(6) | U16_BIT(4) | U16_BIT(3) | U16_BIT(2);
+  const uint32_t cfgr1 =
+    U16_BIT(15) | U16_BIT(14) | U16_BIT(9) | U16_BIT(8) | U16_BIT(6) | U16_BIT(4) | U16_BIT(3) | U16_BIT(2);
 
   const SPI_Config spi_config = {
     ._SDDMEN = 1,  /* enable SDDM */
@@ -60,10 +61,10 @@ void test_spi_configure_device(void)
     ._CRCNEXT = 0,
     ._DFF = 0,
     ._RXONLY = 0,
-    ._NSS_CFG = 1,   /* SW NSS Control */
-    ._NSS_LVL = 1,   /* NSS high */
+    ._NSS_CFG = 1,  /* SW NSS Control */
+    ._NSS_LVL = 1,  /* NSS high */
     ._LSBFIRST = 0, /* MSB FIRST */
-    ._SPI_EN = 1,    /* Enable SPI device */
+    ._SPI_EN = 1,   /* Enable SPI device */
     ._BAUD_RATE = SPI_CTRL1_BR_FPCLK_128,
     ._MSTR = 1,
     ._CPOL = 0,
@@ -99,7 +100,7 @@ void test_spi_write_u8(void)
   pthread_create(&helper_thread, NULL, test_spi_write_helper, NULL);
   spi_write_u8(SPI_Device1, 'U');
   pthread_join(helper_thread, NULL);
-  
+
   TEST_ASSERT_EQUAL('U', spi1_regfile.DATAR);
 }
 
@@ -109,7 +110,7 @@ void test_spi_write_u16(void)
   pthread_create(&helper_thread, NULL, test_spi_write_helper, NULL);
   spi_write_u16(SPI_Device1, 0xdead);
   pthread_join(helper_thread, NULL);
-  
+
   TEST_ASSERT_EQUAL(0xdead, spi1_regfile.DATAR);
 }
 

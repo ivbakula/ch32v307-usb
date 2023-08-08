@@ -203,7 +203,6 @@ typedef uint16_t SPI_ConfigCtrl1;
  */
 #define SPI_CTRL1_SPIEN ((SPI_ConfigCtrl1)U16_BIT(6))
 
-
 typedef union
 {
   union
@@ -211,25 +210,25 @@ typedef union
     /* SPI_CTRL1 */
     struct
     {
-      uint16_t _SDDMEN : 1;      /*< Single direction data-mode enable (BIDIMODE in Reference manual). */
-      uint16_t _SDDM_TX : 1;     /*< Enable TX only in SDDM. Use in conjucture with _SDDMEN" */
-      uint16_t _CRCEN : 1;       /*< Enable HW CRC check */
-      uint16_t _CRCNEXT : 1;     /*< I have no idea. Check RM if you're interested in knowing */
-      uint16_t _DFF : 1;         /*< Data frame length: 1: 16bit, 0: 8bit */
-      uint16_t _RXONLY : 1;      /*< Rx only (simplex) in 2-wire mode (use when _SDDMEN==0) */
-      uint16_t _NSS_CFG : 1;     /*< NSS pin control configuration; 1: SW NSS control, 0: HW NSS control */
-      uint16_t _NSS_LVL : 1;     /*< NSS pin logic level; 1: high 0: low. Use when _NSS_CFG == 1 */
-      uint16_t _LSBFIRST : 1;    /*< 1: send LSB first, 0: send MSB first */
-      uint16_t _SPI_EN : 1;      /*< 1: Enable SPI device */
-      uint16_t _BAUD_RATE : 3;   /*< Spi baud rate setting. Check SPI_CTRL_BR_FPCLK macros */
-      uint16_t _MSTR : 1;        /*< 1: SPI device in master mode */
-      uint16_t _CPOL : 1;        /*< Clock polarity */
-      uint16_t _CPHA : 1;        /*< Clock phase */
+      uint16_t _SDDMEN : 1;    /*< Single direction data-mode enable (BIDIMODE in Reference manual). */
+      uint16_t _SDDM_TX : 1;   /*< Enable TX only in SDDM. Use in conjucture with _SDDMEN" */
+      uint16_t _CRCEN : 1;     /*< Enable HW CRC check */
+      uint16_t _CRCNEXT : 1;   /*< I have no idea. Check RM if you're interested in knowing */
+      uint16_t _DFF : 1;       /*< Data frame length: 1: 16bit, 0: 8bit */
+      uint16_t _RXONLY : 1;    /*< Rx only (simplex) in 2-wire mode (use when _SDDMEN==0) */
+      uint16_t _NSS_CFG : 1;   /*< NSS pin control configuration; 1: SW NSS control, 0: HW NSS control */
+      uint16_t _NSS_LVL : 1;   /*< NSS pin logic level; 1: high 0: low. Use when _NSS_CFG == 1 */
+      uint16_t _LSBFIRST : 1;  /*< 1: send LSB first, 0: send MSB first */
+      uint16_t _SPI_EN : 1;    /*< 1: Enable SPI device */
+      uint16_t _BAUD_RATE : 3; /*< Spi baud rate setting. Check SPI_CTRL_BR_FPCLK macros */
+      uint16_t _MSTR : 1;      /*< 1: SPI device in master mode */
+      uint16_t _CPOL : 1;      /*< Clock polarity */
+      uint16_t _CPHA : 1;      /*< Clock phase */
     };
     uint16_t cfgr1;
   };
 
-  /* SPI_CTRL2 */  
+  /* SPI_CTRL2 */
   union
   {
     struct
