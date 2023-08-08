@@ -21,7 +21,7 @@ SPI_Err spi_reset_device(SPI_Device dev)
   return SPI_Err_Success;
 }
 
-SPI_Err spi_configure_device(SPI_Device dev, SPI_ConfigCtrl1 ctrl1_reg)
+SPI_Err spi_configure_device(SPI_Device dev, SPI_Config config)
 {
   return SPI_Err_Success;
 }

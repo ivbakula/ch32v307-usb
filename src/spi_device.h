@@ -5,9 +5,9 @@
 
 typedef struct
 {
-  volatile uint16_t CTLR1;
+  volatile uint16_t CTRL1;
   volatile uint16_t padding_1;
-  volatile uint16_t CTLR2;
+  volatile uint16_t CTRL2;
   volatile uint16_t padding_2;
   volatile uint16_t STATR;
   volatile uint16_t padding_3;

@@ -170,7 +170,7 @@ typedef uint16_t SPI_ConfigCtrl1;
  * @brief CS Pin management. This macro will force Software control of the NSS pin
  *
  */
-#define SPI_CTRL1_SSM_SW ((SPI_ConfigCtrl1)U16_BIT(9))
+#define SPI_CTRL1_NSS_SW ((SPI_ConfigCtrl1)U16_BIT(9))
 
 /**
  * @name SPI_CTRL1_NSS_LEVEL_MASK
@@ -179,6 +179,7 @@ typedef uint16_t SPI_ConfigCtrl1;
  *        NSS will be pulled high.
  */
 #define SPI_CTRL1_NSS_LEVEL_MASK ((SPI_ConfigCtrl1)U16_BIT(8))
+#define SPI_CTRL1_NSS_LEVEL_HIGH ((SPI_ConfigCtrl1)U16_BIT(8))
 
 /**
  * @name
@@ -202,6 +203,49 @@ typedef uint16_t SPI_ConfigCtrl1;
  */
 #define SPI_CTRL1_SPIEN ((SPI_ConfigCtrl1)U16_BIT(6))
 
+
+typedef union
+{
+  union
+  {
+    /* SPI_CTRL1 */
+    struct
+    {
+      uint16_t _SDDMEN : 1;      /*< Single direction data-mode enable (BIDIMODE in Reference manual). */
+      uint16_t _SDDM_TX : 1;     /*< Enable TX only in SDDM. Use in conjucture with _SDDMEN" */
+      uint16_t _CRCEN : 1;       /*< Enable HW CRC check */
+      uint16_t _CRCNEXT : 1;     /*< I have no idea. Check RM if you're interested in knowing */
+      uint16_t _DFF : 1;         /*< Data frame length: 1: 16bit, 0: 8bit */
+      uint16_t _RXONLY : 1;      /*< Rx only (simplex) in 2-wire mode (use when _SDDMEN==0) */
+      uint16_t _NSS_CFG : 1;     /*< NSS pin control configuration; 1: SW NSS control, 0: HW NSS control */
+      uint16_t _NSS_LVL : 1;     /*< NSS pin logic level; 1: high 0: low. Use when _NSS_CFG == 1 */
+      uint16_t _LSBFIRST : 1;    /*< 1: send LSB first, 0: send MSB first */
+      uint16_t _SPI_EN : 1;      /*< 1: Enable SPI device */
+      uint16_t _BAUD_RATE : 3;   /*< Spi baud rate setting. Check SPI_CTRL_BR_FPCLK macros */
+      uint16_t _MSTR : 1;        /*< 1: SPI device in master mode */
+      uint16_t _CPOL : 1;        /*< Clock polarity */
+      uint16_t _CPHA : 1;        /*< Clock phase */
+    };
+    uint16_t cfgr1;
+  };
+
+  /* SPI_CTRL2 */  
+  union
+  {
+    struct
+    {
+      uint8_t _TXEIE : 1;     /*< TX buffer empty interrupt enable */
+      uint8_t _RXNEIE : 1;    /*< RX buffer not empty interrupt enable */
+      uint8_t _ERRIE : 1;     /*< Error interrupt enable. */
+      uint8_t _reserved2 : 2; /*< don't care */
+      uint8_t _NSSOE : 1;     /*< NSS output enable. You don't need to touch this bit if _NSS_CFG==1. I think :) */
+      uint8_t _TXDMAEN : 1;   /*< TX DMA enable */
+      uint8_t _RXDMAEN : 1;   /*< RX DMA enable */
+    };
+    uint8_t cfgrs; /*< upper 16 bits contain SPI_CTRL1 register. Lower 16 bits contain SPI_CTRL2 register */
+  };
+} SPI_Config;
+
 /**
  * @name SPI_CTRL1_BR_(2|4|8|16|32|64|128|256)
  *
@@ -209,13 +253,13 @@ typedef uint16_t SPI_ConfigCtrl1;
  *        is enabled.
  */
 #define SPI_CTRL1_BR_FPCLK_2 ((SPI_ConfigCtrl1)0))
-#define SPI_CTRL1_BR_FPCLK_4   ((SPI_ConfigCtrl1)(0b001 << 3))
-#define SPI_CTRL1_BR_FPCLK_8   ((SPI_ConfigCtrl1)(0b010 << 3))
-#define SPI_CTRL1_BR_FPCLK_16  ((SPI_ConfigCtrl1)(0b011 << 3))
-#define SPI_CTRL1_BR_FPCLK_32  ((SPI_ConfigCtrl1)(0b100 << 3))
-#define SPI_CTRL1_BR_FPCLK_64  ((SPI_ConfigCtrl1)(0b101 << 3))
-#define SPI_CTRL1_BR_FPCLK_128 ((SPI_ConfigCtrl1)(0b110 << 3))
-#define SPI_CTRL1_BR_FPCLK_256 ((SPI_ConfigCtrl1)(0b111 << 3))
+#define SPI_CTRL1_BR_FPCLK_4   ((SPI_ConfigCtrl1)(0b001))
+#define SPI_CTRL1_BR_FPCLK_8   ((SPI_ConfigCtrl1)(0b010))
+#define SPI_CTRL1_BR_FPCLK_16  ((SPI_ConfigCtrl1)(0b011))
+#define SPI_CTRL1_BR_FPCLK_32  ((SPI_ConfigCtrl1)(0b100))
+#define SPI_CTRL1_BR_FPCLK_64  ((SPI_ConfigCtrl1)(0b101))
+#define SPI_CTRL1_BR_FPCLK_128 ((SPI_ConfigCtrl1)(0b110))
+#define SPI_CTRL1_BR_FPCLK_256 ((SPI_ConfigCtrl1)(0b111))
 
 /**
  * @name SPI_CTRL1_MASTER
@@ -250,6 +294,9 @@ typedef uint16_t SPI_ConfigCtrl1;
 typedef enum
 {
   SPI_Err_Success,
+  SPI_Err_ConfigFail,
+  SPI_Err_AlreadyEnabled,
+  SPI_Err_NotEnabled,
 } SPI_Err;
 
 /**
@@ -296,7 +343,7 @@ SPI_Err spi_reset_device(SPI_Device dev);
  *
  * @param ctrl1
  */
-SPI_Err spi_configure_device(SPI_Device dev, SPI_ConfigCtrl1 ctrl1_reg);
+SPI_Err spi_configure_device(SPI_Device dev, SPI_Config config);
 
 /**
  * @fn spi_write_u8
