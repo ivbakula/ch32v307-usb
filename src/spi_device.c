@@ -195,4 +195,4 @@ void spi_wait_tx(SPI_Device dev)
 
   while (!mmio_and_readw(_SPI_REGISTER(base, STATR), U16_BIT(1)))
     ;
-}  
+}

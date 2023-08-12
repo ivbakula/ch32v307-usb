@@ -22,14 +22,15 @@ typedef struct
   GPIO_Pin LD; /*< Lock detect. */
 } ADF435x_PinConfig
 
-/**
- * @fn adf435x_configure_interface
- *
- * @brief
- *
- * @param spi_bus: SPI device that ADF435x is connected to. 
- */
-ADF435x_Err adf435x_create_interface(SPI_Device spi_bus, ADF435x_PinConfig pin_config);
+  /**
+   * @fn adf435x_configure_interface
+   *
+   * @brief
+   *
+   * @param spi_bus: SPI device that ADF435x is connected to.
+   */
+  ADF435x_Err
+  adf435x_create_interface(SPI_Device spi_bus, ADF435x_PinConfig pin_config);
 
 /**
  * @fn adf435x_program_device

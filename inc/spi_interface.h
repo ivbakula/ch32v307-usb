@@ -1,8 +1,8 @@
 #ifndef INC_SPI_INTERFACE_H
 #define INC_SPI_INTERFACE_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef enum
 {
@@ -276,7 +276,6 @@ void spi_write(SPI_Device dev, uint16_t data);
  */
 uint16_t spi_read(SPI_Device dev);
 
-
 /**
  * @fn spi_is_enabled
  *
@@ -319,5 +318,5 @@ uint8_t spi_packet_size(SPI_Device dev);
  *
  */
 void spi_wait_tx(SPI_Device dev);
-  
+
 #endif
