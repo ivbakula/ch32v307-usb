@@ -2,6 +2,7 @@
 #define INC_SPI_INTERFACE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum
 {
@@ -275,4 +276,48 @@ void spi_write(SPI_Device dev, uint16_t data);
  */
 uint16_t spi_read(SPI_Device dev);
 
+
+/**
+ * @fn spi_is_enabled
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return is_enabled
+ */
+bool spi_is_enabled(SPI_Device dev);
+
+/**
+ * @fn spi_is_configured
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return is_configured
+ */
+bool spi_is_configured(SPI_Device dev);
+
+/**
+ * @fn spi_packet_size
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return packet size
+ */
+uint8_t spi_packet_size(SPI_Device dev);
+
+/**
+ * @fn spi_wait_tx
+ *
+ * @brief Wait for TX to finish.
+ *
+ * @param dev
+ *
+ */
+void spi_wait_tx(SPI_Device dev);
+  
 #endif

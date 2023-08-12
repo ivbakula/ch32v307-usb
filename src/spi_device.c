@@ -1,5 +1,6 @@
 #include "spi_device.h"
 
+#include "gpio_device.h"
 #include "gpio_interface.h"
 #include "mmio_ops.h"
 #include "rcc_interface.h"
@@ -160,3 +161,38 @@ uint16_t spi_read(SPI_Device dev)
 
   return mmio_readw(_SPI_REGISTER(base, DATAR));
 }
+
+bool spi_is_enabled(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return SPI_Err_NoSuchDevice;
+
+  return SPI_Instances[dev].enabled;
+}
+
+bool spi_is_configured(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return SPI_Err_NoSuchDevice;
+
+  return SPI_Instances[dev].configured;
+}
+
+uint8_t spi_packet_size(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return SPI_Err_NoSuchDevice;
+
+  return SPI_Instances[dev].packet_sz;
+}
+
+void spi_wait_tx(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return;
+
+  uintptr_t base = SPI_Instances[dev].base;
+
+  while (!mmio_and_readw(_SPI_REGISTER(base, STATR), U16_BIT(1)))
+    ;
+}  

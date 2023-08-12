@@ -87,11 +87,9 @@ static inline void __trap_handle_interrupt(uint32_t irqn)
     IRQ_interrupt_vector[irqn]();
 }
 
-extern void red_light();
 static inline void __trap_handle_exception(uint32_t excn) __attribute__((always_inline));
 static inline void __trap_handle_exception(uint32_t excn)
 {
-  red_light();
   return;
 }
 
