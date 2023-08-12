@@ -21,6 +21,9 @@ UART_Regfile uart8_regfile;
 extern unsigned char uart_instantiated[8];
 extern UART_Instance UART_Instances[8];
 
+// TODO: in _enable function, only select pin configuration. Actual pin options
+// shall be set in configure routine. Here, you should only enable RCC to both
+// GPIO port and to actual UART device
 UART_Err uart_enable_device(UART_Device dev, UART_PinConfig pin_config)
 {
   if (!uart_instantiated[dev])

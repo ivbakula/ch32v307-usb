@@ -38,7 +38,7 @@ void test_uart_enable_disable(void)
 
   /* Disable successfuly */
   TEST_ASSERT_EQUAL(UART_Err_Success, uart_disable_device(UART_Device1));
-  TEST_ASSERT_EQUAL(0, rcc_regfile.R32_RCC_APB2PRSTR);
+  TEST_ASSERT_EQUAL(U32_BIT(2), rcc_regfile.R32_RCC_APB2PCENR); /* Only GPIOA port is enabled */
 
   /* Fail with NotEnabled error code */
   TEST_ASSERT_EQUAL(UART_Err_NotEnabled, uart_disable_device(UART_Device1));
