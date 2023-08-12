@@ -1,3 +1,6 @@
+#ifndef SRC_SPI_DEVICE_H
+#define SRC_SPI_DEVICE_H
+
 #include "gpio_interface.h"
 #include "irq.h"
 #include "rcc_interface.h"
@@ -31,6 +34,7 @@ typedef struct _SPI_Instance
   Interrupt_IRQn irqn;
   bool enabled;
   bool configured;
+  uint8_t packet_sz;
   uint8_t chosen_pinconfig;
   uint8_t no_pin_configs;
   GPIO_Pin pin_configuration[2][4];
@@ -68,5 +72,8 @@ extern SPI_Regfile spi3_regfile;
 /************************************/
 /* END UNITTEST DEFINITIONS         */
 /************************************/
+#endif
+
+#define _SPI_REGISTER(X,Y) ((uintptr_t) & (((SPI_Regfile *)X)->Y))
 
 #endif
