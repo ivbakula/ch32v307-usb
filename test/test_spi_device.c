@@ -16,33 +16,32 @@ void tearDown(void)
   memset(&spi1_regfile, 0, sizeof(spi1_regfile));
 }
 
-  const SPI_Config spi_config = {
-    .CTRL1 =
-      {
-        ._SDDMEN = 1,  /* enable SDDM */
-        ._SDDM_TX = 1, /* enable TX only in SDDM */
-        ._CRCEN = 0,
-        ._CRCNEXT = 0,
-        ._DFF = 0,
-        ._RXONLY = 0,
-        ._NSS_CFG = 1,  /* SW NSS Control */
-        ._NSS_LVL = 1,  /* NSS high */
-        ._LSBFIRST = 0, /* MSB FIRST */
-        ._SPI_EN = 1,   /* Enable SPI device */
-        ._BAUD_RATE = SPI_CTRL1_BR_FPCLK_16,
-        ._MSTR = 1,
-        ._CPOL = 0,
-        ._CPHA = 0,
-      },
-    .CTRL2 =
-      {
-        .data = 0,
-      },
-  };
+const SPI_Config spi_config = {
+  .CTRL1 =
+    {
+      ._SDDMEN = 1,  /* enable SDDM */
+      ._SDDM_TX = 1, /* enable TX only in SDDM */
+      ._CRCEN = 0,
+      ._CRCNEXT = 0,
+      ._DFF = 0,
+      ._RXONLY = 0,
+      ._NSS_CFG = 1,  /* SW NSS Control */
+      ._NSS_LVL = 1,  /* NSS high */
+      ._LSBFIRST = 0, /* MSB FIRST */
+      ._SPI_EN = 1,   /* Enable SPI device */
+      ._BAUD_RATE = SPI_CTRL1_BR_FPCLK_16,
+      ._MSTR = 1,
+      ._CPOL = 0,
+      ._CPHA = 0,
+    },
+  .CTRL2 =
+    {
+      .data = 0,
+    },
+};
 
 void test_spi_enable_disable_device_spi1_1line_tx_config(void)
 {
-
   /* Lock SCK pin and fail with ConfigFail error code */
   gpio_lock_pin(1, PA4);
   TEST_ASSERT_EQUAL(SPI_Err_ConfigFail, spi_enable_device(SPI_Device1, SPI1_DEFAULT_MAPPING));
@@ -98,7 +97,6 @@ void test_spi_configure_device(void)
 
   const uint32_t cfgr1 =
     U16_BIT(15) | U16_BIT(14) | U16_BIT(9) | U16_BIT(8) | U16_BIT(6) | U16_BIT(4) | U16_BIT(3) | U16_BIT(2);
-
 
   TEST_ASSERT_EQUAL(cfgr1, spi_config.CTRL1.data);
 

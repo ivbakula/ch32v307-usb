@@ -1,4 +1,5 @@
 #include "spi_device.h"
+
 #include "gpio_interface.h"
 #include "mmio_ops.h"
 #include "rcc_interface.h"
@@ -58,7 +59,7 @@ SPI_Err spi_enable_device(SPI_Device dev, SPI_PinConfig pin_config)
     // return CONFIGURATION ERROR.
     if (gpio_lock_pin(rcc_devid, inst->pin_configuration[pin_config][i])) {
       spi_gpio_unlock_pin_group(rcc_devid, &inst->pin_configuration[pin_config][0]);
-      return SPI_Err_ConfigFail;      
+      return SPI_Err_ConfigFail;
     }
   }
 
@@ -104,12 +105,12 @@ SPI_Err spi_configure_device(SPI_Device dev, SPI_Config config)
   if (!inst->enabled)
     return SPI_Err_NotEnabled;
 
-  uintptr_t base = inst->base; 
+  uintptr_t base = inst->base;
   RCC_DevId rcc_devid = inst->rcc_devid;
   uint8_t pin_config = inst->chosen_pinconfig;
 
   // This is Master mode SDDM TX configuration.
-  // TODO add handlers for other configurations 
+  // TODO add handlers for other configurations
   if (config.CTRL1._MSTR == 1 && config.CTRL1._SDDMEN == 1 && config.CTRL1._SDDM_TX == 1) {
     for (int i = 0; i < 4; i++) {
       gpio_pin_config(inst->pin_configuration[pin_config][i], GPIO_Mode_Output_50MHz, GPIO_Output_PushPullAlt);
@@ -158,5 +159,4 @@ uint16_t spi_read(SPI_Device dev)
     return mmio_and_readb(_SPI_REGISTER(base, DATAR), 0xff);
 
   return mmio_readw(_SPI_REGISTER(base, DATAR));
-}  
-
+}

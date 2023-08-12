@@ -74,6 +74,6 @@ extern SPI_Regfile spi3_regfile;
 /************************************/
 #endif
 
-#define _SPI_REGISTER(X,Y) ((uintptr_t) & (((SPI_Regfile *)X)->Y))
+#define _SPI_REGISTER(X, Y) ((uintptr_t) & (((SPI_Regfile *)X)->Y))
 
 #endif

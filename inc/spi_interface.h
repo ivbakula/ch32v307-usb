@@ -266,11 +266,12 @@ void spi_write(SPI_Device dev, uint16_t data);
 /**
  * @fn spi_read
  *
- * @brief Read data from SPI device. 
+ * @brief Read data from SPI device.
  *
  * @param dev Desired SPI device
  *
- * @return data Data that was read from the SPI device. If max data packet on SPI device is 8 bits, than lower byte contains received data  
+ * @return data Data that was read from the SPI device. If max data packet on SPI device is 8 bits, than lower byte contains
+ * received data
  */
 uint16_t spi_read(SPI_Device dev);
 
