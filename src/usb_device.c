@@ -56,7 +56,7 @@ static void usb_update_ep0(void)
 /* ====================================================================== */
 /* ===============================DEBUG================================== */
 #ifdef DEBUG
-//void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg);
+// void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg);
 static inline void enable_usbd_debug(void) __attribute__((always_inline));
 static inline void enable_usbd_debug(void)
 {

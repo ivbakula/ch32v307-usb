@@ -1,16 +1,17 @@
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "adf435x_control.h"
+#include "time.h"
 #include "uart_interface.h"
 #include "usb_interface.h"
-#include "time.h"
 
 void uart_puts(UART_Device dev, const char *str)
 {
   while (*str) {
     uart_putc(dev, *str);
-    str++;    
+    str++;
   }
 }
 
@@ -22,14 +23,14 @@ int _printf(const char *fmt, ...)
   va_end(args);
 
   char msg[len + 1];
-  memset(msg, 0, len +1);
+  memset(msg, 0, len + 1);
   va_start(args, fmt);
   vsnprintf(msg, len + 1, fmt, args);
   va_end(args);
 
   uart_puts(UART_Device1, msg);
   return len;
-}  
+}
 
 const SPI_Config spi1_config = {
   .CTRL1 =
@@ -67,7 +68,7 @@ void adf435x_dump_registers(ADF435x_Regs *regs)
   _printf("R3: 0x%08x\r\n", regs->adf435x_regs[3]);
   _printf("R4: 0x%08x\r\n", regs->adf435x_regs[4]);
   _printf("R5: 0x%08x\r\n", regs->adf435x_regs[5]);
-  _printf("ADF435x_REGISTER_DUMP END\r\n");  
+  _printf("ADF435x_REGISTER_DUMP END\r\n");
 }
 
 void handle_usb_request(uint32_t command, uint8_t *data)
@@ -76,7 +77,7 @@ void handle_usb_request(uint32_t command, uint8_t *data)
     case SPI_WRITE_COMMAND:
       _printf("SPI_WRITE_COMMAND\r\n");
       for (int i = 0; i < strlen(data); i++) {
-	spi_write(SPI_Device1, data[i]);
+        spi_write(SPI_Device1, data[i]);
       }
       break;
 
@@ -119,7 +120,7 @@ const char spi_error_codes[5][32] = {
 int main()
 {
   system_pll_clock_init(PLLMul_6);
-  
+
   uart_enable_device(UART_Device1, UART1_DEFAULT_MAPPING);
   uart_configure_device(UART_Device1, 9600, sysclock_frequency);
 
@@ -135,7 +136,7 @@ int main()
     _printf("SPI configure device failed for SPI_Device%d with error code: %s\r\n", SPI_Device1, spi_error_codes[spi_err]);
     goto nothing;
   }
-  
+
   ADF435x_PinConfig pinc = {.LE = PA1, .CE = PA0, .LD = PA2};
   adf435x_create_interface(SPI_Device1, pinc);
 
@@ -146,4 +147,4 @@ int main()
 nothing:
   while (1)
     ;
-}  
+}

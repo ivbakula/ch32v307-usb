@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define SPI_PACKET_TRANSFER_SIZE_8 (sizeof(uint8_t))
+#define SPI_PACKET_TRANSFER_SIZE_8  (sizeof(uint8_t))
 #define SPI_PACKET_TRANSFER_SIZE_16 (sizeof(uint16_t))
 typedef enum
 {

@@ -1,6 +1,8 @@
 #include "adf435x_control.h"
-#include "time.h"
+
 #include <stddef.h>
+
+#include "time.h"
 
 static SPI_Device spi_iface;
 static bool is_created;
@@ -40,13 +42,12 @@ ADF435x_Err adf435x_create_interface(SPI_Device spi_bus, ADF435x_PinConfig pin_c
   return ADF435x_Err_Success;
 }
 
-
 typedef union
 {
   uint8_t r8[4];   /* use this array if spi_transfer_size == SPI_PACKET_TRANSFER_SIZE_8 */
   uint16_t r16[2]; /* use this array if spi_transfer_size == SPI_PACKET_TRANSFER_SIZE_16 */
 
-  uint32_t reg;    /*  Whole register */
+  uint32_t reg; /*  Whole register */
 } ADF435x_RegisterHelper;
 
 static void adf435x_write_register(uint32_t reg)
