@@ -124,7 +124,7 @@ SPI_Err spi_configure_device(SPI_Device dev, SPI_Config config)
   mmio_writew(_SPI_REGISTER(base, CTRL1), config.CTRL1.data);
   mmio_writew(_SPI_REGISTER(base, CTRL2), config.CTRL2.data);
 
-  inst->packet_sz = (config.CTRL1._DFF) ? SPI_PACKET_TRANSFER_SIZE_8 : SPI_PACKET_TRANSFER_SIZE_16;
+  inst->packet_sz = (config.CTRL1._DFF) ? SPI_PACKET_TRANSFER_SIZE_16 : SPI_PACKET_TRANSFER_SIZE_8;
 
   inst->configured = true;
   return SPI_Err_Success;
@@ -156,7 +156,7 @@ uint16_t spi_read(SPI_Device dev)
   while (!(mmio_and_readw(_SPI_REGISTER(base, STATR), U16_BIT(0))))
     ;
 
-  if (packet_sz == 8)
+  if (packet_sz == SPI_PACKET_TRANSFER_SIZE_8)
     return mmio_and_readb(_SPI_REGISTER(base, DATAR), 0xff);
 
   return mmio_readw(_SPI_REGISTER(base, DATAR));
