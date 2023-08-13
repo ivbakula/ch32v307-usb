@@ -56,16 +56,16 @@ static void usb_update_ep0(void)
 /* ====================================================================== */
 /* ===============================DEBUG================================== */
 #ifdef DEBUG
-void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg);
+// void gpio_port_config(uint32_t gpio_base, uint8_t port, uint8_t cfg);
 static inline void enable_usbd_debug(void) __attribute__((always_inline));
 static inline void enable_usbd_debug(void)
 {
-  RCC->R32_RCC_APB2PCENR |= RCC_APB2PCENR_IOPBEN;
-  gpio_port_config(GPIOB_BASE, 10, 0b0001);
-  gpio_port_config(GPIOB_BASE, 11, 0b0001);
-  gpio_port_config(GPIOB_BASE, 12, 0b0001);
-  gpio_port_config(GPIOB_BASE, 13, 0b0001);
-  gpio_port_config(GPIOB_BASE, 14, 0b0001);
+  /* RCC->R32_RCC_APB2PCENR |= RCC_APB2PCENR_IOPBEN; */
+  /* gpio_port_config(GPIOB_BASE, 10, 0b0001); */
+  /* gpio_port_config(GPIOB_BASE, 11, 0b0001); */
+  /* gpio_port_config(GPIOB_BASE, 12, 0b0001); */
+  /* gpio_port_config(GPIOB_BASE, 13, 0b0001); */
+  /* gpio_port_config(GPIOB_BASE, 14, 0b0001); */
 }
 
 static uint32_t __dbg_pin;

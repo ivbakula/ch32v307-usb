@@ -1,5 +1,6 @@
 #include "spi_device.h"
 
+#include "gpio_device.h"
 #include "gpio_interface.h"
 #include "mmio_ops.h"
 #include "rcc_interface.h"
@@ -123,7 +124,7 @@ SPI_Err spi_configure_device(SPI_Device dev, SPI_Config config)
   mmio_writew(_SPI_REGISTER(base, CTRL1), config.CTRL1.data);
   mmio_writew(_SPI_REGISTER(base, CTRL2), config.CTRL2.data);
 
-  inst->packet_sz = (config.CTRL1._DFF) ? 16 : 8;
+  inst->packet_sz = (config.CTRL1._DFF) ? SPI_PACKET_TRANSFER_SIZE_16 : SPI_PACKET_TRANSFER_SIZE_8;
 
   inst->configured = true;
   return SPI_Err_Success;
@@ -155,8 +156,43 @@ uint16_t spi_read(SPI_Device dev)
   while (!(mmio_and_readw(_SPI_REGISTER(base, STATR), U16_BIT(0))))
     ;
 
-  if (packet_sz == 8)
+  if (packet_sz == SPI_PACKET_TRANSFER_SIZE_8)
     return mmio_and_readb(_SPI_REGISTER(base, DATAR), 0xff);
 
   return mmio_readw(_SPI_REGISTER(base, DATAR));
+}
+
+bool spi_is_enabled(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return SPI_Err_NoSuchDevice;
+
+  return SPI_Instances[dev].enabled;
+}
+
+bool spi_is_configured(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return SPI_Err_NoSuchDevice;
+
+  return SPI_Instances[dev].configured;
+}
+
+uint8_t spi_packet_size(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return SPI_Err_NoSuchDevice;
+
+  return SPI_Instances[dev].packet_sz;
+}
+
+void spi_wait_tx(SPI_Device dev)
+{
+  if (!spi_instantiated[dev])
+    return;
+
+  uintptr_t base = SPI_Instances[dev].base;
+
+  while (!mmio_and_readw(_SPI_REGISTER(base, STATR), U16_BIT(1)))
+    ;
 }

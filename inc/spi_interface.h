@@ -1,8 +1,11 @@
 #ifndef INC_SPI_INTERFACE_H
 #define INC_SPI_INTERFACE_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
+#define SPI_PACKET_TRANSFER_SIZE_8  (sizeof(uint8_t))
+#define SPI_PACKET_TRANSFER_SIZE_16 (sizeof(uint16_t))
 typedef enum
 {
   SPI_Device1,
@@ -274,5 +277,48 @@ void spi_write(SPI_Device dev, uint16_t data);
  * received data
  */
 uint16_t spi_read(SPI_Device dev);
+
+/**
+ * @fn spi_is_enabled
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return is_enabled
+ */
+bool spi_is_enabled(SPI_Device dev);
+
+/**
+ * @fn spi_is_configured
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return is_configured
+ */
+bool spi_is_configured(SPI_Device dev);
+
+/**
+ * @fn spi_packet_size
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ * @return packet size
+ */
+uint8_t spi_packet_size(SPI_Device dev);
+
+/**
+ * @fn spi_wait_tx
+ *
+ * @brief Wait for TX to finish.
+ *
+ * @param dev
+ *
+ */
+void spi_wait_tx(SPI_Device dev);
 
 #endif
