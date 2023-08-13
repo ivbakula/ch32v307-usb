@@ -1,6 +1,6 @@
 set(BOOT_SOURCES
   boot.S
-  main.c
+  boot.c
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

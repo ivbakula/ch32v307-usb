@@ -9,6 +9,7 @@ set(SRC_SOURCES
   gpio_device.c
   uart_device.c
   spi_device.c
+  adf435x_control.c
   instances/drv/uart_instances.c
   instances/drv/spi_instances.c
 )
