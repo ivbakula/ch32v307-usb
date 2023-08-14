@@ -36,7 +36,7 @@ UART_Err uart_enable_device(UART_Device dev, UART_PinConfig pin_config)
 
   if (pin_config > inst->no_pin_configs - 1)
     return UART_Err_ConfigFail;
-  
+
   inst->chosen_pinconfig = pin_config;
   RCC_DevId rcc_devid = inst->rcc_devid;
   GPIO_Pin tx = inst->pin_configuration[pin_config][UART_TX_PIN_INDEX];

@@ -44,7 +44,7 @@ SPI_Err spi_enable_device(SPI_Device dev, SPI_PinConfig pin_config)
   if (inst->enabled)
     return SPI_Err_AlreadyEnabled;
 
-  if (pin_config > inst->no_pin_configs)
+  if (pin_config > inst->no_pin_configs - 1)
     return SPI_Err_ConfigFail;
 
   inst->chosen_pinconfig = pin_config;

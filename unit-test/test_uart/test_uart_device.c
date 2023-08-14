@@ -1,11 +1,10 @@
+#include <stdint.h>
 #include <unity.h>
 
-#include <stdint.h>
-
-#include "uart_device.h"
+#include "Mockgpio_interface.h"
 #include "Mockmmio_ops.h"
 #include "Mockrcc_interface.h"
-#include "Mockgpio_interface.h"
+#include "uart_device.h"
 
 // clang-format off
 const unsigned char uart_instantiated[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
@@ -28,6 +27,9 @@ UART_Instance UART_Instances[8] = {
 };
 // clang-format on
 
+static const GPIO_Pin pin_configuration[4][5] = {{PA8, PA9, PA10, PA11, PA12}, {PA8, PB6, PB7, PA11, PA12},
+  {PA10, PB15, PA8, PA5, PA9}, {PA5, PA6, PA7, PC4, PC5}};
+
 void setUp(void)
 {
   UART_Instances[0].base = UART1_BASE;
@@ -37,16 +39,7 @@ void setUp(void)
   UART_Instances[0].configured = false;
   UART_Instances[0].chosen_pinconfig = UART1_DEFAULT_MAPPING;
   UART_Instances[0].no_pin_configs = 4;
-  // clang-format off
-  GPIO_Pin pin_configuration[4][5] = {
-      { PA8,  PA9,  PA10, PA11, PA12 },
-      { PA8,  PB6,  PB7,  PA11, PA12 },
-      { PA10, PB15, PA8,  PA5,  PA9  },
-      { PA5,  PA6,  PA7,  PC4,  PC5  }
-  };
-  // clang-format on
-
-  memcpy(&UART_Instances[0].pin_configuration[0][0], &pin_configuration[0][0], sizeof(pin_configuration));  
+  memcpy(&UART_Instances[0].pin_configuration[0][0], &pin_configuration[0][0], sizeof(pin_configuration));
 }
 
 void tearDown(void)
@@ -109,7 +102,7 @@ void test_uart_enable_config_failure_locked_pin(void)
   gpio_lock_pin_ExpectAndReturn(RCC_USART1EN, PA9, GPIO_Success);
   gpio_lock_pin_ExpectAndReturn(RCC_USART1EN, PA10, GPIO_Locked);
   TEST_ASSERT_EQUAL(UART_Err_ConfigFail, uart_enable_device(UART_Device1, UART1_DEFAULT_MAPPING));
- }
+}
 
 void test_uart_disable_no_such_device_fail(void)
 {
@@ -163,7 +156,7 @@ void test_uart_configure_device(void)
 
 void test_uart_reset_device(void)
 {
-  // TODO depends on implementing reset infrastructure to RCC subsystem
+  // TODO depends on implementing reset infrastructure in RCC subsystem
 }
 
 void test_uart_putc(void)
@@ -181,7 +174,7 @@ void test_uart_getc(void)
 
   TEST_ASSERT_EQUAL('U', uart_getc(UART_Device1));
 }
-  
+
 int main()
 {
   UNITY_BEGIN();
@@ -201,4 +194,4 @@ int main()
   RUN_TEST(test_uart_putc);
   RUN_TEST(test_uart_getc);
   return UNITY_END();
-}  
+}
