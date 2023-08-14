@@ -13,6 +13,7 @@ UART_Instance UART_Instances[8] = {
     .enabled = false,
     .configured = false,
     .chosen_pinconfig = UART1_DEFAULT_MAPPING,
+    .no_pin_configs = 4,
     .pin_configuration = {
       { PA8,  PA9,  PA10, PA11, PA12 },
       { PA8,  PB6,  PB7,  PA11, PA12 },

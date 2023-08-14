@@ -42,8 +42,8 @@ typedef struct _SPI_Instance
 
 #define SPI_NSS_INDEX  0
 #define SPI_SCK_INDEX  1
-#define SPI_MOSI_INDEX 2
-#define SPI_MISO_INDEX 3
+#define SPI_MISO_INDEX 2
+#define SPI_MOSI_INDEX 3
 
 #ifndef UNITTEST
 
