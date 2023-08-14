@@ -1,8 +1,9 @@
 #include <unity.h>
-#include "helpers.h"
+
 #include "Mockmmio_ops.h"
-#include "gpio_device.h"
 #include "Mockrcc_interface.h"
+#include "gpio_device.h"
+#include "helpers.h"
 
 void setUp(void)
 {
