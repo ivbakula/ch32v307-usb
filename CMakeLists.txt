@@ -11,8 +11,6 @@ if (TARGET_GROUP STREQUAL test)
   message(INFO " Build unit tests")
   include(CTest)
   add_subdirectory(unit-test)
-#  add_subdirectory(external)
-#  add_subdirectory(test)
 else ()
   #
   # Build the real thing
