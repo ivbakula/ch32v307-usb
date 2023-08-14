@@ -112,21 +112,23 @@ static uintptr_t gpio_get_port_base_address_mapping(GPIO_Pin pin)
 void gpio_pin_config(GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config)
 {
   uint8_t shift = 0;
-  uint32_t *reg = 0;
+  uintptr_t reg = 0;
   uint8_t val = mode | (config << 2);
   uint8_t pin_index = GET_GPIO_PIN_INDEX(pin);
   uintptr_t base = gpio_get_port_base_address_mapping(pin);
 
   if (pin_index < 8) {
     shift = pin_index << 2;
-    reg = (uint32_t *)(_GPIO_REGISTER(base, R32_GPIO_CFGLR));
+    reg = (uintptr_t)(_GPIO_REGISTER(base, R32_GPIO_CFGLR));
   } else {
     shift = (pin_index - 8) << 2;
-    reg = (uint32_t *)(_GPIO_REGISTER(base, R32_GPIO_CFGHR));
+    reg = (uintptr_t)(_GPIO_REGISTER(base, R32_GPIO_CFGHR));
   }
 
-  *reg &= ~(0xf << shift);
-  *reg |= (0xf & val) << shift;
+  mmio_and_writedw(reg, ~(0xf << shift));
+  mmio_or_writedw(reg, ((0xf & val) << shift));
+  //  *reg &= ~(0xf << shift);
+  //  *reg |= (0xf & val) << shift;
 }
 
 GPIO_State gpio_pin_input(GPIO_Pin pin)

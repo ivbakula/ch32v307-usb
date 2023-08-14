@@ -14,15 +14,16 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Unity CMock)
 
-message(INFO " Unity srcdir: " "${unity_SOURCE_DIR}")
-message(INFO " CMock srcdir: " "${cmock_SOURCE_DIR}")
-
-ADD_CUSTOM_COMMAND(
-  OUTPUT "${cmock_SOURCE_DIR}"
-  COMMAND rm "${cmock_SOURCE_DIR}/vendor/unity"
-  COMMAND ln -svf "${unity_SOURCE_DIR}" "${cmock_SOURCE_DIR}/vendor/unity"
-  DEPENDS "${unity_SOURCE_DIR}" "${cmock_SOURCE_DIR}"
-)
+set(CMOCK_SOURCE_DIRECTORY ${cmock_SOURCE_DIR})
+set(MOCK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mocks/src)
+set(MOCK_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mocks/inc)
 
 add_library(Unity STATIC ${unity_SOURCE_DIR}/src/unity.c)
 target_include_directories(Unity PUBLIC ${unity_SOURCE_DIR}/src)
+
+add_library(CMock STATIC ${cmock_SOURCE_DIR}/src/cmock.c)
+target_include_directories(CMock PUBLIC ${cmock_SOURCE_DIR}/src ${unity_SOURCE_DIR}/src)
+
+add_subdirectory(test_mmio)
+add_subdirectory(test_rcc)
+add_subdirectory(test_gpio)
