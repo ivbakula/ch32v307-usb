@@ -8,15 +8,16 @@ set(PROJECT firmware)
 if (TARGET_GROUP STREQUAL test)
   project(${PROJECT} LANGUAGES C)
   set(PROJECT test_firmware)
-  message(INFO "Build unit tests")
+  message(INFO " Build unit tests")
   include(CTest)
-  add_subdirectory(external)
-  add_subdirectory(test)
+  add_subdirectory(unit-test)
+#  add_subdirectory(external)
+#  add_subdirectory(test)
 else ()
   #
   # Build the real thing
   #
-  message(INFO "This is not a test :D. Build the real thing.")
+  message(INFO " This is not a test :D. Build the real thing.")
 
   if (NOT TOOLCHAIN_PREFIX)
     message(INFO " TOOLCHAIN_PREFIX is not set. Using default \"riscv-none-embed-\"")
