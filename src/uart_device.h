@@ -25,6 +25,7 @@ typedef struct _UART_Instance
   bool enabled;
   bool configured;
   uint8_t chosen_pinconfig;
+  uint8_t no_pin_configs;
   GPIO_Pin pin_configuration[4][5];
 } UART_Instance;
 

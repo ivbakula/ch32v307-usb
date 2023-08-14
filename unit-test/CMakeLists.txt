@@ -27,3 +27,4 @@ target_include_directories(CMock PUBLIC ${cmock_SOURCE_DIR}/src ${unity_SOURCE_D
 add_subdirectory(test_mmio)
 add_subdirectory(test_rcc)
 add_subdirectory(test_gpio)
+add_subdirectory(test_uart)
