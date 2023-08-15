@@ -9,9 +9,10 @@ set(SRC_SOURCES
   gpio_device.c
   uart_device.c
   spi_device.c
-  adf435x_control.c
+  adf435x_device.c
   instances/drv/uart_instances.c
   instances/drv/spi_instances.c
+  instances/ext/adf435x_instances.c
 )
 
 add_library(src STATIC ${SRC_SOURCES})

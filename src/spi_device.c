@@ -165,7 +165,7 @@ uint16_t spi_read(SPI_Device dev)
 bool spi_is_enabled(SPI_Device dev)
 {
   if (!spi_instantiated[dev])
-    return SPI_Err_NoSuchDevice;
+    return false;
 
   return SPI_Instances[dev].enabled;
 }
@@ -173,7 +173,7 @@ bool spi_is_enabled(SPI_Device dev)
 bool spi_is_configured(SPI_Device dev)
 {
   if (!spi_instantiated[dev])
-    return SPI_Err_NoSuchDevice;
+    return false;
 
   return SPI_Instances[dev].configured;
 }
@@ -181,7 +181,7 @@ bool spi_is_configured(SPI_Device dev)
 uint8_t spi_packet_size(SPI_Device dev)
 {
   if (!spi_instantiated[dev])
-    return SPI_Err_NoSuchDevice;
+    return 0;
 
   return SPI_Instances[dev].packet_sz;
 }
