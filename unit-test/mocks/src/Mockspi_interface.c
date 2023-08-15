@@ -12,8 +12,12 @@ static const char* CMockString_pin_config = "pin_config";
 static const char* CMockString_spi_configure_device = "spi_configure_device";
 static const char* CMockString_spi_disable_device = "spi_disable_device";
 static const char* CMockString_spi_enable_device = "spi_enable_device";
+static const char* CMockString_spi_is_configured = "spi_is_configured";
+static const char* CMockString_spi_is_enabled = "spi_is_enabled";
+static const char* CMockString_spi_packet_size = "spi_packet_size";
 static const char* CMockString_spi_read = "spi_read";
 static const char* CMockString_spi_reset_device = "spi_reset_device";
+static const char* CMockString_spi_wait_tx = "spi_wait_tx";
 static const char* CMockString_spi_write = "spi_write";
 
 typedef struct _CMOCK_spi_enable_device_CALL_INSTANCE
@@ -66,6 +70,37 @@ typedef struct _CMOCK_spi_read_CALL_INSTANCE
 
 } CMOCK_spi_read_CALL_INSTANCE;
 
+typedef struct _CMOCK_spi_is_enabled_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  bool ReturnVal;
+  SPI_Device Expected_dev;
+
+} CMOCK_spi_is_enabled_CALL_INSTANCE;
+
+typedef struct _CMOCK_spi_is_configured_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  bool ReturnVal;
+  SPI_Device Expected_dev;
+
+} CMOCK_spi_is_configured_CALL_INSTANCE;
+
+typedef struct _CMOCK_spi_packet_size_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  uint8_t ReturnVal;
+  SPI_Device Expected_dev;
+
+} CMOCK_spi_packet_size_CALL_INSTANCE;
+
+typedef struct _CMOCK_spi_wait_tx_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  SPI_Device Expected_dev;
+
+} CMOCK_spi_wait_tx_CALL_INSTANCE;
+
 static struct Mockspi_interfaceInstance
 {
   CMOCK_MEM_INDEX_TYPE spi_enable_device_CallInstance;
@@ -74,6 +109,10 @@ static struct Mockspi_interfaceInstance
   CMOCK_MEM_INDEX_TYPE spi_configure_device_CallInstance;
   CMOCK_MEM_INDEX_TYPE spi_write_CallInstance;
   CMOCK_MEM_INDEX_TYPE spi_read_CallInstance;
+  CMOCK_MEM_INDEX_TYPE spi_is_enabled_CallInstance;
+  CMOCK_MEM_INDEX_TYPE spi_is_configured_CallInstance;
+  CMOCK_MEM_INDEX_TYPE spi_packet_size_CallInstance;
+  CMOCK_MEM_INDEX_TYPE spi_wait_tx_CallInstance;
 } Mock;
 
 extern jmp_buf AbortFrame;
@@ -116,6 +155,30 @@ void Mockspi_interface_Verify(void)
   if (CMOCK_GUTS_NONE != call_instance)
   {
     UNITY_SET_DETAIL(CMockString_spi_read);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  call_instance = Mock.spi_is_enabled_CallInstance;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_spi_is_enabled);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  call_instance = Mock.spi_is_configured_CallInstance;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_spi_is_configured);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  call_instance = Mock.spi_packet_size_CallInstance;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_spi_packet_size);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  call_instance = Mock.spi_wait_tx_CallInstance;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_spi_wait_tx);
     UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
   }
 }
@@ -364,5 +427,147 @@ void spi_read_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, SPI_Device dev, u
   cmock_call_instance->LineNumber = cmock_line;
   CMockExpectParameters_spi_read(cmock_call_instance, dev);
   cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+bool spi_is_enabled(SPI_Device dev)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_spi_is_enabled_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_spi_is_enabled);
+  cmock_call_instance = (CMOCK_spi_is_enabled_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.spi_is_enabled_CallInstance);
+  Mock.spi_is_enabled_CallInstance = CMock_Guts_MemNext(Mock.spi_is_enabled_CallInstance);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  {
+    UNITY_SET_DETAILS(CMockString_spi_is_enabled,CMockString_dev);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev), sizeof(SPI_Device), cmock_line, CMockStringMismatch);
+  }
+  UNITY_CLR_DETAILS();
+  return cmock_call_instance->ReturnVal;
+}
+
+void CMockExpectParameters_spi_is_enabled(CMOCK_spi_is_enabled_CALL_INSTANCE* cmock_call_instance, SPI_Device dev);
+void CMockExpectParameters_spi_is_enabled(CMOCK_spi_is_enabled_CALL_INSTANCE* cmock_call_instance, SPI_Device dev)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev),
+         sizeof(SPI_Device[sizeof(dev) == sizeof(SPI_Device) ? 1 : -1])); /* add SPI_Device to :treat_as_array if this causes an error */
+}
+
+void spi_is_enabled_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, SPI_Device dev, bool cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_spi_is_enabled_CALL_INSTANCE));
+  CMOCK_spi_is_enabled_CALL_INSTANCE* cmock_call_instance = (CMOCK_spi_is_enabled_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.spi_is_enabled_CallInstance = CMock_Guts_MemChain(Mock.spi_is_enabled_CallInstance, cmock_guts_index);
+  cmock_call_instance->LineNumber = cmock_line;
+  CMockExpectParameters_spi_is_enabled(cmock_call_instance, dev);
+  cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+bool spi_is_configured(SPI_Device dev)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_spi_is_configured_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_spi_is_configured);
+  cmock_call_instance = (CMOCK_spi_is_configured_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.spi_is_configured_CallInstance);
+  Mock.spi_is_configured_CallInstance = CMock_Guts_MemNext(Mock.spi_is_configured_CallInstance);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  {
+    UNITY_SET_DETAILS(CMockString_spi_is_configured,CMockString_dev);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev), sizeof(SPI_Device), cmock_line, CMockStringMismatch);
+  }
+  UNITY_CLR_DETAILS();
+  return cmock_call_instance->ReturnVal;
+}
+
+void CMockExpectParameters_spi_is_configured(CMOCK_spi_is_configured_CALL_INSTANCE* cmock_call_instance, SPI_Device dev);
+void CMockExpectParameters_spi_is_configured(CMOCK_spi_is_configured_CALL_INSTANCE* cmock_call_instance, SPI_Device dev)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev),
+         sizeof(SPI_Device[sizeof(dev) == sizeof(SPI_Device) ? 1 : -1])); /* add SPI_Device to :treat_as_array if this causes an error */
+}
+
+void spi_is_configured_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, SPI_Device dev, bool cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_spi_is_configured_CALL_INSTANCE));
+  CMOCK_spi_is_configured_CALL_INSTANCE* cmock_call_instance = (CMOCK_spi_is_configured_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.spi_is_configured_CallInstance = CMock_Guts_MemChain(Mock.spi_is_configured_CallInstance, cmock_guts_index);
+  cmock_call_instance->LineNumber = cmock_line;
+  CMockExpectParameters_spi_is_configured(cmock_call_instance, dev);
+  cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+uint8_t spi_packet_size(SPI_Device dev)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_spi_packet_size_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_spi_packet_size);
+  cmock_call_instance = (CMOCK_spi_packet_size_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.spi_packet_size_CallInstance);
+  Mock.spi_packet_size_CallInstance = CMock_Guts_MemNext(Mock.spi_packet_size_CallInstance);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  {
+    UNITY_SET_DETAILS(CMockString_spi_packet_size,CMockString_dev);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev), sizeof(SPI_Device), cmock_line, CMockStringMismatch);
+  }
+  UNITY_CLR_DETAILS();
+  return cmock_call_instance->ReturnVal;
+}
+
+void CMockExpectParameters_spi_packet_size(CMOCK_spi_packet_size_CALL_INSTANCE* cmock_call_instance, SPI_Device dev);
+void CMockExpectParameters_spi_packet_size(CMOCK_spi_packet_size_CALL_INSTANCE* cmock_call_instance, SPI_Device dev)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev),
+         sizeof(SPI_Device[sizeof(dev) == sizeof(SPI_Device) ? 1 : -1])); /* add SPI_Device to :treat_as_array if this causes an error */
+}
+
+void spi_packet_size_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, SPI_Device dev, uint8_t cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_spi_packet_size_CALL_INSTANCE));
+  CMOCK_spi_packet_size_CALL_INSTANCE* cmock_call_instance = (CMOCK_spi_packet_size_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.spi_packet_size_CallInstance = CMock_Guts_MemChain(Mock.spi_packet_size_CallInstance, cmock_guts_index);
+  cmock_call_instance->LineNumber = cmock_line;
+  CMockExpectParameters_spi_packet_size(cmock_call_instance, dev);
+  cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+void spi_wait_tx(SPI_Device dev)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_spi_wait_tx_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_spi_wait_tx);
+  cmock_call_instance = (CMOCK_spi_wait_tx_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.spi_wait_tx_CallInstance);
+  Mock.spi_wait_tx_CallInstance = CMock_Guts_MemNext(Mock.spi_wait_tx_CallInstance);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  {
+    UNITY_SET_DETAILS(CMockString_spi_wait_tx,CMockString_dev);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev), sizeof(SPI_Device), cmock_line, CMockStringMismatch);
+  }
+  UNITY_CLR_DETAILS();
+}
+
+void CMockExpectParameters_spi_wait_tx(CMOCK_spi_wait_tx_CALL_INSTANCE* cmock_call_instance, SPI_Device dev);
+void CMockExpectParameters_spi_wait_tx(CMOCK_spi_wait_tx_CALL_INSTANCE* cmock_call_instance, SPI_Device dev)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_dev), (void*)(&dev),
+         sizeof(SPI_Device[sizeof(dev) == sizeof(SPI_Device) ? 1 : -1])); /* add SPI_Device to :treat_as_array if this causes an error */
+}
+
+void spi_wait_tx_CMockExpect(UNITY_LINE_TYPE cmock_line, SPI_Device dev)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_spi_wait_tx_CALL_INSTANCE));
+  CMOCK_spi_wait_tx_CALL_INSTANCE* cmock_call_instance = (CMOCK_spi_wait_tx_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.spi_wait_tx_CallInstance = CMock_Guts_MemChain(Mock.spi_wait_tx_CallInstance, cmock_guts_index);
+  cmock_call_instance->LineNumber = cmock_line;
+  CMockExpectParameters_spi_wait_tx(cmock_call_instance, dev);
 }
 
