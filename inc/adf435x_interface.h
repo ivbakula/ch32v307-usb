@@ -64,8 +64,10 @@ ADF435x_Err adf435x_disable_device(ADF435x_Device dev);
  *
  * @brief Write to ADF435x configuration registers over SPI bus.
  *
+ * @param dev ADF435x device to be programmed
+ *
  * @param ADF435x_Regs Desired values of ADF435x registers
  */
-ADF435x_Err adf435x_program_device(ADF435x_Regs regs);
+ADF435x_Err adf435x_program_device(ADF435x_Device dev, ADF435x_Regs regs);
 
 #endif

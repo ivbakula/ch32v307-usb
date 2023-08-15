@@ -14,9 +14,9 @@ typedef struct
   bool is_binded;
   bool is_enabled;
   size_t spi_transfer_size;
-  const uint8_t no_pin_config;
+  uint8_t no_pin_config;
   ADF435x_PinConfig chosen_pinconfig;
-  const GPIO_Pin pin_configuration[1][3];
+  GPIO_Pin pin_configuration[1][3];
 } ADF435x_Instance;
 
 typedef union
@@ -26,7 +26,6 @@ typedef union
 
   uint32_t reg; /*  Whole register */
 } ADF435x_RegisterHelper;
-
 
 #define ADF435x_LE_INDEX 0 /*< Load enable. On LE posedge, bits transfered by SPI are loaded into desired register. */
 #define ADF435x_CE_INDEX 1 /*< Chip Enable. When high, ADF435x is turned ON */
