@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "adf435x_control.h"
+#include "adf435x_interface.h"
 #include "time.h"
 #include "uart_interface.h"
 #include "usb_interface.h"
@@ -84,7 +84,7 @@ void handle_usb_request(uint32_t command, uint8_t *data)
     case PLL_SET_FREQUENCY:
       _printf("PLL_SET_FREQUENCY\r\n");
       adf435x_dump_registers((ADF435x_Regs *)data);
-      adf435x_program_device(*(ADF435x_Regs *)data);
+      adf435x_program_device(ADF435x_Device1, *(ADF435x_Regs *)data);
       break;
     default:
       break;
@@ -117,6 +117,14 @@ const char spi_error_codes[5][32] = {
   "SPI_Err_NoSuchDevice",
 };
 
+const char adf435x_error_codes[5][64] = {
+  "ADF435x_Err_Success",
+  "ADF435x_Err_ConfigFail,"
+  "ADF435x_Err_NoSuchDevice",
+  "ADF435x_Err_NotBinded",
+  "ADF435x_Err_NotEnabled",
+};
+
 int main()
 {
   system_pll_clock_init(PLLMul_6);
@@ -137,8 +145,19 @@ int main()
     goto nothing;
   }
 
-  ADF435x_PinConfig pinc = {.LE = PA1, .CE = PA0, .LD = PA2};
-  adf435x_create_interface(SPI_Device1, pinc);
+  ADF435x_Err adf435x_err = adf435x_bind_device(ADF435x_Device1, SPI_Device1, ADF435x_PinConfig_Default);
+  if (adf435x_err) {
+    _printf("ADF435x bind device failed for ADF435x_Device%d with error code: %s\r\n", ADF435x_Device1,
+      adf435x_error_codes[adf435x_err]);
+    goto nothing;
+  }
+
+  adf435x_err = adf435x_enable_device(ADF435x_Device1);
+  if (adf435x_err) {
+    _printf("ADF435x enable device failed for ADF435x_Device%d with error code: %s\r\n", ADF435x_Device1,
+      adf435x_error_codes[adf435x_err]);
+    goto nothing;
+  }
 
   init_usb_device(USB_FULL_SPEED);
 
