@@ -94,6 +94,120 @@ typedef uint8_t UART_PinConfig;
  *
  */
 #define UART1_ALTERNATE_MAPPING_3 ((UART_PinConfig)0b11)
+
+/**
+ * @name UART2_DEFAULT_MAPPING
+ *
+ * @brief Third alternate pin mapping for UART1
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PA4 | PA2 | PA3 | PA0 | PA1 |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART2_DEFAULT_MAPPING ((UART_PinConfig)0b00)
+
+/**
+ * @name UART2_ALTERNATE_MAPPING_1
+ *
+ * @brief Third alternate pin mapping for UART1
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PD7 | PD5 | PD6 | PD3 | PD4 |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART2_ALTERNATE_MAPPING_1 ((UART_PinConfig)0b00)
+
+/**
+ * @name UART3_DEFAULT_MAPPING
+ *
+ * @brief Third alternate pin mapping for UART1
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PB12| PB10| PB11| PB13|PB14 |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART3_DEFAULT_MAPPING ((UART_PinConfig)0b00)
+
+/**
+ * @name UART3_ALTERNATE_MAPPING_1
+ *
+ * @brief Third alternate pin mapping for UART3
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PC12| PC10| PC11| PB13|PB14 |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART3_ALTERNATE_MAPPING_1 ((UART_PinConfig)0b01)
+
+/**
+ * @name UART3_ALTERNATE_MAPPING_2
+ *
+ * @brief Third alternate pin mapping for UART3
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PD10| PA13| PA14| PD11|PD12 |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART3_ALTERNATE_MAPPING_2 ((UART_PinConfig)0b10)
+
+/**
+ * @name UART3_ALTERNATE_MAPPING_3
+ *
+ * @brief Third alternate pin mapping for UART3
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PD10| PD8 | PD9 | PD11|PD12 |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART3_ALTERNATE_MAPPING_3 ((UART_PinConfig)0b11)
+
+
+/**
+ * @name UART4_DEFAULT_MAPPING
+ *
+ * @brief Third alternate pin mapping for UART1
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PNA | PC10| PC11| PNA | PNA |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART4_DEFAULT_MAPPING ((UART_PinConfig)0b00)
+
+/**
+ * @name UART4_ALTERNATE_MAPPING_1
+ *
+ * @brief Third alternate pin mapping for UART1
+ *
+ * |------+-----+-----+-----+-----+-----|
+ * | FUNC | CK  | TX  | RX  | CTS | RTS |
+ * |------+-----+-----+-----+-----+-----|
+ * | PIN  | PNA | PB0 | PB1 | PNA | PNA |
+ * |------+-----+-----+-----+-----+-----|
+ *
+ */
+#define UART4_ALTERNATE_MAPPING_1 ((UART_PinConfig)0b01)
+
 ///@}
 
 typedef enum

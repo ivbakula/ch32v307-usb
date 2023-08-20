@@ -130,6 +130,17 @@ void gpio_pin_config(GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config)
   //  *reg &= ~(0xf << shift);
   //  *reg |= (0xf & val) << shift;
 }
+void gpio_pin_pullstate_config(GPIO_Pin pin, GPIO_PullState state)
+{
+  uint8_t pin_index = GET_GPIO_PIN_INDEX(pin);
+  uintptr_t base = gpio_get_port_base_address_mapping(pin);
+
+  if (state == GPIO_PullState_Up) {
+    mmio_writew(_GPIO_REGISTER(base, R32_GPIO_BSHR), GET_GPIO_PIN_BIT(pin));
+  } else {
+    mmio_writew(_GPIO_REGISTER(base, R32_GPIO_BCR), GET_GPIO_PIN_BIT(pin));
+  }
+}
 
 GPIO_State gpio_pin_input(GPIO_Pin pin)
 {

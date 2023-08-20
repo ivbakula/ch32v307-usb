@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../src/dvp_device.h"
 #include "adf435x_interface.h"
 #include "time.h"
 #include "uart_interface.h"
@@ -28,7 +29,7 @@ int _printf(const char *fmt, ...)
   vsnprintf(msg, len + 1, fmt, args);
   va_end(args);
 
-  uart_puts(UART_Device1, msg);
+  uart_puts(UART_Device3, msg);
   return len;
 }
 
@@ -125,44 +126,129 @@ const char adf435x_error_codes[5][64] = {
   "ADF435x_Err_NotEnabled",
 };
 
+/*
+1) Clear RB_DVP_ALL_CLR and RB_DVP_RCV_CLR using the R8_DVP_CR1 register.
+
+2) Configure the image mode, data bit width, PCLK polarity, HSYNC polarity and VSYNC polarity through
+the R8_DVP_CR0 register to match the output of the sensor.
+
+3) According to the effective image pixels output by the configured image sensor, configure the
+R16_DVP_ROW_NUM and R16_DVP_COL_NUM registers to match the output of the sensor. In the
+image JPEG mode, only configure the R16_DVP_COL_NUM register.
+
+4) Configure the DMA receive address through the R32_DVP_DMA_BUF0/1 register.
+
+5) If the snapshot mode is used, the RB_DVP_CM field needs to be configured through the R8_DVP_CR1
+register to enable the snapshot mode.
+
+6) If the cropping mode is used, the RB_DVP_CROP and RB_DVP_FCRC fields need to be configured
+through the R8_DVP_CR1 register to enable the cropping function and control the frame capture rate. At
+the same time, configure the R16_DVP_HOFFCNT, R16_DVP_VST, R16_DVP_CAPCNT and R16_DVP_VLINE to set the size of the cropped
+image.
+
+7) According to the requirements, enable the corresponding interrupt through the R8_DVP_IER register,
+configure the interrupt priority through the interrupt controller NVIC or PFIC, and enable the DVP
+interrupt.
+
+8) The DMA is enabled through the R8_DVP_CR1 register, and the DVP interface is enabled through the
+R8_DVP_CR0 register.
+
+9) Wait for the generation of the relevant receiving interrupt, and process the received data in time.
+ */
+
+__attribute__((section(".data"))) uint16_t buff0[64] = {};
+__attribute__((section(".data"))) uint16_t buff1[64] = {};
+
+void irq_dvp(void)
+{
+  _printf("0x%02x\r\n", DVP->R8_DVP_IFR);
+  if (DVP->R8_DVP_IFR & U8_BIT(0)) {
+    _printf("START_FRAME_INTERRUPT\r\n");
+    DVP->R8_DVP_IFR &= ~U8_BIT(0);
+  }
+
+  if (DVP->R8_DVP_IFR & U8_BIT(1)) {
+    _printf("ROW_DONE_INTERRUPT\r\n");    
+    /* ROW done */
+    uint8_t *bytes = (uint8_t *)buff0;
+    DVP->R8_DVP_IFR &= ~U8_BIT(1);
+    //    DVP->R8_DVP_CR0 = 0;
+    for (int i = 0; i < 10; i++) {
+      _printf("buff0[%d]: 0x%04x\r\n", i, buff0[i]);
+      //      _printf("0x%02x %02x\r\n", bytes[i + 1], bytes);
+    }
+    
+  }
+
+  if (DVP->R8_DVP_IFR & U8_BIT(2)) {
+    _printf("FRAME_DONE_INTERRUPT\r\n");        
+    DVP->R8_DVP_IFR &= ~U8_BIT(2);
+  }
+
+  if (DVP->R8_DVP_IFR & U8_BIT(3)) {
+    _printf("FIFO_OVERFLOW_INTERRUPT\r\n");        
+    DVP->R8_DVP_IFR &= ~U8_BIT(3);
+  }
+
+  if (DVP->R8_DVP_IFR & U8_BIT(4)) {
+    _printf("FRAME_STOP_INTERRUPT\r\n");            
+    DVP->R8_DVP_IFR &= ~U8_BIT(4);
+  }
+
+  return;
+}
+
 int main()
 {
-  system_pll_clock_init(PLLMul_6);
+  system_pll_clock_init(PLLMul_12);
 
-  uart_enable_device(UART_Device1, UART1_DEFAULT_MAPPING);
-  uart_configure_device(UART_Device1, 9600, sysclock_frequency);
+  uart_enable_device(UART_Device3, UART3_DEFAULT_MAPPING);
+  uart_configure_device(UART_Device3, 9600, sysclock_frequency);
 
-  uart_puts(UART_Device1, "UART Device successfuly configured\r\n");
-  SPI_Err spi_err = spi_enable_device(SPI_Device1, SPI1_DEFAULT_MAPPING);
-  if (spi_err) {
-    _printf("SPI enable device failed for SPI_Device%d with error code: %s\r\n", SPI_Device1, spi_error_codes[spi_err]);
-    goto nothing;
+  GPIO_Pin dvp_pins[16] = {
+    PA4, PA5, PA6, PA9,
+    PA10, PB3, PB6, PB8,
+    PB9, PC8, PC9, PC10,
+    PC11, PC12, PD2, PD6
+  };
+
+  rcc_pcendis(RCC_DVPEN, RCC_ENABLE);
+  for (int i = 0; i < 16; i++) {
+    if (gpio_lock_pin(RCC_DVPEN, dvp_pins[i]))
+      {
+      _printf("Unable to lock pin\r\n");
+      goto nothing;
+      }
+    gpio_port_enable(GET_GPIO_PORT(dvp_pins[i]));
+    gpio_pin_config(dvp_pins[i], GPIO_Mode_Input, GPIO_Input_PullUpDown);
+    gpio_pin_pullstate_config(dvp_pins[i], GPIO_PullState_Up);
   }
 
-  spi_err = spi_configure_device(SPI_Device1, spi1_config);
-  if (spi_err) {
-    _printf("SPI configure device failed for SPI_Device%d with error code: %s\r\n", SPI_Device1, spi_error_codes[spi_err]);
-    goto nothing;
-  }
-
-  ADF435x_Err adf435x_err = adf435x_bind_device(ADF435x_Device1, SPI_Device1, ADF435x_PinConfig_Default);
-  if (adf435x_err) {
-    _printf("ADF435x bind device failed for ADF435x_Device%d with error code: %s\r\n", ADF435x_Device1,
-      adf435x_error_codes[adf435x_err]);
-    goto nothing;
-  }
-
-  adf435x_err = adf435x_enable_device(ADF435x_Device1);
-  if (adf435x_err) {
-    _printf("ADF435x enable device failed for ADF435x_Device%d with error code: %s\r\n", ADF435x_Device1,
-      adf435x_error_codes[adf435x_err]);
-    goto nothing;
-  }
-
-  init_usb_device(USB_FULL_SPEED);
+  DVP->R8_DVP_CR0 &= ~0x30;
+  DVP->R8_DVP_CR1 &= ~(U8_BIT(1) | U8_BIT(2)); /* clear RB_DVP_ALL_CLR and RB_DVP_RCV_CLR using the R8_DVP_CR1 */
+  DVP->R8_DVP_CR0 = /*U8_BIT(6) |*/ U8_BIT(5); /* RAW image mode, 12 bit data width, PCLK posedge, HSYNC neg polarity VSYNC neg polarity */
+  DVP->R8_DVP_CR1 |= U8_BIT(4);
+  DVP->R16_DVP_COL_NUM = 10;
+  DVP->R16_DVP_ROW_NUM = 1;
+  DVP->R32_DVP_DMA_BUF0 = (uintptr_t)((uint16_t *) buff0);
+  DVP->R32_DVP_DMA_BUF1 = (uintptr_t)((uint16_t *) buff1);
+  DVP->R8_DVP_IER = 0xff;
+  irq_register_interrupt_handler(DVP_IRQn, irq_dvp);
+  irq_enable_interrupt(DVP_IRQn);
+  DVP->R8_DVP_CR1 |= U8_BIT(0);
+  DVP->R8_DVP_CR0 |= U8_BIT(0);
 
   _printf("Initialization complete\r\n");
-  usb_server();
+  _printf("Sysclock frequency: %d Hz\r\n", sysclock_frequency);
+  
+  while (!buff1[0])
+    ;
+
+
+  
+
+  _printf("DMA0[0] = %x\r\n", buff0[0]);
+  _printf("DMA1[0] = %x\r\n", buff1[0]);  
 nothing:
   while (1)
     ;
