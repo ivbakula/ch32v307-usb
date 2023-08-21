@@ -1,9 +1,9 @@
 #include <string.h>
 
 #include "Mockgpio_interface.h"
-#include "Mockrcc_interface.h"
 #include "Mockirq.h"
 #include "Mockmmio_ops.h"
+#include "Mockrcc_interface.h"
 #include "dvp_device.h"
 
 bool dvp_instantiated[1] = {1};
@@ -49,7 +49,7 @@ void test_dvp_enable_failure(void)
   dvp_instantiated[0] = true;
   DVP_Instances[0].enabled = true;
   TEST_ASSERT_EQUAL(DVP_Err_AlreadyEnabled, dvp_enable_device(DVP_Device1, DVP_DEFAULT_MAPPING));
-  
+
   // Invalid pinconfig failure
   DVP_Instances[0].enabled = false;
   dvp_instantiated[0] = true;
@@ -59,7 +59,7 @@ void test_dvp_enable_failure(void)
   // Pin locked failure
   DVP_Instances[0].no_pin_configs = DVP_MAX_PINCONFIGS;
   rcc_pcendis_Expect(RCC_DVPEN, RCC_ENABLE);
-  
+
   // Expect Enable port A
   gpio_port_enable_Expect(GET_GPIO_PORT(PA4));
   gpio_lock_pin_ExpectAndReturn(RCC_DVPEN, PA4, GPIO_Success);
@@ -71,7 +71,7 @@ void test_dvp_enable_failure(void)
 
   // Expect PA4 pin unlock
   for (int i = 0; i < 16; i++) {
-    gpio_unlock_pin_ExpectAndReturn(RCC_DVPEN, pin_configurations_dvp[DVP_DEFAULT_MAPPING][i], GPIO_Success);    
+    gpio_unlock_pin_ExpectAndReturn(RCC_DVPEN, pin_configurations_dvp[DVP_DEFAULT_MAPPING][i], GPIO_Success);
   }
 
   TEST_ASSERT_EQUAL(DVP_Err_ConfigFail, dvp_enable_device(DVP_Device1, DVP_DEFAULT_MAPPING));
@@ -108,7 +108,7 @@ void test_dvp_configure_failure(void)
   dvp_instantiated[0] = true;
   DVP_Instances[0].enabled = false;
   TEST_ASSERT_EQUAL(DVP_Err_NotEnabled, dvp_configure_device(DVP_Device1, dvp_config));
-  
+
   // Already configured failure
   DVP_Instances[0].enabled = true;
   DVP_Instances[0].configured = true;
@@ -124,36 +124,35 @@ void test_dvp_configure_success(void)
   uint16_t buff1[1024];
 
   const DVP_Config dvp_config = {
-    .CR0 = {
-      .DVP_ENABLE = 1,
+    .CR0 = {.DVP_ENABLE = 1,
       .DVP_VSYNC_POL = DVP_VSYNC_POL_LOW,
       .DVP_HSYNC_POL = DVP_HSYNC_POL_HIGH,
       .DVP_PCLK_POL = DVP_PCLK_POL_POSEDGE,
       .DVP_DATA_WIDTH = DVP_BusWidth_12bit,
-      .DVP_MODE = DVP_DATA_FORMAT_RAW
-    },
-    .CR1 = {
-      .DVP_DMA_ENABLE = DVP_ENABLE_DMA,
-      .DVP_ALL_CLR = 0,
-      .DVP_RCV_CLR = 0,
-      .DVP_BUF_TOG = 0,
-      .DVP_CAPTURE_MODE = DVP_CAPTURE_MODE_SNAPSHOT,
-      .DVP_CROP = DVP_CROP_DISABLED,
-      .DVP_FCRC = DVP_FCRC_ALL_FRAMES,
-    },
-    .IER = {
-      .DVP_ROW_DONE = DVP_ROW_DONE_INTERRUPT_EN,
-      .DVP_FRM_DONE = DVP_FRM_DONE_INTERRUPT_EN,
-      .DVP_FIFO_OV = DVP_FIFO_OV_INTERRUPT_EN,
-      .DVP_STP_FRM = DVP_STP_FRM_INTERRUPT_EN,
-    },
-    
+      .DVP_MODE = DVP_DATA_FORMAT_RAW},
+    .CR1 =
+      {
+        .DVP_DMA_ENABLE = DVP_ENABLE_DMA,
+        .DVP_ALL_CLR = 0,
+        .DVP_RCV_CLR = 0,
+        .DVP_BUF_TOG = 0,
+        .DVP_CAPTURE_MODE = DVP_CAPTURE_MODE_SNAPSHOT,
+        .DVP_CROP = DVP_CROP_DISABLED,
+        .DVP_FCRC = DVP_FCRC_ALL_FRAMES,
+      },
+    .IER =
+      {
+        .DVP_ROW_DONE = DVP_ROW_DONE_INTERRUPT_EN,
+        .DVP_FRM_DONE = DVP_FRM_DONE_INTERRUPT_EN,
+        .DVP_FIFO_OV = DVP_FIFO_OV_INTERRUPT_EN,
+        .DVP_STP_FRM = DVP_STP_FRM_INTERRUPT_EN,
+      },
+
     .DVP_ROW_NUM = 1024,
     .DVP_COL_NUM = 1,
-    .DVP_DMA_BUF0 = (uintptr_t)((uint16_t *) buff0),
-    .DVP_DMA_BUF1 = (uintptr_t)((uint16_t *) buff1),
+    .DVP_DMA_BUF0 = (uintptr_t)((uint16_t *)buff0),
+    .DVP_DMA_BUF1 = (uintptr_t)((uint16_t *)buff1),
   };
-  
 
   mmio_and_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_CR1), ~(U8_BIT(1) | U8_BIT(2)));
   mmio_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_CR0), U8_BIT(5));

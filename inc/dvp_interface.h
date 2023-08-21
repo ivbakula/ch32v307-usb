@@ -27,40 +27,40 @@ typedef enum
   DVP_BusWidth_12bit = 0b10,
 } DVP_BusWidth;
 
-#define DVP_VSYNC_POL_LOW 0
+#define DVP_VSYNC_POL_LOW  0
 #define DVP_VSYNC_POL_HIGH 1
 
-#define DVP_HSYNC_POL_LOW 1
+#define DVP_HSYNC_POL_LOW  1
 #define DVP_HSYNC_POL_HIGH 0
 
 #define DVP_PCLK_POL_POSEDGE 0
 #define DVP_PCLK_POL_NEGEDGE 1
 
-#define DVP_DATA_FORMAT_RAW 0
+#define DVP_DATA_FORMAT_RAW  0
 #define DVP_DATA_FORMAT_JPEG 1
 
-#define DVP_ENABLE_DMA 1
+#define DVP_ENABLE_DMA  1
 #define DVP_DISABLE_DMA 0
 
-#define DVP_CAPTURE_MODE_SNAPSHOT 1
+#define DVP_CAPTURE_MODE_SNAPSHOT   1
 #define DVP_CAPTURE_MODE_CONTINUOUS 0
 
 #define DVP_CROP_DISABLED 0
-#define DVP_CROP_ENABLED 1
+#define DVP_CROP_ENABLED  1
 
-#define DVP_FCRC_ALL_FRAMES (0b00)
+#define DVP_FCRC_ALL_FRAMES        (0b00)
 #define DVP_FCRC_EVERY_OTHER_FRAME (0b01)
 #define DVP_FCRC_EVERY_THIRD_FRAME (0b10)
-#define DVP_FCRC_RESERVED (0b11)
+#define DVP_FCRC_RESERVED          (0b11)
 
-#define DVP_ROW_DONE_INTERRUPT_EN 1
+#define DVP_ROW_DONE_INTERRUPT_EN  1
 #define DVP_ROW_DONE_INTERRUPT_DIS 0
-#define DVP_FRM_DONE_INTERRUPT_EN 1
-#define DVP_FRM_DONE_INTERRUPT_DIS 0  
-#define DVP_FIFO_OV_INTERRUPT_EN 1
-#define DVP_FIFO_OV_INTERRUPT_DIS 0
-#define DVP_STP_FRM_INTERRUPT_EN 1
-#define DVP_STP_FRM_INTERRUPT_DIS 0
+#define DVP_FRM_DONE_INTERRUPT_EN  1
+#define DVP_FRM_DONE_INTERRUPT_DIS 0
+#define DVP_FIFO_OV_INTERRUPT_EN   1
+#define DVP_FIFO_OV_INTERRUPT_DIS  0
+#define DVP_STP_FRM_INTERRUPT_EN   1
+#define DVP_STP_FRM_INTERRUPT_DIS  0
 
 /**
  * @brief This structure contains register bit fields that are necessary at device configuration
@@ -113,8 +113,8 @@ typedef struct
     uint8_t data;
   } IER;
 
-  uint16_t DVP_ROW_NUM;  /*< Number of Rows contained in a frame of image data. */
-  uint16_t DVP_COL_NUM;  /*< Number pixels in a row (number of PCLK cycles per row) */
+  uint16_t DVP_ROW_NUM;   /*< Number of Rows contained in a frame of image data. */
+  uint16_t DVP_COL_NUM;   /*< Number pixels in a row (number of PCLK cycles per row) */
   uintptr_t DVP_DMA_BUF0; /*< Address of DMA buffer 1 */
   uintptr_t DVP_DMA_BUF1; /*< Address of DMA buffer 2 */
 } DVP_Config;
@@ -205,7 +205,6 @@ DVP_Err dvp_configure_device(DVP_Device dev, DVP_Config config);
  * @return DVP_Err DVP_AlreadyEnabled if device is enabled , Appropriate error code otherwise.
  */
 DVP_Err dvp_is_enabled(DVP_Device dev);
-
 
 /**
  * @fn dvp_is_configured
