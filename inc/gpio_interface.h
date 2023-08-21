@@ -177,10 +177,10 @@ typedef enum
 } GPIO_Err;
 
 typedef enum
-  {
-    GPIO_PullState_Up,
-    GPIO_PullState_Down
-  } GPIO_PullState; 
+{
+  GPIO_PullState_Up,
+  GPIO_PullState_Down
+} GPIO_PullState;
 /**
  * @fn gpio_port_enable
  *

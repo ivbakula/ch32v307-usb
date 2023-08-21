@@ -2,6 +2,7 @@
 #define SRC_DVP_DEVICE_H
 
 #include <stdint.h>
+
 #include "dvp_interface.h"
 #include "gpio_interface.h"
 #include "irq.h"
@@ -40,12 +41,12 @@ typedef struct
   bool enabled;
   bool configured;
 
-  uint8_t chosen_pinconfig;  
+  uint8_t chosen_pinconfig;
   uint8_t no_pin_configs;
   GPIO_Pin pin_configuration[DVP_MAX_PINCONFIGS][16];
 } DVP_Instance;
 
-#define DVP ((DVP_Regfile *) DVP_BASE)
-#define _DVP_REGISTER(X,Y) ((uintptr_t) & (((DVP_Regfile *)X)->Y))
+#define DVP                 ((DVP_Regfile *)DVP_BASE)
+#define _DVP_REGISTER(X, Y) ((uintptr_t) & (((DVP_Regfile *)X)->Y))
 
 #endif

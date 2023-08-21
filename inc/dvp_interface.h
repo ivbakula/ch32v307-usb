@@ -72,8 +72,8 @@ typedef struct
     uint8_t ier_register;
   } IER;
 
-  uint16_t DVP_ROW_NUM; /*< Number of Rows contained in a frame of image data. */
-  uint16_t DVP_COL_NUM; /*< Number pixels in a row (number of PCLK cycles per row) */
+  uint16_t DVP_ROW_NUM;  /*< Number of Rows contained in a frame of image data. */
+  uint16_t DVP_COL_NUM;  /*< Number pixels in a row (number of PCLK cycles per row) */
   uint16_t DVP_DMA_BUF0; /*< Address of DMA buffer 1 */
   uint16_t DVP_DMA_BUF1; /*< Address of DMA buffer 2 */
 } DVP_Config;

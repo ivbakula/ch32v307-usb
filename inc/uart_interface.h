@@ -179,7 +179,6 @@ typedef uint8_t UART_PinConfig;
  */
 #define UART3_ALTERNATE_MAPPING_3 ((UART_PinConfig)0b11)
 
-
 /**
  * @name UART4_DEFAULT_MAPPING
  *

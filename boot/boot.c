@@ -168,7 +168,7 @@ void irq_dvp(void)
   }
 
   if (DVP->R8_DVP_IFR & U8_BIT(1)) {
-    _printf("ROW_DONE_INTERRUPT\r\n");    
+    _printf("ROW_DONE_INTERRUPT\r\n");
     /* ROW done */
     uint8_t *bytes = (uint8_t *)buff0;
     DVP->R8_DVP_IFR &= ~U8_BIT(1);
@@ -177,21 +177,20 @@ void irq_dvp(void)
       _printf("buff0[%d]: 0x%04x\r\n", i, buff0[i]);
       //      _printf("0x%02x %02x\r\n", bytes[i + 1], bytes);
     }
-    
   }
 
   if (DVP->R8_DVP_IFR & U8_BIT(2)) {
-    _printf("FRAME_DONE_INTERRUPT\r\n");        
+    _printf("FRAME_DONE_INTERRUPT\r\n");
     DVP->R8_DVP_IFR &= ~U8_BIT(2);
   }
 
   if (DVP->R8_DVP_IFR & U8_BIT(3)) {
-    _printf("FIFO_OVERFLOW_INTERRUPT\r\n");        
+    _printf("FIFO_OVERFLOW_INTERRUPT\r\n");
     DVP->R8_DVP_IFR &= ~U8_BIT(3);
   }
 
   if (DVP->R8_DVP_IFR & U8_BIT(4)) {
-    _printf("FRAME_STOP_INTERRUPT\r\n");            
+    _printf("FRAME_STOP_INTERRUPT\r\n");
     DVP->R8_DVP_IFR &= ~U8_BIT(4);
   }
 
@@ -205,20 +204,14 @@ int main()
   uart_enable_device(UART_Device3, UART3_DEFAULT_MAPPING);
   uart_configure_device(UART_Device3, 9600, sysclock_frequency);
 
-  GPIO_Pin dvp_pins[16] = {
-    PA4, PA5, PA6, PA9,
-    PA10, PB3, PB6, PB8,
-    PB9, PC8, PC9, PC10,
-    PC11, PC12, PD2, PD6
-  };
+  GPIO_Pin dvp_pins[16] = {PA4, PA5, PA6, PA9, PA10, PB3, PB6, PB8, PB9, PC8, PC9, PC10, PC11, PC12, PD2, PD6};
 
   rcc_pcendis(RCC_DVPEN, RCC_ENABLE);
   for (int i = 0; i < 16; i++) {
-    if (gpio_lock_pin(RCC_DVPEN, dvp_pins[i]))
-      {
+    if (gpio_lock_pin(RCC_DVPEN, dvp_pins[i])) {
       _printf("Unable to lock pin\r\n");
       goto nothing;
-      }
+    }
     gpio_port_enable(GET_GPIO_PORT(dvp_pins[i]));
     gpio_pin_config(dvp_pins[i], GPIO_Mode_Input, GPIO_Input_PullUpDown);
     gpio_pin_pullstate_config(dvp_pins[i], GPIO_PullState_Up);
@@ -226,12 +219,13 @@ int main()
 
   DVP->R8_DVP_CR0 &= ~0x30;
   DVP->R8_DVP_CR1 &= ~(U8_BIT(1) | U8_BIT(2)); /* clear RB_DVP_ALL_CLR and RB_DVP_RCV_CLR using the R8_DVP_CR1 */
-  DVP->R8_DVP_CR0 = /*U8_BIT(6) |*/ U8_BIT(5); /* RAW image mode, 12 bit data width, PCLK posedge, HSYNC neg polarity VSYNC neg polarity */
+  DVP->R8_DVP_CR0 =
+    /*U8_BIT(6) |*/ U8_BIT(5); /* RAW image mode, 12 bit data width, PCLK posedge, HSYNC neg polarity VSYNC neg polarity */
   DVP->R8_DVP_CR1 |= U8_BIT(4);
   DVP->R16_DVP_COL_NUM = 10;
   DVP->R16_DVP_ROW_NUM = 1;
-  DVP->R32_DVP_DMA_BUF0 = (uintptr_t)((uint16_t *) buff0);
-  DVP->R32_DVP_DMA_BUF1 = (uintptr_t)((uint16_t *) buff1);
+  DVP->R32_DVP_DMA_BUF0 = (uintptr_t)((uint16_t *)buff0);
+  DVP->R32_DVP_DMA_BUF1 = (uintptr_t)((uint16_t *)buff1);
   DVP->R8_DVP_IER = 0xff;
   irq_register_interrupt_handler(DVP_IRQn, irq_dvp);
   irq_enable_interrupt(DVP_IRQn);
@@ -240,15 +234,12 @@ int main()
 
   _printf("Initialization complete\r\n");
   _printf("Sysclock frequency: %d Hz\r\n", sysclock_frequency);
-  
+
   while (!buff1[0])
     ;
 
-
-  
-
   _printf("DMA0[0] = %x\r\n", buff0[0]);
-  _printf("DMA1[0] = %x\r\n", buff1[0]);  
+  _printf("DMA1[0] = %x\r\n", buff1[0]);
 nothing:
   while (1)
     ;
