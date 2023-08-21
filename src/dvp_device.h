@@ -42,7 +42,7 @@ typedef struct
 
   uint8_t chosen_pinconfig;  
   uint8_t no_pin_configs;
-  GPIO_Pin pin_configuration[DVP_MAX_PINCONFIGS][15];
+  GPIO_Pin pin_configuration[DVP_MAX_PINCONFIGS][16];
 } DVP_Instance;
 
 #define DVP ((DVP_Regfile *) DVP_BASE)

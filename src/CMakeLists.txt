@@ -10,6 +10,8 @@ set(SRC_SOURCES
   uart_device.c
   spi_device.c
   adf435x_device.c
+  dvp_device.c
+  instances/drv/dvp_instances.c
   instances/drv/uart_instances.c
   instances/drv/spi_instances.c
   instances/ext/adf435x_instances.c
