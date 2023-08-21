@@ -4,6 +4,7 @@ add_executable(test_dvp_device_suite
   "${MOCK_SOURCE_DIR}/Mockmmio_ops.c"
   "${MOCK_SOURCE_DIR}/Mockrcc_interface.c"
   "${MOCK_SOURCE_DIR}/Mockgpio_interface.c"
+  "${MOCK_SOURCE_DIR}/Mockirq.c"
 )
 
 target_link_libraries(test_dvp_device_suite
@@ -12,7 +13,7 @@ target_link_libraries(test_dvp_device_suite
 )
 
 target_compile_options(test_dvp_device_suite PUBLIC
-  -ggdb
+  -ggdb -D UNITTEST
 )
 
 target_include_directories(test_dvp_device_suite PUBLIC

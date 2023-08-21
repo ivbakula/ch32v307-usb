@@ -2,7 +2,7 @@
 #define SRC_DVP_DEVICE_H
 
 #include <stdint.h>
-
+#include <stddef.h>
 #include "dvp_interface.h"
 #include "gpio_interface.h"
 #include "irq.h"

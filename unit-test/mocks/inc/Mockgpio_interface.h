@@ -34,6 +34,8 @@ void gpio_lock_pin_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, RCC_DevId rc
 void gpio_unlock_pin_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, RCC_DevId rcc_devid, GPIO_Pin pin, GPIO_Err cmock_to_return);
 #define gpio_pin_config_Expect(pin, mode, config) gpio_pin_config_CMockExpect(__LINE__, pin, mode, config)
 void gpio_pin_config_CMockExpect(UNITY_LINE_TYPE cmock_line, GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config);
+#define gpio_pin_pullstate_config_Expect(pin, state) gpio_pin_pullstate_config_CMockExpect(__LINE__, pin, state)
+void gpio_pin_pullstate_config_CMockExpect(UNITY_LINE_TYPE cmock_line, GPIO_Pin pin, GPIO_PullState state);
 #define gpio_pin_input_ExpectAndReturn(pin, cmock_retval) gpio_pin_input_CMockExpectAndReturn(__LINE__, pin, cmock_retval)
 void gpio_pin_input_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, GPIO_Pin pin, GPIO_State cmock_to_return);
 #define gpio_pin_output_Expect(pin, state) gpio_pin_output_CMockExpect(__LINE__, pin, state)

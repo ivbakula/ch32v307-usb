@@ -2,6 +2,7 @@
 
 // clang-format off
 const bool dvp_instantiated[1] = {1};
+const size_t no_of_dvp_instances = 1;
 DVP_Instance DVP_Instances[1] = {
   {
     .base = DVP_BASE,
