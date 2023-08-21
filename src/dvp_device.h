@@ -35,7 +35,6 @@ typedef struct
 typedef struct
 {
   uintptr_t base;
-  //  I2C_Device i2c_bus;
   RCC_DevId rcc_devid;
   Interrupt_IRQn irqn;
   bool enabled;
