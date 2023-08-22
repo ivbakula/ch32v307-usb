@@ -3,7 +3,7 @@ set(SRC_SOURCES
   irq.c
   usb_device.c
   mmem.c
-  msgq.c
+#  msgq.c
   mmio_ops.c
   rcc_device.c
   gpio_device.c

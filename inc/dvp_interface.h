@@ -219,4 +219,15 @@ DVP_Err dvp_is_enabled(DVP_Device dev);
  * @return DVP_Err DVP_AlreadyConfigured if device is configured, Appropriate Error code otherwise.
  */
 DVP_Err dvp_is_configured(DVP_Device dev);
+
+/**
+ * @fn dvp_dump_registers
+ *
+ * @brief
+ *
+ * @param dev
+ *
+ */
+void dvp_dump_registers(DVP_Device dev);
+
 #endif
