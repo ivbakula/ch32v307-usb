@@ -12,7 +12,7 @@ static uint16_t *buff1_ptr;
 
 int _printf(const char *fmt, ...);
 
-// TODO implement this function properly. depends on  Implement console #46 
+// TODO implement this function properly. depends on  Implement console #46
 void dvp_dump_registers(DVP_Device dev)
 {
   /* if (dev >= no_of_dvp_instances) { */
@@ -71,8 +71,8 @@ static void irq_handler_dvp(void)
   }
 
   if (dvp_ifr & U8_BIT(2)) {
-    _printf("FRAME_DONE_INTERRUPT\r\n");        
-    dvp_clr |= U8_BIT(2);    
+    _printf("FRAME_DONE_INTERRUPT\r\n");
+    dvp_clr |= U8_BIT(2);
   }
 
   if (dvp_ifr & U8_BIT(3)) {
@@ -160,7 +160,6 @@ DVP_Err dvp_reset_device(DVP_Device dev)
   // TODO
 }
 
-
 DVP_Err dvp_configure_device(DVP_Device dev, DVP_Config config)
 {
   if (dev >= no_of_dvp_instances)
@@ -195,7 +194,7 @@ DVP_Err dvp_configure_device(DVP_Device dev, DVP_Config config)
   mmio_writeb(_DVP_REGISTER(base, R8_DVP_CR0), (config.CR0.data & (~U8_BIT(0))));
 
   /* 4. configure DVP receiver device; capture mode, crop function, and frame capture rate.
-   * Don't enable DMA for now (the main reason for clearing bit 0) 
+   * Don't enable DMA for now (the main reason for clearing bit 0)
    */
   mmio_or_writeb(_DVP_REGISTER(base, R8_DVP_CR1), (config.CR1.data & (~U8_BIT(0))));
 

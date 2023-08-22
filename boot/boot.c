@@ -1,10 +1,11 @@
-#include "uart_interface.h" 
-#include "dvp_interface.h"
-#include "time.h"
 #include <stdarg.h>
 #include <stdio.h>
-#include "mmem.h"
+
 #include "../src/dvp_device.h"
+#include "dvp_interface.h"
+#include "mmem.h"
+#include "time.h"
+#include "uart_interface.h"
 
 extern uint32_t _susrstack;
 
@@ -26,7 +27,6 @@ int _printf(const char *fmt, ...)
   int len = vsnprintf(NULL, 0, fmt, args);
   va_end(args);
 
-
   char msg[len + 1];
   memset(msg, 0, len + 1);
   va_start(args, fmt);
@@ -37,15 +37,8 @@ int _printf(const char *fmt, ...)
   return len;
 }
 
-const char DVP_Err_String[][64] = {
-  "DVP_Err_Success",
-  "DVP_Err_ConfigFail",
-  "DVP_Err_AlreadyEnabled",
-  "DVP_Err_AlreadyConfigured",
-  "DVP_Err_NotEnabled",
-  "DVP_Err_NoSuchDevice",
-  "DVP_Err_DeviceOutOfRange"
-};
+const char DVP_Err_String[][64] = {"DVP_Err_Success", "DVP_Err_ConfigFail", "DVP_Err_AlreadyEnabled",
+  "DVP_Err_AlreadyConfigured", "DVP_Err_NotEnabled", "DVP_Err_NoSuchDevice", "DVP_Err_DeviceOutOfRange"};
 
 __attribute__((section(".data"))) static uint16_t buff0[16];
 __attribute__((section(".data"))) static uint16_t buff1[16];
@@ -71,33 +64,30 @@ int main(void)
   /* buff0 = (uint16_t *)0x20005000; */
   /* buff1 = (uint16_t *)(0x20005000 + 128); */
   DVP_Config dvp_config = {
-    .CR0 =
-    {
-      .DVP_ENABLE = 1,
+    .CR0 = {.DVP_ENABLE = 1,
       .DVP_VSYNC_POL = DVP_VSYNC_POL_LOW,
       .DVP_HSYNC_POL = DVP_HSYNC_POL_HIGH,
       .DVP_PCLK_POL = DVP_PCLK_POL_POSEDGE,
       .DVP_DATA_WIDTH = DVP_BusWidth_12bit,
-      .DVP_MODE = DVP_DATA_FORMAT_RAW
-    },
+      .DVP_MODE = DVP_DATA_FORMAT_RAW},
     .CR1 =
-    {
-      .DVP_DMA_ENABLE = DVP_ENABLE_DMA,
-      .DVP_ALL_CLR = 0,
-      .DVP_RCV_CLR = 0,
-      .DVP_BUF_TOG = 0,
-      .DVP_CAPTURE_MODE = DVP_CAPTURE_MODE_SNAPSHOT,
-      .DVP_CROP = DVP_CROP_DISABLED,
-      .DVP_FCRC = DVP_FCRC_ALL_FRAMES,
-    },
+      {
+        .DVP_DMA_ENABLE = DVP_ENABLE_DMA,
+        .DVP_ALL_CLR = 0,
+        .DVP_RCV_CLR = 0,
+        .DVP_BUF_TOG = 0,
+        .DVP_CAPTURE_MODE = DVP_CAPTURE_MODE_SNAPSHOT,
+        .DVP_CROP = DVP_CROP_DISABLED,
+        .DVP_FCRC = DVP_FCRC_ALL_FRAMES,
+      },
     .IER =
-    {
-      .DVP_FRM_STRT = DVP_FRAME_START_INTERRUPT_EN,
-      .DVP_ROW_DONE = DVP_ROW_DONE_INTERRUPT_EN,
-      .DVP_FRM_DONE = DVP_FRM_DONE_INTERRUPT_EN,
-      .DVP_FIFO_OV = DVP_FIFO_OV_INTERRUPT_EN,
-      .DVP_STP_FRM = DVP_STP_FRM_INTERRUPT_EN,
-    },
+      {
+        .DVP_FRM_STRT = DVP_FRAME_START_INTERRUPT_EN,
+        .DVP_ROW_DONE = DVP_ROW_DONE_INTERRUPT_EN,
+        .DVP_FRM_DONE = DVP_FRM_DONE_INTERRUPT_EN,
+        .DVP_FIFO_OV = DVP_FIFO_OV_INTERRUPT_EN,
+        .DVP_STP_FRM = DVP_STP_FRM_INTERRUPT_EN,
+      },
 
     .DVP_ROW_NUM = 1,
     .DVP_COL_NUM = 16,
@@ -121,7 +111,7 @@ int main(void)
   dvp_dump_registers(DVP_Device1);
   wait_ms(500);
 
- _nothing:
+_nothing:
   while (1)
     ;
 }

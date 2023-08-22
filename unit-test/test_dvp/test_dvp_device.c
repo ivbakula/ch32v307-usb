@@ -142,7 +142,7 @@ void test_dvp_configure_success(void)
       },
     .IER =
       {
-	.DVP_FRM_STRT = DVP_FRAME_START_INTERRUPT_EN,
+        .DVP_FRM_STRT = DVP_FRAME_START_INTERRUPT_EN,
         .DVP_ROW_DONE = DVP_ROW_DONE_INTERRUPT_EN,
         .DVP_FRM_DONE = DVP_FRM_DONE_INTERRUPT_EN,
         .DVP_FIFO_OV = DVP_FIFO_OV_INTERRUPT_EN,
@@ -157,7 +157,7 @@ void test_dvp_configure_success(void)
 
   /* 1. clear bus width setting in control register 0 */
   mmio_and_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_CR0), ~0x30);
-  
+
   /* 2. clear FIFO reset and receive logic reset bits in control register 1 */
   mmio_and_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_CR1), ~(U8_BIT(1) | U8_BIT(2)));
 
@@ -167,10 +167,10 @@ void test_dvp_configure_success(void)
   mmio_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_CR0), U8_BIT(5));
 
   /* 4. configure DVP receiver device; capture mode, crop function, and frame capture rate.
-   * Don't enable DMA for now (the main reason for clearing bit 0) 
+   * Don't enable DMA for now (the main reason for clearing bit 0)
    */
   mmio_or_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_CR1), U8_BIT(4));
-  
+
   /* 5. configure number of pixels (samples) per row. */
   mmio_writew_Expect(_DVP_REGISTER(DVP_BASE, R16_DVP_COL_NUM), 1024);
 
@@ -178,10 +178,10 @@ void test_dvp_configure_success(void)
   mmio_writew_Expect(_DVP_REGISTER(DVP_BASE, R16_DVP_ROW_NUM), 1);
 
   /* 7. configure DMA buffer0 */
-  mmio_writedw_Expect(_DVP_REGISTER(DVP_BASE, R32_DVP_DMA_BUF0), ((uintptr_t) buff0) & 0xffffffff);
+  mmio_writedw_Expect(_DVP_REGISTER(DVP_BASE, R32_DVP_DMA_BUF0), ((uintptr_t)buff0) & 0xffffffff);
 
   /* 8. configure DMA buffer0 */
-  mmio_writedw_Expect(_DVP_REGISTER(DVP_BASE, R32_DVP_DMA_BUF1), ((uintptr_t) buff1) & 0xffffffff);
+  mmio_writedw_Expect(_DVP_REGISTER(DVP_BASE, R32_DVP_DMA_BUF1), ((uintptr_t)buff1) & 0xffffffff);
 
   /* 9. enable selected interrupts */
   mmio_writeb_Expect(_DVP_REGISTER(DVP_BASE, R8_DVP_IER), 0x1f);

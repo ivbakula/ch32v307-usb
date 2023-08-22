@@ -53,16 +53,16 @@ typedef enum
 #define DVP_FCRC_EVERY_THIRD_FRAME (0b10)
 #define DVP_FCRC_RESERVED          (0b11)
 
-#define DVP_FRAME_START_INTERRUPT_EN 1
+#define DVP_FRAME_START_INTERRUPT_EN  1
 #define DVP_FRAME_START_INTERRUPT_DIS 0
-#define DVP_ROW_DONE_INTERRUPT_EN  1
-#define DVP_ROW_DONE_INTERRUPT_DIS 0
-#define DVP_FRM_DONE_INTERRUPT_EN  1
-#define DVP_FRM_DONE_INTERRUPT_DIS 0
-#define DVP_FIFO_OV_INTERRUPT_EN   1
-#define DVP_FIFO_OV_INTERRUPT_DIS  0
-#define DVP_STP_FRM_INTERRUPT_EN   1
-#define DVP_STP_FRM_INTERRUPT_DIS  0
+#define DVP_ROW_DONE_INTERRUPT_EN     1
+#define DVP_ROW_DONE_INTERRUPT_DIS    0
+#define DVP_FRM_DONE_INTERRUPT_EN     1
+#define DVP_FRM_DONE_INTERRUPT_DIS    0
+#define DVP_FIFO_OV_INTERRUPT_EN      1
+#define DVP_FIFO_OV_INTERRUPT_DIS     0
+#define DVP_STP_FRM_INTERRUPT_EN      1
+#define DVP_STP_FRM_INTERRUPT_DIS     0
 
 /**
  * @brief This structure contains register bit fields that are necessary at device configuration
