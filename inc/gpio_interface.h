@@ -138,6 +138,8 @@ typedef uint32_t GPIO_Port;
 #define PE14 ((GPIO_Pin)(GPIO_PORTE | ORD_PX14 | U32_BIT(14)))
 #define PE15 ((GPIO_Pin)(GPIO_PORTE | ORD_PX15 | U32_BIT(15)))
 
+#define PNA ((GPIO_Pin)(0xffffffff)) /* N/A pin */
+
 #define GET_GPIO_PIN_BIT(x) ((uint16_t)(x & 0xffff))
 ///@}
 
@@ -174,6 +176,11 @@ typedef enum
   GPIO_Ownership, /*< GPIO pin is not claimed by provided RCC_DevId, so pin cannot be freed */
 } GPIO_Err;
 
+typedef enum
+{
+  GPIO_PullState_Up,
+  GPIO_PullState_Down
+} GPIO_PullState;
 /**
  * @fn gpio_port_enable
  *
@@ -235,6 +242,7 @@ GPIO_Err gpio_unlock_pin(RCC_DevId rcc_devid, GPIO_Pin pin);
  */
 void gpio_pin_config(GPIO_Pin pin, GPIO_Mode mode, GPIO_Config config);
 
+void gpio_pin_pullstate_config(GPIO_Pin pin, GPIO_PullState state);
 /**
  * @fn gpio_pin_input
  *

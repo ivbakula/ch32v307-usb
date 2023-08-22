@@ -10,6 +10,7 @@ static const char* CMockString_gpio_lock_pin = "gpio_lock_pin";
 static const char* CMockString_gpio_pin_config = "gpio_pin_config";
 static const char* CMockString_gpio_pin_input = "gpio_pin_input";
 static const char* CMockString_gpio_pin_output = "gpio_pin_output";
+static const char* CMockString_gpio_pin_pullstate_config = "gpio_pin_pullstate_config";
 static const char* CMockString_gpio_port_disable = "gpio_port_disable";
 static const char* CMockString_gpio_port_enable = "gpio_port_enable";
 static const char* CMockString_gpio_unlock_pin = "gpio_unlock_pin";
@@ -60,6 +61,14 @@ typedef struct _CMOCK_gpio_pin_config_CALL_INSTANCE
 
 } CMOCK_gpio_pin_config_CALL_INSTANCE;
 
+typedef struct _CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  GPIO_Pin Expected_pin;
+  GPIO_PullState Expected_state;
+
+} CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE;
+
 typedef struct _CMOCK_gpio_pin_input_CALL_INSTANCE
 {
   UNITY_LINE_TYPE LineNumber;
@@ -83,6 +92,7 @@ static struct Mockgpio_interfaceInstance
   CMOCK_MEM_INDEX_TYPE gpio_lock_pin_CallInstance;
   CMOCK_MEM_INDEX_TYPE gpio_unlock_pin_CallInstance;
   CMOCK_MEM_INDEX_TYPE gpio_pin_config_CallInstance;
+  CMOCK_MEM_INDEX_TYPE gpio_pin_pullstate_config_CallInstance;
   CMOCK_MEM_INDEX_TYPE gpio_pin_input_CallInstance;
   CMOCK_MEM_INDEX_TYPE gpio_pin_output_CallInstance;
 } Mock;
@@ -121,6 +131,12 @@ void Mockgpio_interface_Verify(void)
   if (CMOCK_GUTS_NONE != call_instance)
   {
     UNITY_SET_DETAIL(CMockString_gpio_pin_config);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  call_instance = Mock.gpio_pin_pullstate_config_CallInstance;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_gpio_pin_pullstate_config);
     UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
   }
   call_instance = Mock.gpio_pin_input_CallInstance;
@@ -346,6 +362,46 @@ void gpio_pin_config_CMockExpect(UNITY_LINE_TYPE cmock_line, GPIO_Pin pin, GPIO_
   Mock.gpio_pin_config_CallInstance = CMock_Guts_MemChain(Mock.gpio_pin_config_CallInstance, cmock_guts_index);
   cmock_call_instance->LineNumber = cmock_line;
   CMockExpectParameters_gpio_pin_config(cmock_call_instance, pin, mode, config);
+}
+
+void gpio_pin_pullstate_config(GPIO_Pin pin, GPIO_PullState state)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_gpio_pin_pullstate_config);
+  cmock_call_instance = (CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.gpio_pin_pullstate_config_CallInstance);
+  Mock.gpio_pin_pullstate_config_CallInstance = CMock_Guts_MemNext(Mock.gpio_pin_pullstate_config_CallInstance);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  {
+    UNITY_SET_DETAILS(CMockString_gpio_pin_pullstate_config,CMockString_pin);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_pin), (void*)(&pin), sizeof(GPIO_Pin), cmock_line, CMockStringMismatch);
+  }
+  {
+    UNITY_SET_DETAILS(CMockString_gpio_pin_pullstate_config,CMockString_state);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_state), (void*)(&state), sizeof(GPIO_PullState), cmock_line, CMockStringMismatch);
+  }
+  UNITY_CLR_DETAILS();
+}
+
+void CMockExpectParameters_gpio_pin_pullstate_config(CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE* cmock_call_instance, GPIO_Pin pin, GPIO_PullState state);
+void CMockExpectParameters_gpio_pin_pullstate_config(CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE* cmock_call_instance, GPIO_Pin pin, GPIO_PullState state)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_pin), (void*)(&pin),
+         sizeof(GPIO_Pin[sizeof(pin) == sizeof(GPIO_Pin) ? 1 : -1])); /* add GPIO_Pin to :treat_as_array if this causes an error */
+  memcpy((void*)(&cmock_call_instance->Expected_state), (void*)(&state),
+         sizeof(GPIO_PullState[sizeof(state) == sizeof(GPIO_PullState) ? 1 : -1])); /* add GPIO_PullState to :treat_as_array if this causes an error */
+}
+
+void gpio_pin_pullstate_config_CMockExpect(UNITY_LINE_TYPE cmock_line, GPIO_Pin pin, GPIO_PullState state)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE));
+  CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE* cmock_call_instance = (CMOCK_gpio_pin_pullstate_config_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.gpio_pin_pullstate_config_CallInstance = CMock_Guts_MemChain(Mock.gpio_pin_pullstate_config_CallInstance, cmock_guts_index);
+  cmock_call_instance->LineNumber = cmock_line;
+  CMockExpectParameters_gpio_pin_pullstate_config(cmock_call_instance, pin, state);
 }
 
 GPIO_State gpio_pin_input(GPIO_Pin pin)
