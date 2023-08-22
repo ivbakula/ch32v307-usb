@@ -53,6 +53,8 @@ typedef enum
 #define DVP_FCRC_EVERY_THIRD_FRAME (0b10)
 #define DVP_FCRC_RESERVED          (0b11)
 
+#define DVP_FRAME_START_INTERRUPT_EN 1
+#define DVP_FRAME_START_INTERRUPT_DIS 0
 #define DVP_ROW_DONE_INTERRUPT_EN  1
 #define DVP_ROW_DONE_INTERRUPT_DIS 0
 #define DVP_FRM_DONE_INTERRUPT_EN  1
@@ -104,6 +106,7 @@ typedef struct
   {
     struct
     {
+      uint8_t DVP_FRM_STRT : 1; /*< Frame start interrupt enable */
       uint8_t DVP_ROW_DONE : 1; /*< Row done interrupt enable. */
       uint8_t DVP_FRM_DONE : 1; /*< Frame done interrupt enable. */
       uint8_t DVP_FIFO_OV : 1;  /*< RCV FIFO buffer overflow interrupt enable. */
