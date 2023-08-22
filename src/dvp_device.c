@@ -12,28 +12,29 @@ static uint16_t *buff1_ptr;
 
 int _printf(const char *fmt, ...);
 
+// TODO implement this function properly. depends on  Implement console #46 
 void dvp_dump_registers(DVP_Device dev)
 {
-  if (dev >= no_of_dvp_instances) {
-    return;
-  }
+  /* if (dev >= no_of_dvp_instances) { */
+  /*   return; */
+  /* } */
 
-  if (!dvp_instantiated[dev]) {
-    return;
-  }
+  /* if (!dvp_instantiated[dev]) { */
+  /*   return; */
+  /* } */
 
-  uintptr_t base = DVP_Instances[dev].base;
+  /* uintptr_t base = DVP_Instances[dev].base; */
 
-  _printf("DVP_BASE: 0x%08x; base: 0x%08x\r\n", base, DVP_Instances[0].base);
-  _printf("===================BEGIN DVP REGISTER DUMP===================\r\n");
-  _printf("R8_DVP_CR0: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR0)));
-  _printf("R8_DVP_CR1: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR1)));
-  _printf("R8_DVP_IER: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_IER)));
-  _printf("R8_DVP_DMA_BUF0: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF0)));
-  _printf("R8_DVP_DMA_BUF1: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF1)));
-  _printf("R16_DVP_ROW_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_ROW_NUM)));
-  _printf("R16_DVP_COL_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_COL_NUM)));
-  _printf("===================END   DVP REGISTER DUMP===================\r\n");
+  /* _printf("DVP_BASE: 0x%08x; base: 0x%08x\r\n", base, DVP_Instances[0].base); */
+  /* _printf("===================BEGIN DVP REGISTER DUMP===================\r\n"); */
+  /* _printf("R8_DVP_CR0: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR0))); */
+  /* _printf("R8_DVP_CR1: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR1))); */
+  /* _printf("R8_DVP_IER: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_IER))); */
+  /* _printf("R8_DVP_DMA_BUF0: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF0))); */
+  /* _printf("R8_DVP_DMA_BUF1: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF1))); */
+  /* _printf("R16_DVP_ROW_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_ROW_NUM))); */
+  /* _printf("R16_DVP_COL_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_COL_NUM))); */
+  /* _printf("===================END   DVP REGISTER DUMP===================\r\n"); */
 }
 
 #ifdef UNITTEST
