@@ -63,8 +63,6 @@ DVP_Config dvp_config = {
 
   .DVP_ROW_NUM = 1,
   .DVP_COL_NUM = 16,
-  //    .DVP_DMA_BUF0 = (uintptr_t)((uint16_t *)buff0),
-  //    .DVP_DMA_BUF1 = (uintptr_t)((uint16_t *)buff1),
 };
 
 #define SPI_WRITE_COMMAND 0x1
