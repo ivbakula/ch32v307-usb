@@ -56,7 +56,6 @@ else ()
   target_link_options(${PROJECT_TARGET_ELF} PUBLIC
     -T${MCU_LINKER_SCRIPT}
     -nostartfiles
-    -nostdlib
     -Xlinker
     --gc-sections
     -Wl,-Map=${PROJECT}.map
