@@ -108,7 +108,7 @@ typedef struct
 
 void usb_server(void)
 {
-  uart_puts(UART_Device3, "Starting USB server\r\n");
+  printf_("Starting USB server\r\n");
   char buffer[64];
 
   while (1) {
@@ -154,7 +154,7 @@ int main(void)
 
   uart_enable_device(UART_Device3, UART3_DEFAULT_MAPPING);
   uart_configure_device(UART_Device3, 9600, sysclock_frequency);
-  bindprintf_(UART_Device3);
+  bind_printf(UART_Device3);
 
   printf_("UART Device%d successfuly initialized\r\n", UART_Device3);
 
