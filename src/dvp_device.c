@@ -10,7 +10,7 @@ extern DVP_Instance DVP_Instances[];
 static uint16_t *buff0_ptr;
 static uint16_t *buff1_ptr;
 
-int _printf(const char *fmt, ...);
+int printf_(const char *fmt, ...);
 
 // TODO implement this function properly. depends on  Implement console #46
 void dvp_dump_registers(DVP_Device dev)
@@ -25,16 +25,16 @@ void dvp_dump_registers(DVP_Device dev)
 
   /* uintptr_t base = DVP_Instances[dev].base; */
 
-  /* _printf("DVP_BASE: 0x%08x; base: 0x%08x\r\n", base, DVP_Instances[0].base); */
-  /* _printf("===================BEGIN DVP REGISTER DUMP===================\r\n"); */
-  /* _printf("R8_DVP_CR0: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR0))); */
-  /* _printf("R8_DVP_CR1: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR1))); */
-  /* _printf("R8_DVP_IER: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_IER))); */
-  /* _printf("R8_DVP_DMA_BUF0: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF0))); */
-  /* _printf("R8_DVP_DMA_BUF1: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF1))); */
-  /* _printf("R16_DVP_ROW_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_ROW_NUM))); */
-  /* _printf("R16_DVP_COL_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_COL_NUM))); */
-  /* _printf("===================END   DVP REGISTER DUMP===================\r\n"); */
+  /* printf_("DVP_BASE: 0x%08x; base: 0x%08x\r\n", base, DVP_Instances[0].base); */
+  /* printf_("===================BEGIN DVP REGISTER DUMP===================\r\n"); */
+  /* printf_("R8_DVP_CR0: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR0))); */
+  /* printf_("R8_DVP_CR1: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_CR1))); */
+  /* printf_("R8_DVP_IER: 0x%02x\r\n", mmio_readb(_DVP_REGISTER(base, R8_DVP_IER))); */
+  /* printf_("R8_DVP_DMA_BUF0: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF0))); */
+  /* printf_("R8_DVP_DMA_BUF1: 0x%08x\r\n", mmio_readb(_DVP_REGISTER(base, R32_DVP_DMA_BUF1))); */
+  /* printf_("R16_DVP_ROW_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_ROW_NUM))); */
+  /* printf_("R16_DVP_COL_NUM: 0x%04x\r\n", mmio_readw(_DVP_REGISTER(base, R16_DVP_COL_NUM))); */
+  /* printf_("===================END   DVP REGISTER DUMP===================\r\n"); */
 }
 
 #ifdef UNITTEST
@@ -45,7 +45,7 @@ void irq_handler_dvp(void)
 #else
 static void irq_handler_dvp(void)
 {
-  _printf("%s\r\n", __FUNCTION__);
+  printf_("%s\r\n", __FUNCTION__);
   uint8_t dvp_ifr = mmio_readb(_DVP_REGISTER(DVP_BASE, R8_DVP_IFR));
   uint8_t dvp_clr = 0;
   uint16_t *buff0 = (uint16_t *)mmio_readdw(_DVP_REGISTER(DVP_BASE, R32_DVP_DMA_BUF0));
@@ -53,35 +53,35 @@ static void irq_handler_dvp(void)
   uint16_t rows = mmio_readw(_DVP_REGISTER(DVP_BASE, R16_DVP_ROW_CNT));
 
   if (dvp_ifr & U8_BIT(0)) {
-    _printf("START_FRAME_INTERRUPT\r\n");
+    printf_("START_FRAME_INTERRUPT\r\n");
     dvp_clr |= U8_BIT(0);
   }
 
   if (dvp_ifr & U8_BIT(1)) {
     dvp_clr |= U8_BIT(1);
-    _printf("ROW_DONE_INTERRUPT\r\n");
+    printf_("ROW_DONE_INTERRUPT\r\n");
 
     for (int i = 0; i < 10; i++) {
-      _printf("buf0[%d]: 0x%04x\r\n", i, buff0_ptr[i]);
+      printf_("buf0[%d]: 0x%04x\r\n", i, buff0_ptr[i]);
     }
 
     for (int i = 0; i < 10; i++) {
-      _printf("buf1[%d]: 0x%04x\r\n", i, buff1_ptr[i]);
+      printf_("buf1[%d]: 0x%04x\r\n", i, buff1_ptr[i]);
     }
   }
 
   if (dvp_ifr & U8_BIT(2)) {
-    _printf("FRAME_DONE_INTERRUPT\r\n");
+    printf_("FRAME_DONE_INTERRUPT\r\n");
     dvp_clr |= U8_BIT(2);
   }
 
   if (dvp_ifr & U8_BIT(3)) {
-    _printf("FIFO_OVERFLOW_INTERRUPT\r\n");
+    printf_("FIFO_OVERFLOW_INTERRUPT\r\n");
     dvp_clr |= U8_BIT(3);
   }
 
   if (dvp_ifr & U8_BIT(4)) {
-    _printf("FRAME_STOP_INTERRUPT\r\n");
+    printf_("FRAME_STOP_INTERRUPT\r\n");
     dvp_clr |= U8_BIT(4);
   }
 
