@@ -2,7 +2,9 @@ set(SRC_SOURCES
   time.c
   irq.c
   usb_device.c
-  mmem.c
+#  mmem.c
+  printf.c
+  arith64.c
 #  msgq.c
   mmio_ops.c
   rcc_device.c
@@ -18,6 +20,10 @@ set(SRC_SOURCES
 )
 
 add_library(src STATIC ${SRC_SOURCES})
+
+target_compile_options(src PUBLIC
+  -DPRINTF_INCLUDE_CONFIG_H
+)
 
 target_include_directories(src PUBLIC
   "${PROJECT_SOURCE_DIR}/inc"
