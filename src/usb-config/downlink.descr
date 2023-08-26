@@ -1,0 +1,120 @@
+/* -*- mode: c -*- */
+#ifndef __USB_DEVICE_DESCR
+#define __USB_DEVICE_DESCR
+
+#include "usb_interface.h"
+#include "usb_fullspeed.cfg"
+
+static DeviceDescriptor deviceDescriptor = {
+  .bLength = sizeof(deviceDescriptor),
+  .bDescriptorType = 0x01,
+  .bcdUSB = USB_PROTOCOL,
+  .bDeviceClass       = 0xff,
+  .bDeviceSubClass    = 0x00,
+  .bDeviceProtocol    = 0x00,
+  .bMaxPacketSize0    = USB_MAX_PACKET_SIZE,
+  .idVendor           = 0x6976,
+  .idProduct          = 0x616e,
+  .bcdDevice          = 0x01,
+  .iProduct           = 0x01,
+  .iSerialNumber      = 0x00,
+  .bNumConfigurations = 0x1 
+};
+
+struct CompoundDescriptor {
+  ConfigurationDescriptor configurationDescriptor;
+  InterfaceDescriptor interfaceDescriptor;
+  EndpointDescriptor ep1InDescriptor;
+  EndpointDescriptor ep1OutDescriptor;
+  EndpointDescriptor ep2InDescriptor;
+} __attribute__((packed))
+compoundDescriptor = {
+  .configurationDescriptor = {
+    .bLength = sizeof(ConfigurationDescriptor),
+    .bDescriptorType = CONFIGURATION_DESCRIPTOR,
+    .wTotalLength = sizeof(struct CompoundDescriptor),
+    .bNumInterfaces = 0x1,
+    .bConfigurationValue = 0x1,
+    .iConfiguration = 0x0,
+    .bmAttributes = 1 << 7,
+    .bMaxPower = 100,
+  },
+  .interfaceDescriptor = {
+    .bLength = sizeof(InterfaceDescriptor),
+    .bDescriptorType = INTERFACE_DESCRIPTOR,
+    .bInterfaceNumber = 0x0,
+    .bAlternateSetting = 0x0,
+    .bNumEndpoints = 0x03,
+    .bInterfaceClass = 0xff,
+    .bInterfaceSubClass = 0xff,
+    .bInterfaceProtocol = 0xff,
+    .iInterface = 0x00,
+  },
+  .ep1InDescriptor = {
+    .bLength = sizeof(EndpointDescriptor),
+    .bDescriptorType = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = 1 | (1 << 7),
+    .bmAttributes = 0x03,
+    .wMaxPacketSize = USB_MAX_PACKET_SIZE,
+    .bInterval = 0x10,
+  },
+  .ep1OutDescriptor = {
+    .bLength = sizeof(EndpointDescriptor),
+    .bDescriptorType = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = 1,
+    .bmAttributes = 0x03,
+    .wMaxPacketSize = USB_MAX_PACKET_SIZE,
+    .bInterval = 0x10,
+  },
+  .ep2InDescriptor = {
+    .bLength = sizeof(EndpointDescriptor),
+    .bDescriptorType = ENDPOINT_DESCRIPTOR,
+    .bEndpointAddress = 2 | (1 << 7),
+    .bmAttributes = 0x02,
+    .wMaxPacketSize = 64,
+    .bInterval = 0x10,
+  },
+};
+
+struct StringDescriptorLang {
+  StringDescriptorComm comm;
+  uint16_t wLANGID[1];
+} __attribute__((packed)) stringDescriptorLang = {
+  .comm = {
+    .bLength = sizeof(struct StringDescriptorLang),
+    .bDescriptorType = STRING_DESCRIPTOR,
+  },
+  .wLANGID[0] = 0x0409,
+};
+struct StringDescriptorStr {
+  StringDescriptorComm comm;
+  char bString[sizeof("Fourier 1011 SDR") * 2];
+} __attribute__((packed)) stringDescriptorStr = {
+  .comm =
+    {
+      .bLength = sizeof(StringDescriptorComm) + sizeof("Fourier 1011 SDR") * 2,
+      .bDescriptorType = STRING_DESCRIPTOR,
+    },
+  .bString = 
+  {
+    'F', 0x00, 
+    'o', 0x00, 
+    'u', 0x00, 
+    'r', 0x00, 
+    'i', 0x00, 
+    'e', 0x00, 
+    'r', 0x00, 
+    ' ', 0x00, 
+    '1', 0x00, 
+    '0', 0x00,
+    '1', 0x00,
+    '1', 0x00,
+    ' ', 0x00,
+    'S', 0x00,
+    'D', 0x00,
+    'R', 0x00,
+    0x00, 0x00,
+  },
+};
+
+#endif
