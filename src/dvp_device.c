@@ -117,7 +117,7 @@ DVP_Err dvp_enable_device(DVP_Device dev, DVP_PinConfig pin_config)
   inst->chosen_pinconfig = pin_config;
 
   rcc_pcendis(rcc_devid, RCC_ENABLE);
-  for (int i = 0; i < 16; i++) {
+  for (int i = 0; i < 15; i++) {
     gpio_port_enable(GET_GPIO_PORT(pins[i]));
     if (gpio_lock_pin(rcc_devid, pins[i])) {
       dvp_gpio_unlock_pin_group(rcc_devid, pins);

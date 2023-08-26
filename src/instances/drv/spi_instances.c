@@ -1,7 +1,7 @@
 #include "../../spi_device.h"
 
 // clang-format off
-const bool spi_instantiated[3] = { 1, 0, 0 };
+const bool spi_instantiated[3] = { 1, 1, 0 };
 SPI_Instance SPI_Instances[3] = {
   {
     .base = SPI1_BASE,
